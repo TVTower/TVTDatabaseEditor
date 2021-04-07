@@ -1,0 +1,3 @@
+target/
+**/model/generated/
+plugin.xml_gen
