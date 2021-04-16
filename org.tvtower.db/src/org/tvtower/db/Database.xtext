@@ -386,7 +386,7 @@ AdConditions:
 ;
 
 AdvertisementData:
-	'<''data'{Conditions}
+	'<''data'{AdvertisementData}
 		(
 			('quality''='quality=STRING)?&
 			('available''='available=STRING)?&//TODO nÃ¶tig
@@ -427,11 +427,10 @@ NewsItem:
 	(
 		title=Title?&
 		description=Description?&
-		availability=Availability?&
 		variables=Variables?&
+		availability=Availability?&
 		data=NewsData?&
-		effects=Effects?&
-		conditions=NewsConditions?
+		effects=Effects?
 	)
 	'</''news''>'
 	('</''ignore''>')?
@@ -449,9 +448,9 @@ Effects:
 
 //TODO welche möglichen Trigger-Werte, welche Typen und Zusammenhänge (für Validierung und Autovervollständigung)
 Effect:
-	'<''effect'
+	'<''effect'{Effect}
 		(
-			('trigger''='trigger=STRING )& 
+			('trigger''='trigger=STRING )?& 
 			('type''='type=STRING)?&
 			('news''='news=[NewsItem|STRING])?& 
 			('genre''='genre=STRING)?&//TODO nur einmal
@@ -475,25 +474,12 @@ Effect:
 ;
 
 
-NewsConditions:
-	'<''conditions'{NewsConditions}
-		(
-			('year_range_from''='yearFrom=STRING)?&
-			('year_range_to''='yearTo=STRING)?
-//			('target_group''='targetGroup=STRING)?&
-//			('pro_pressure_groups''='proPressureGroup=STRING)?&
-//			('contra_pressure_groups''='contraPressureGrouo=STRING)?
-		)
-	'/>'
-;
-
 Availability:
 	'<''availability'{Availability}
 		(
 			('script''='script=STRING)?&
-			('year_range_from''='yearFrom=STRING)?&//TODO also in conditions
-			('year_range_to''='yearTo=STRING)?//TODO also in conditions
-//			('year_range_to''='minImage=STRING)?
+			('year_range_from''='yearFrom=STRING)?&
+			('year_range_to''='yearTo=STRING)?
 		)
 	'/>'
 ;
@@ -501,10 +487,10 @@ Availability:
 NewsData:
 	'<''data'{NewsData}
 		(
+			('genre''='genre=STRING)?&
+			('price''='price=STRING)?&
 			('quality''='quality=STRING)?&
 			('flags''='flags=STRING)?&//TODO nur einmal verwendet
-			('price''='price=STRING)?&
-			('genre''='avgenreailable=STRING)?&
 			('happen_time''='happenTime=STRING)?&//TODO nur einmal
 			('fictional''='fictional=STRING)?&
 			('quality_min''='qualityMin=STRING)?&//TODO nur einmal
@@ -759,7 +745,7 @@ ProgrammeRatings:
 ;
 
 ProgrammeData:
-	'<''data'{NewsData}
+	'<''data'{ProgrammeData}
 		(
 			('country''='country=STRING)?&
 			('year''='year=STRING)?&

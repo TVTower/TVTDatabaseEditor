@@ -4,6 +4,8 @@
 package org.tvtower.db.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ui.editor.outline.actions.OutlineWithEditorLinker;
+import org.tvtower.db.ui.outline.DatabaseOutlineWithEditorLinker;
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.
@@ -12,5 +14,9 @@ public class DatabaseUiModule extends AbstractDatabaseUiModule {
 
 	public DatabaseUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+
+	public Class<? extends OutlineWithEditorLinker> bindOutlineLinker() {
+		return DatabaseOutlineWithEditorLinker.class;
 	}
 }

@@ -3,12 +3,14 @@
  */
 package org.tvtower.db.validation;
 
+import org.eclipse.xtext.validation.ComposedChecks;
 
 /**
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
+@ComposedChecks(validators = {NewsValidator.class, CommonTagsValidator.class})
 public class DatabaseValidator extends AbstractDatabaseValidator {
 	
 //	public static final String INVALID_NAME = "invalidName";

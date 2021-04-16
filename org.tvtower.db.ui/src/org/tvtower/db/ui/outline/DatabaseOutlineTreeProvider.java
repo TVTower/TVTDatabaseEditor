@@ -3,16 +3,21 @@
  */
 package org.tvtower.db.ui.outline;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
+import org.tvtower.db.constants.NewsConstants;
 import org.tvtower.db.database.Achievement;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Database;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
+import org.tvtower.db.database.News;
 import org.tvtower.db.database.NewsItem;
 import org.tvtower.db.database.Person;
 import org.tvtower.db.database.Programme;
@@ -21,40 +26,51 @@ import org.tvtower.db.database.ScriptTemplate;
 /**
  * Customization of the default outline structure.
  *
- * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#outline
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#outline
  */
 public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	@Override
 	protected void _createChildren(DocumentRootNode parentNode, EObject modelElement) {
-		if(modelElement instanceof Database) {
-			((Database) modelElement).getDefinitions().forEach(def->{
+		if (modelElement instanceof Database) {
+			((Database) modelElement).getDefinitions().forEach(def -> {
 				createNode(parentNode, def);
 			});
-		}else {
+		} else {
 			super._createChildren(parentNode, modelElement);
 		}
 	}
 
-	//Programme
+	// Programme
 	protected boolean _isLeaf(Programme p) {
-		return p.getChildren()==null || p.getChildren().getChild().isEmpty();
+		return p.getChildren() == null || p.getChildren().getChild().isEmpty();
 	}
 
 	protected void _createChildren(IOutlineNode parent, Programme p) {
-		if(!_isLeaf(p)) {
-			p.getChildren().getChild().forEach(c-> createNode(parent, c));
+		if (!_isLeaf(p)) {
+			p.getChildren().getChild().forEach(c -> createNode(parent, c));
 		}
 	}
 
-	//News
+	// News
+	private Set<NewsItem> processedNews; // prevent infinite loops
+
+	protected void _createChildren(IOutlineNode parent, News n) {
+		processedNews = new HashSet<>();
+		n.getNews().stream().filter(i -> NewsConstants.isStartNews(i)).forEach(i -> {
+			createEObjectNode(parent, i);
+			processedNews.add(i);
+		});
+	}
+
 	protected boolean _isLeaf(NewsItem n) {
-		return n.getEffects()==null || n.getEffects().getEffects().isEmpty();
+		return n.getEffects() == null || n.getEffects().getEffects().isEmpty();
 	}
 
 	protected void _createChildren(IOutlineNode parent, NewsItem n) {
-		if(!_isLeaf(n)) {
-			n.getEffects().getEffects().forEach(e-> createNode(parent, e));
+		if (!_isLeaf(n)) {
+			n.getEffects().getEffects().forEach(e -> createNode(parent, e));
 		}
 	}
 
@@ -66,34 +82,40 @@ public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		maybeCreateTriggeredNewsNode(parent, e, e.getNews4(), DatabasePackage.eINSTANCE.getEffect_News4());
 	}
 
-	protected void maybeCreateTriggeredNewsNode(IOutlineNode outlineParent, Effect parentEffect, NewsItem triggeredNews, EStructuralFeature f) {
-		if(triggeredNews!=null) {
-			createEStructuralFeatureNode(outlineParent, parentEffect, f, labelProvider.getImage(triggeredNews), labelProvider.getText(triggeredNews), true);
+	protected void maybeCreateTriggeredNewsNode(IOutlineNode outlineParent, Effect parentEffect, NewsItem triggeredNews,
+			EStructuralFeature f) {
+		if (triggeredNews != null) {
+			if (!processedNews.contains(triggeredNews)) {
+				processedNews.add(triggeredNews);
+				createEObjectNode(outlineParent, triggeredNews);
+			} else {
+//				System.out.println("loop for " + labelProvider.getText(triggeredNews));
+			}
 		}
 	}
 
-	//ScriptTemplates
+	// ScriptTemplates
 	protected boolean _isLeaf(ScriptTemplate t) {
-		return t.getChildren()==null || t.getChildren().getChild().isEmpty();
+		return t.getChildren() == null || t.getChildren().getChild().isEmpty();
 	}
 
 	protected void _createChildren(IOutlineNode parent, ScriptTemplate t) {
-		if(!_isLeaf(t)) {
-			t.getChildren().getChild().forEach(c-> createNode(parent, c));
+		if (!_isLeaf(t)) {
+			t.getChildren().getChild().forEach(c -> createNode(parent, c));
 		}
 	}
 
-	//Person
+	// Person
 	protected boolean _isLeaf(Person p) {
 		return true;
 	}
 
-	//Advertisement
+	// Advertisement
 	protected boolean _isLeaf(Advertisement a) {
 		return true;
 	}
 
-	//Achievement
+	// Achievement
 	protected boolean _isLeaf(Achievement a) {
 		return true;
 	}

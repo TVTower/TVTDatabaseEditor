@@ -14,15 +14,16 @@ Require-Bundle: org.eclipse.xtext,
  org.eclipse.emf.common,
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.tvtower.db.database.util,
- org.tvtower.db.services,
- org.tvtower.db.serializer,
- org.tvtower.db.parser.antlr.internal,
- org.tvtower.db.database.impl,
- org.tvtower.db.parser.antlr,
- org.tvtower.db.validation,
- org.tvtower.db,
- org.tvtower.db.scoping,
+Export-Package: org.tvtower.db,
+ org.tvtower.db.constants,
  org.tvtower.db.database,
- org.tvtower.db.generator
+ org.tvtower.db.database.impl,
+ org.tvtower.db.database.util,
+ org.tvtower.db.generator,
+ org.tvtower.db.parser.antlr,
+ org.tvtower.db.parser.antlr.internal,
+ org.tvtower.db.scoping,
+ org.tvtower.db.serializer,
+ org.tvtower.db.services,
+ org.tvtower.db.validation
 Import-Package: org.apache.log4j

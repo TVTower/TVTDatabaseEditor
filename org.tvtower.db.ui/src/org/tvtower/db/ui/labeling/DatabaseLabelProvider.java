@@ -30,7 +30,8 @@ import com.google.inject.Inject;
 /**
  * Provides labels for EObjects.
  * 
- * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 
@@ -44,8 +45,8 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(Achievement a) {
-		String title=fromTitle(a.getTitle());
-		if(title!=null) {
+		String title = fromTitle(a.getTitle());
+		if (title != null) {
 			return title;
 		}
 		return a.getId();
@@ -56,8 +57,8 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(Advertisement a) {
-		String title=fromTitle(a.getTitle());
-		if(title!=null) {
+		String title = fromTitle(a.getTitle());
+		if (title != null) {
 			return title;
 		}
 		return a.getId();
@@ -68,11 +69,18 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(NewsItem i) {
-		String title=fromTitle(i.getTitle());
-		if(title!=null) {
+		String title = fromTitle(i.getTitle());
+		if (title != null) {
 			return title;
 		}
 		return i.getName();
+	}
+
+	String image(NewsItem ele) {
+		if (ele.getData() != null && ele.getData().getGenre() != null) {
+			return "news/genre" + ele.getData().getGenre() + ".png";
+		}
+		return null;
 	}
 
 	String text(Programmes programmes) {
@@ -80,8 +88,8 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(Programme p) {
-		String title=fromTitle(p.getTitle());
-		if(title!=null) {
+		String title = fromTitle(p.getTitle());
+		if (title != null) {
 			return title;
 		}
 		return p.getId();
@@ -92,8 +100,8 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(ScriptTemplate t) {
-		String title=fromTitle(t.getTitle());
-		if(title!=null) {
+		String title = fromTitle(t.getTitle());
+		if (title != null) {
 			return title;
 		}
 		return t.getName();
@@ -112,38 +120,38 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(ProgrammeRole role) {
-		String result=fromNames(role.getLastName(),role.getFirtName());
-		if(result!=null) {
+		String result = fromNames(role.getLastName(), role.getFirtName());
+		if (result != null) {
 			return result;
 		}
 		return role.getName();
 	}
 
 	String text(Person p) {
-		String result=fromNames(p.getLastName(), p.getFirstName());
-		if(result!=null) {
+		String result = fromNames(p.getLastName(), p.getFirstName());
+		if (result != null) {
 			return result;
 		}
 		return p.getName();
 	}
 
 	String fromNames(String lastName, String firstName) {
-		String l=Strings.emptyToNull(lastName);
-		String f=Strings.emptyToNull(firstName);
-		if(l!=null && f!=null) {
-			return l+", "+f;
-		}else if(l!=null) {
+		String l = Strings.emptyToNull(lastName);
+		String f = Strings.emptyToNull(firstName);
+		if (l != null && f != null) {
+			return l + ", " + f;
+		} else if (l != null) {
 			return l;
-		}else if(f!=null) {
+		} else if (f != null) {
 			return f;
 		}
 		return null;
 	}
 
 	private String fromTitle(Title t) {
-		if(t!=null) {
+		if (t != null) {
 			EList<LanguageString> lStrings = t.getLanguageString();
-			if(!lStrings.isEmpty()) {
+			if (!lStrings.isEmpty()) {
 				return lStrings.get(0).getText();
 			}
 		}
@@ -151,7 +159,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	// Labels and icons can be computed like this:
-	
+
 //	String text(Greeting ele) {
 //		return "A greeting to " + ele.getName();
 //	}
