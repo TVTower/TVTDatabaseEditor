@@ -142,8 +142,8 @@
         storageURI="scope://Workspace"/>
     <description>aktuell deaktivierte Tasks</description>
   </setupTask>
-  <stream name="initialGrammar"
-      label="initialGrammar"/>
+  <stream name="master"
+      label="master"/>
   <logicalProjectContainer
       xsi:type="setup:ProjectCatalog"
       href="index:/org.eclipse.setup#//@projectCatalogs[name='com.github']"/>
