@@ -42,7 +42,7 @@ Nach dem Neustart wird die Installation fortgesetzt, das Editor-Repository geklo
 * In der Eclipse-Toolbar unter den Hauptmenüpunkten sollte ein Bereich mit einem "Bug" und 3 verschiedenen grünen "Play"-Icons sein; das sind die verschiedenen Debug und Run-Varianten.
 * Auf den Pfeil(!) nach unten neben dem "Play" ganz links (`Run`) klicken
 * Es sollte ein Menü aufgehen, den Punkt `Organize Favorites...` auswählen
-* Im Dialog `Organize Run Favorites` die Aktion `Add...` auswählen und jeweils einen Eintrag `Generate Database...` und `Launce Runtime Eclipse` selektieren und mit `OK` abschließen
+* Im Dialog `Organize Run Favorites` die Aktion `Add...` auswählen und jeweils einen der dopptelt vorhandenen Einträge `Generate Database...` und `Launce Runtime Eclipse` selektieren und mit `OK` abschließen
 * Im Dialog `Organize Run Favourites` sollten die beiden Einträge nun sichtbar sein; mit `OK` abschließen
 * Wenn man jetzt das `Run`-Menü nochmal öffnet, sollten die beiden gewählten Run-Konfigurationen verfügbar sein
 
@@ -61,6 +61,10 @@ Nach Abschluss des Builds sollte in keinem der Projekte mehr ein Fehler sein. Nu
 
 Um den Editor in Aktion zu sehen, wird ein Runtime-Eclipse gestartet, in dem dann der Editor verfügbar ist.
 In der `Run`-Aktion den Punkt `Launch Runtime Eclipse` anklicken.
+(Es kann hier zu Problemen führen, wenn die plattformspezifischen Plugins nicht passen.
+Für diesen Fall unter `Run Configurations` in der `Run`-Aktion die Konfiguration öffnen und `Plugins`-Reiter nicht alle Plugins selektieren, sondern nur die Workspace-Plugins und dann rechts die `required plungins` ergänzen.
+Die Fehlermeldungen beim Start helfen, dann die noch fehlenden Plugins nach und nach zu ergänzen.
+Wie gesagt, mittelfristig soll man sich den Editor ja nicht selbst bauen müssen.)
 
 * Git-Repositories-View öffnen (siehe oben mit `Strg-3`...)
 * Importieren des TVTower-Repositories (Kontext-Menü im Repositories-View
@@ -80,7 +84,7 @@ Zunächst sind nur wenige Features umgesetzt, da als erstes die Grammatik für d
 Triviale Autovervollständigung, einfacher Outline und etwas Linking sind schon vorhanden.
 
 * Autovervollständigung mit `Strg-Leertaste` am besten nach der öffnenden spitzen Klammer, damit die möglichen XML-Tags angeboten werden; sowie nach einem Leerzeichen hinter dem Haupt-Tag für die Eigenschaften
-* Outline - Der View sollte schon offen sein oder kann mit `Strg-3` gesucht werden und zeigt die XML-Struktu an
+* Outline - Der View sollte schon offen sein oder kann mit `Strg-3` gesucht werden und zeigt die XML-Struktur an
 * Quick-Outline - mit `Strg-o` im Editor kann man ein Outline-Popup aufmachen, in dem man auch suchen kann
 * GoTo-Navigation - `F3` springt bei verlinkten Objekten zur Definition (z.B. bei News-Triggern zu den Nachfolge-News, oder bei Programm-Staff-Membern zur Personendefinition
 * Hover-Info: Mouse-Hover über einem Verlinkten Objekt zeigt Infos an (z.B. bei Nachfolge-News den Titel oder bei Staff-Membern den Personennamen)
