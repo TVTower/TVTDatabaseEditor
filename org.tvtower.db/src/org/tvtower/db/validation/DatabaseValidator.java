@@ -10,7 +10,8 @@ import org.eclipse.xtext.validation.ComposedChecks;
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-@ComposedChecks(validators = {NewsValidator.class, CommonTagsValidator.class})
+@ComposedChecks(validators = { NewsValidator.class, CommonTagsValidator.class, PersonsValidator.class,
+		AdValidator.class, ProgrammeValidator.class, ScriptValidator.class })
 public class DatabaseValidator extends AbstractDatabaseValidator {
 	
 //	public static final String INVALID_NAME = "invalidName";
@@ -23,5 +24,6 @@ public class DatabaseValidator extends AbstractDatabaseValidator {
 //					INVALID_NAME);
 //		}
 //	}
-	
+
+
 }

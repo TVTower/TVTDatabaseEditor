@@ -6,9 +6,11 @@ import java.util.regex.Pattern;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
+import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.DatabasePackage;
+import org.tvtower.db.database.LanguageString;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -45,6 +47,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		return checkNumber(year, true, 1950, 3000, "year", f);
 	}
 
+	//Mögliche Werte in game.gamescriptexpression
+	//TIME_X, mit X in YEAR, DAY, HOUR, MINUTE, WEEKDAY, SEASON, DAYSPLAYED, YEARSPLAYED, DAYOFMONTH, DAYOFYEAR, (ISNIGHT, ISDAWN, ISDAY, ISDUSK) 
 	// returns if script defines year
 	private boolean checkScript(Availability a) {
 		boolean result = false;
@@ -81,7 +85,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 						max = 23;
 						break;
 					default:
-						error("no valid script key " + key, $.getAvailability_Script());
+						//TODO revert to error
+						warning("no valid script key " + key, $.getAvailability_Script());
 						return result;
 					}
 					checkNumber(value, false, min, max, key, $.getAvailability_Script());
@@ -91,6 +96,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		return result;
 	}
 
+	//TODO extract for common usage
 	// returns whether the number is actually defined
 	private boolean checkNumber(String number, boolean allowMinusOne, int min, int max, String period,
 			EStructuralFeature f) {
@@ -110,6 +116,12 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			}
 			return true;
 		}
+	}
+
+	@Check(CheckType.NORMAL)
+	public void checkLanguageString(LanguageString s) {
+		//TODO prüfe Variablenverwendung
+		//Konsistenz Start/EndTag?
 	}
 
 }

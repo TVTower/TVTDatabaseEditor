@@ -35,12 +35,42 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			if (!NewsConstants.isNewsGenre(data.getGenre())) {
 				error("invalid genre", $.getNewsData_Genre());
 			}
+		} else {
+			error("genre must be defined", $.getNewsData_Genre());
 		}
 		if (data.getFictional() != null) {
 			String lower = data.getFictional().toLowerCase();
 			if (!"true".equals(lower) && !"false".equals(lower)) {
 				error("invalid fictional value", $.getNewsData_Fictional());
 			}
+		}
+		if (data.getPrice() != null) {
+			// TODO validate price factor
+		} else {
+			error("price must be defined", $.getNewsData_Price());
+		}
+		if (data.getQuality() != null) {
+			int q = Integer.parseInt(data.getQuality());
+			if (q < 0 || q > 100) {
+				error("quality out of range", $.getNewsData_Quality());
+			}
+			// TODO check quality
+			if (data.getQualityMax() != null || data.getQualityMin() != null || data.getQualitySlope() != null) {
+				error("if quality is defined, random quality properties must not be set", $.getNewsData_Quality());
+			}
+		} else {
+			if (data.getQualityMax() == null || data.getQualityMin() == null || data.getQualitySlope() == null) {
+				error("either absolute or random quality must be defined", $.getNewsData_Quality());
+			}else {
+				//TODO validate quality
+			}
+		}
+		if (data.getFlags() != null) {
+			//TODO flags validation
+			//2=unique event
+//			if(!"2".equals(data.getFlags())) {
+//				error("flags must not be defined", $.getNewsData_Flags());
+//			}
 		}
 	}
 
@@ -152,6 +182,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability2(), $.getEffect_Probability2());
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
+			}
+			if(e.getTime()==null) {
+				//TODO validate time
+//				error("time must be defined", $.getEffect_Trigger());
+			}
+			if(e.getFlags()!=null) {
+				error("flags not allowed", $.getEffect_Flags());
 			}
 		} else {
 			error("effect must have type", $.getEffect_Type());

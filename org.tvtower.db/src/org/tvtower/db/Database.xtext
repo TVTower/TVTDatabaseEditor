@@ -4,7 +4,6 @@ generate database "http://www.tvtower.org/db/Database"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 
-//nur Dateien aus database verarbeiten
 //kein SL-Comment-Key!!!
 //%Text% als Variable unterstützen, dann aber Number% - nicht als Variable
 
@@ -42,32 +41,31 @@ ScriptTemplates:
 ScriptTemplate:
 	'<''scripttemplate'
 		(
-			(('guid'|'id')'='name=STRING)&
+			('guid''='name=STRING)&
 			('product''='product=STRING)&
-			('index''='index=STRING)?&
-			('licence_type''='licenceType=STRING)
+			('licence_type''='licenceType=STRING)&
+			('index''='index=STRING)?
 		)
 	'>'
 	(
 		title=Title &
 		description=Description?&
-		children=ScriptChildren?&
 		variables=Variables? &
-		groups=ProgrammeGroups? &
+		genres=ScriptGenres?&
 		jobs=Jobs?&
 		data=ScriptData?&
-		genres=ScriptGenres?&
+		groups=ProgrammeGroups? &
+		availability=Availability?&
 		episodes=Episodes?&
 		studioSize=StudioSize?&
 		blocks=Blocks?&
-		availability=Availability?&
 		price=Price?&
 		potential=Potential?&
 		outcome=Outcome?&
 		review=Review?&
-		speed=Speed?
+		speed=Speed?&
+		children=ScriptChildren?
 	)
-	//	templates+=ScriptTemplate*
 	'</''scripttemplate''>'
 ;
 Title:
@@ -110,11 +108,11 @@ Jobs:
 Job:
 	'<''job'
 		(
-			('role_guid''='rolId=[ProgrammeRole|STRING] )?&
 			('index''='index=STRING)&
-			('function''='function=STRING)
+			('function''='function=STRING)&
 			('required''='required=STRING)&
-			('gender''='gender=STRING)?
+			('gender''='gender=STRING)?&
+			('role_guid''='rolId=[ProgrammeRole|STRING] )?
 		)
 	'/>'
 ;
@@ -123,6 +121,7 @@ ScriptData:
 	'<''data'{ScriptData}
 		(
 			('flags''='flags=STRING)?&
+			('flags_optional''='optionalFlags=STRING)?&
 			('live_date''='live_date=STRING)?&
 			('broadcast_time_slot_start''='broadcastTimeSlotStart=STRING)?&//TODO viele der Flags nur einmal
 			('broadcast_time_slot_end''='broadcastTimeSlotEnd=STRING)?&
@@ -130,15 +129,14 @@ ScriptData:
 			('production_limit''='productionLimit=STRING)?&
 			('production_broadcast_limit''='broadcastLimit=STRING)?&
 			('production_broadcast_flags''='broadcastFlags=STRING)?&
-			('production_licence_flags''='licenceFlags=STRING)?&
-			('optional_flags''='optionalFlags=STRING)?
+			('production_licence_flags''='licenceFlags=STRING)?
 		)
 	'/>'
 ;
 ScriptGenres:
 	'<''genres'
 		(
-			(('maingenre'|'main_genre')'='firtName=STRING)&
+			('maingenre''='firtName=STRING)&
 			('subgenres''='lastName=STRING)?
 		)
 	'/>'
@@ -215,7 +213,7 @@ ProgrammeRoles:
 ProgrammeRole:
 	'<''programmerole'
 		(
-			(('guid'|'id')'='name=STRING )&
+			('guid''='name=STRING )&
 			('first_name''='firtName=STRING)&
 			('last_name''='lastName=STRING)&
 			('title''='title=STRING)?&
@@ -363,10 +361,9 @@ Advertisement:
 	'>'
 	(
 		title=Title &
-		description=Description?&
-		tasks=Tasks?&
-		conditions=AdConditions?&
-		data=AdvertisementData?
+		description=Description&
+		conditions=AdConditions&
+		data=AdvertisementData
 	)
 	'</''ad''>'
 ;
@@ -377,8 +374,8 @@ AdConditions:
 			('min_audience''='minAudience=STRING)?&
 			('min_image''='minImage=STRING)?&
 			('target_group''='targetGroup=STRING)?&
-			('allowed_programme_type''='allowedProgrammeType=STRING)?&//TODO in conditions and data!?
-			('prohibited_programme_type''='prohibitedProgrammeType=STRING)?&//TODO nÃ¶tig; nur einmal
+			('allowed_programme_type''='allowedProgrammeType=STRING)?&
+			('prohibited_programme_type''='prohibitedProgrammeType=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
 			('contra_pressure_groups''='contraPressureGrouo=STRING)?
 		)
@@ -394,12 +391,11 @@ AdvertisementData:
 			('repetitions''='repetitions=STRING)?&
 			('duration''='duration=STRING)?&
 			('profit''='profit=STRING)?&
-			('fix_price''='fixPrice=STRING)?&//TODO nur einmal genutzt!?
+			('fix_price''='fixPrice=STRING)?&
 			('penalty''='penalty=STRING)?&
-			('allowed_programme_type''='allowedProgrammeType=STRING)?&
 			('year_range_from''='yearRangeFrom=STRING)?&
 			('year_range_to''='yearRangeFromTo=STRING)?&
-			('infomercial''='infomercial=STRING)?&//TODO wofÃ¼r
+			('infomercial''='infomercial=STRING)?&
 			('infomercial_profit''='infomercialProfit=STRING)?&
 			('fix_infomercial_profit''='fixInfomercialProfit=STRING)?
 		)
@@ -413,13 +409,11 @@ News:
 ;
 
 NewsItem:
-	('<''ignore''>')?//TODO nur einmal
 	'<''news'
 		(
 			('id''='name=STRING )&
 			('thread_id''='threadId=STRING )?&
 			('type''='type=STRING )?&
-//			('comment''='comment=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -433,7 +427,6 @@ NewsItem:
 		effects=Effects?
 	)
 	'</''news''>'
-	('</''ignore''>')?
 ;
 
 Effects:
@@ -490,12 +483,13 @@ NewsData:
 			('genre''='genre=STRING)?&
 			('price''='price=STRING)?&
 			('quality''='quality=STRING)?&
-			('flags''='flags=STRING)?&//TODO nur einmal verwendet
+			('flags''='flags=STRING)?&
 			('happen_time''='happenTime=STRING)?&//TODO nur einmal
 			('fictional''='fictional=STRING)?&
-			('quality_min''='qualityMin=STRING)?&//TODO nur einmal
-			('quality_max''='qualityMax=STRING)?&//TODO nur einmal
-			('quality_slope''='qualitySlope=STRING)?//TODO nur einmal
+			//TODO stattdessen Kindelement quality mit Attributen value, min, max, slope?
+			('quality_min''='qualityMin=STRING)?&
+			('quality_max''='qualityMax=STRING)?&
+			('quality_slope''='qualitySlope=STRING)?
 		)
 	'/>'
 ;
@@ -519,11 +513,11 @@ Person:
 			('tmdb_id''='tmdbId=STRING )?&
 			('imdb_id''='imdbId=STRING )?&
 			('first_name''='firstName=STRING )?&
-			('real_first_name''='realFirstName=STRING )?&//TODO needed?
+			('first_name_original''='firstNameOrig=STRING )?&
 			('last_name''='lastName=STRING )?&
-			('real_last_name''='realLastName=STRING )?&//TODO needed?
+			('last_name_original''='lastNameOrig=STRING )?&
 			('nick_name''='nickName=STRING )?&
-			('fictional''='fictional=STRING )?&//TODO nur einmal
+			('fictional''='fictional=STRING )?&
 			('levelup''='levelUp=STRING )?&
 			('bookable''='bookable=STRING )?&
 			('gender''='gender=STRING )?&
@@ -531,7 +525,6 @@ Person:
 			('country''='country=STRING)?&
 			('generator''='generator=STRING)?&
 			('job''='job=STRING)?&
-	//		('comment''='comment=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -543,34 +536,16 @@ Person:
 			('<''first_name''>'firstName=PersonName'</''first_name''>')?&
 			('<''last_name''>'lastName=PersonName'</''last_name''>')?&
 			('<''nick_name''>'nickName=PersonName?'</''nick_name''>')?&
-			('<''first_name_original''>'firstNameOrig=PersonName'</''first_name_original''>')?&//TODO needed?
-			('<''last_name_original''>'lastNameOrig=PersonName'</''last_name_original''>')?&//TODO needed?
-			('<''real_first_name''>'realFirstName=PersonName'</''real_first_name''>')?&//TODO needed?
-			('<''real_last_name''>'realLastName=PersonName'</''real_last_name''>')?&//TODO needed?
-			image=PersonImage?&
+			('<''first_name_original''>'firstNameOrig=PersonName'</''first_name_original''>')?&
+			('<''last_name_original''>'lastNameOrig=PersonName'</''last_name_original''>')?&
 			details=PersonDetails?&
-			function=PersonFunction?& //TODO same as Job?
 			data=PersonData?
 		)
 		'</''person''>'
 	)
 ;
 
-PersonFunction:
-	'<''functions''>'
-		'<''function''>'
-			function=PersonRef//lazy to define another Rule
-		'</''function''>'
-	'</''functions''>'
-;
-
 PersonName:(IDorKeyword|ANY_OTHER)+;
-
-PersonImage://TODO auch nochmal in PersonData
-	'<''images' {PersonImage}
-		('face_code''=' faceCode=STRING)?
-	'/>'
-;
 
 PersonDetails:
 	'<''details' {PersonDetails}
@@ -578,11 +553,10 @@ PersonDetails:
 			('job''='job=STRING)?&
 			('gender''='gender=STRING)?&
 			('birthday''='birthday=STRING)?&
-			('deathday''='deathday=STRING)?&//TODO nur einmal verwendet
+			('deathday''='deathday=STRING)?&
 			('fictional''='fictional=STRING)?&
+			('face_code''='faceCode=STRING)?&
 			('country''='country=STRING)?
-//			('profit''='profit=STRING)?&
-//			('penalty''='penalty=STRING)?&
 		)
 	'/>'
 ;
@@ -593,13 +567,12 @@ PersonData:
 			('popularity''='popularity=STRING)?&
 			('affinity''='affinity=STRING)?&
 			('fame''='fame=STRING)?&
-			('scandalizing''='scandalizing=STRING)?&//TODO nur einmal verwendet
+			('scandalizing''='scandalizing=STRING)?&
 			('price_mod''='priceMod=STRING)?&
 			('power''='power=STRING)?&
 			('humor''='humor=STRING)?&
 			('charisma''='charisma=STRING)?&
 			('appearance''='appearance=STRING)?&
-			('face_code''='faceCode=STRING)?&
 			('topgenre''='topGenre=STRING)?
 		)
 	'/>'
@@ -620,8 +593,6 @@ Programme:
 			('tmdb_id''='tmdbId=STRING )?&
 			('imdb_id''='imdbId=STRING )?&
 			('fictional''='fictional=STRING )?&
-			('rt_id''='rtId=STRING )?&
-//			('comment''='comment=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -630,12 +601,11 @@ Programme:
 		title=Title &
 		titleOrig=TitleOriginal? &
 		description=Description?&
-		availability=Availability?&
 		groups=ProgrammeGroups?&
 		attractivity=ProgrammeAttractivity?&
 		children=ProgrammeChildren?&
 		staff=Staff?&
-		releaseTime=ProgrammeReleaseTime?&//TODO nur zweimal benutzt
+		releaseTime=ProgrammeReleaseTime?&
 		ratings=ProgrammeRatings?&
 		modifiers=ProgrammeModifiers?&
 		data=ProgrammeData?
@@ -663,7 +633,7 @@ ProgrammeGroups:
 	'<''groups'
 		(
 			('target_groups''='targetGroup=STRING )&
-			('optional_target_groups''='optionalTargetGroup=STRING)?& //TODO nur einmal benutzt
+			('target_groups_optional''='optionalTargetGroup=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
 			('contra_pressure_groups''='contraPressureGroup=STRING)?
 		)
@@ -673,6 +643,10 @@ ProgrammeGroups:
 ProgrammeAttractivity:
 	'<''targetgroupattractivity' {ProgrammeAttractivity}
 		(
+			//TODO umschreiben auf allgemeine key-Value
+			//mit Validierung, da die Gruppen mit _male/_female
+			//definiert werden können
+			//data+=UnnamedProperty*
 			('teenagers''='teenagers=STRING )?&
 			('managers''='managers=STRING)?&
 			('housewives''='housewives=STRING)?&
@@ -688,11 +662,15 @@ ProgrammeAttractivity:
 ;
 
 ProgrammeReleaseTime:
-	'<''releaseTime'
+	'<''releaseTime'  {ProgrammeReleaseTime}
 		(
-			('year''='year=STRING )&
+			('year''='year=STRING )?&
 			('day''='day=STRING)?& 
-			('hour''='hour=STRING)?
+			('hour''='hour=STRING)?&
+			('year_relative''='yearRelative=STRING)?&
+			('year_relative_min''='yearRelativeMin=STRING)?&
+			('year_relative_max''='yearRelativeMax=STRING)?
+			//TODO die weiteren Eigenschaften
 		)
 	'/>'
 ;
@@ -738,8 +716,6 @@ ProgrammeRatings:
 			('critics''='critics=STRING)?&
 			('speed''='speed=STRING)?&
 			('outcome''='outcome=STRING)?
-//			('pro_pressure_groups''='proPressureGroup=STRING)?&
-//			('contra_pressure_groups''='contraPressureGrouo=STRING)?
 		)
 	'/>'
 ;
@@ -749,16 +725,11 @@ ProgrammeData:
 		(
 			('country''='country=STRING)?&
 			('year''='year=STRING)?&
-			('year_relative''='yearRelative=STRING)?&
-			('year_relative_min''='yearRelativeMin=STRING)?&
-			('year_relative_max''='yearRelativeMax=STRING)?&
 			('price''='price=STRING)?&
 			('distribution''='distribution=STRING)?&
 			('maingenre''='maingenre=STRING)?&
 			('subgenre''='subgenre=STRING)?&
 			('flags''='flags=STRING)?&
-			('tags''='tags=STRING)?&//TODO needed ?
-			('time''='time=STRING)?&//TODO needed - immer 0
 			('blocks''='blocks=STRING)?&
 			('broadcast_time_slot_start''='slotStart=STRING)?&
 			('broadcast_time_slot_end''='slotEnd=STRING)?&
@@ -781,7 +752,7 @@ TitleOriginal:
 Version: '<' 'version'UnnamedProperty* '/>';
 UnnamedProperty:IDorKeyword'='STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'teenagers'|'managers'|'housewives'|'employees'|'women'|'men'|'teenagers_male'|'teenagers_female'|'pensioners'|'unemployed'|'ignore'|'trigger';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'teenagers'|'managers'|'housewives'|'employees'|'women'|'men'|'teenagers_male'|'teenagers_female'|'pensioners'|'unemployed'|'trigger';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet
