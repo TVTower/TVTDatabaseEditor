@@ -9,6 +9,8 @@ import org.tvtower.db.database.Person;
 import org.tvtower.db.database.PersonData;
 import org.tvtower.db.database.PersonDetails;
 
+import com.google.common.base.Strings;
+
 //TODO general gender check
 //TODO general country check, job, 
 //TODO generator, face code?
@@ -19,6 +21,15 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
+	}
+
+	@Check
+	public void checkGeneral(Person person) {
+		if(person.getGenerator()==null) {
+			if(Strings.isNullOrEmpty(person.getFirstName()) && Strings.isNullOrEmpty(person.getLastName())) {
+				error("name fehlt", $.getPerson_Name());
+			}
+		}
 	}
 
 	@Check
@@ -38,6 +49,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				if (person.getGender() == null && (person.getData() == null || person.getDetails().getGender() == null)) {
 					error("gender must be defined", $.getPerson_Name());
 				}
+				//TODO falls fictional - Fehler!
 			}
 
 			if (person.getData() == null) {

@@ -1,5 +1,9 @@
 package org.tvtower.db.validation;
 
+import static org.tvtower.db.validation.CommonValidation.isUserDB;
+
+import java.util.List;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -10,13 +14,16 @@ import org.tvtower.db.database.NewsData;
 import org.tvtower.db.database.NewsItem;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 //TODO validate time format
-//TODO validate price, quality, flags
+//TODO validate price, quality (auch min/max), flags
 //TODO validate genre values
 public class NewsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
+	//TODO replace with common fictional validator
+	private static final List<String> FICTIONAL=ImmutableList.of("0","1","False","True");
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -27,20 +34,24 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		if (!NewsConstants.isValidNewsType(item.getType())) {
 			error("invalid news type ", $.getNewsItem_Type());
 		}
+		if(isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())){
+			error("created_by must be defined",$.getNewsItem_CreatedBy());
+		}
 	}
 
 	@Check
 	public void newsData(NewsData data) {
 		if (data.getGenre() != null) {
 			if (!NewsConstants.isNewsGenre(data.getGenre())) {
-				error("invalid genre", $.getNewsData_Genre());
+				error("invalid news genre", $.getNewsData_Genre());
 			}
 		} else {
 			error("genre must be defined", $.getNewsData_Genre());
 		}
+		//fictional rein informativ - TODO auf 0,1 umstellen
 		if (data.getFictional() != null) {
-			String lower = data.getFictional().toLowerCase();
-			if (!"true".equals(lower) && !"false".equals(lower)) {
+			String lower = data.getFictional();
+			if (!FICTIONAL.contains(lower)) {
 				error("invalid fictional value", $.getNewsData_Fictional());
 			}
 		}
@@ -78,7 +89,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	public void threadIdPresent(NewsItem item) {
 		if (hasNewsTrigger(item)) {
 			if (Strings.isNullOrEmpty(item.getThreadId())) {
-				warning("news with trigger should have a thread id", $.getNewsItem_Name());
+				warning("news with trigger should have a thread id", $.getMayContainVariables_Name());
 			}
 		}
 	}
@@ -122,12 +133,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				// self-triggered can have 0
 				return;
 			}
-			error("triggered news must have type 2", triggered, $.getNewsItem_Name());
+			error("triggered news must have type 2", triggered, $.getMayContainVariables_Name());
 		}
 	}
 
 	@Check
 	public void checkEffect(Effect e) {
+		//TODO andere Triggerwerte erlaubt
 		if (e.getTrigger() == null) {
 			error("effect must have a (happen)-trigger", $.getEffect_Trigger());
 		} else {

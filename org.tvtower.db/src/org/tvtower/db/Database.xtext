@@ -32,6 +32,8 @@ ExportOptions:
 
 Definition:News|ScriptTemplates|ProgrammeRoles|Achievements|Advertisements|CelebrityPeople|InsignificantPeople|Programmes;
 
+MayContainVariables:NewsItem|ScriptTemplate;
+
 ScriptTemplates:
 	'<''scripttemplates''>'{ScriptTemplates}
 		templates+=ScriptTemplate*
@@ -64,6 +66,7 @@ ScriptTemplate:
 		outcome=Outcome?&
 		review=Review?&
 		speed=Speed?&
+		productionTime=ProductionTime?&
 		children=ScriptChildren?
 	)
 	'</''scripttemplate''>'
@@ -187,6 +190,12 @@ Review:
 
 Speed:
 	'<''speed'
+		data=MinMaxSlope
+	'/>'
+;
+
+ProductionTime:
+	'<''production_time'
 		data=MinMaxSlope
 	'/>'
 ;
@@ -363,7 +372,8 @@ Advertisement:
 		title=Title &
 		description=Description&
 		conditions=AdConditions&
-		data=AdvertisementData
+		data=AdvertisementData&
+		availability=Availability?
 	)
 	'</''ad''>'
 ;
@@ -394,7 +404,7 @@ AdvertisementData:
 			('fix_price''='fixPrice=STRING)?&
 			('penalty''='penalty=STRING)?&
 			('year_range_from''='yearRangeFrom=STRING)?&
-			('year_range_to''='yearRangeFromTo=STRING)?&
+			('year_range_to''='yearRangeTo=STRING)?&
 			('infomercial''='infomercial=STRING)?&
 			('infomercial_profit''='infomercialProfit=STRING)?&
 			('fix_infomercial_profit''='fixInfomercialProfit=STRING)?
@@ -424,6 +434,8 @@ NewsItem:
 		variables=Variables?&
 		availability=Availability?&
 		data=NewsData?&
+		attractivity=GroupAttractivity?&
+		modifiers=Modifiers?&
 		effects=Effects?
 	)
 	'</''news''>'
@@ -485,6 +497,7 @@ NewsData:
 			('quality''='quality=STRING)?&
 			('flags''='flags=STRING)?&
 			('happen_time''='happenTime=STRING)?&//TODO nur einmal
+			('min_subscription_level''='subscriptionLevel=STRING)?&
 			('fictional''='fictional=STRING)?&
 			//TODO stattdessen Kindelement quality mit Attributen value, min, max, slope?
 			('quality_min''='qualityMin=STRING)?&
@@ -565,6 +578,7 @@ PersonData:
 	'<''data'{PersonData}
 		(
 			('popularity''='popularity=STRING)?&
+			('popularity_target''='popularityTarget=STRING)?&
 			('affinity''='affinity=STRING)?&
 			('fame''='fame=STRING)?&
 			('scandalizing''='scandalizing=STRING)?&
@@ -602,12 +616,12 @@ Programme:
 		titleOrig=TitleOriginal? &
 		description=Description?&
 		groups=ProgrammeGroups?&
-		attractivity=ProgrammeAttractivity?&
+		attractivity=GroupAttractivity?&
 		children=ProgrammeChildren?&
 		staff=Staff?&
 		releaseTime=ProgrammeReleaseTime?&
 		ratings=ProgrammeRatings?&
-		modifiers=ProgrammeModifiers?&
+		modifiers=Modifiers?&
 		data=ProgrammeData?
 	)
 	'</''programme''>'
@@ -640,8 +654,8 @@ ProgrammeGroups:
 	'/>'
 ;
 
-ProgrammeAttractivity:
-	'<''targetgroupattractivity' {ProgrammeAttractivity}
+GroupAttractivity:
+	'<''targetgroupattractivity' {GroupAttractivity}
 		(
 			//TODO umschreiben auf allgemeine key-Value
 			//mit Validierung, da die Gruppen mit _male/_female
@@ -677,28 +691,31 @@ ProgrammeReleaseTime:
 
 StaffMember:
 	'<''member'
-		(
-			('index''='index=STRING )&
-			('function''='function=STRING)?
-		)
-	('generator''='generator=STRING
-		'>'
-		'</''member''>'
-	)?
-	|
 	(
-	'>'
-	ref=[Person|PersonRef]
-	'</''member''>')
+		('index''='index=STRING )&
+		('function''='function=STRING)?
+	)
+	(
+		('generator''='generator=STRING
+			'>'
+			'</''member''>'
+		)?
+		|
+		(
+			'>'
+			ref=[Person|PersonRef]
+			'</''member''>'
+		)
+	)
 ;
 
-ProgrammeModifiers:
-	'<''modifiers''>'{ProgrammeModifiers}
-	modifier+=ProgrammeModifier*
+Modifiers:
+	'<''modifiers''>'{Modifiers}
+	modifier+=Modifier*
 	'</''modifiers''>'
 ;
 
-ProgrammeModifier:
+Modifier:
 	'<''modifier'
 		(
 			('name''='modName=STRING )&
@@ -730,6 +747,7 @@ ProgrammeData:
 			('maingenre''='maingenre=STRING)?&
 			('subgenre''='subgenre=STRING)?&
 			('flags''='flags=STRING)?&
+			('licence_flags''='licenceFlags=STRING)?&
 			('blocks''='blocks=STRING)?&
 			('broadcast_time_slot_start''='slotStart=STRING)?&
 			('broadcast_time_slot_end''='slotEnd=STRING)?&

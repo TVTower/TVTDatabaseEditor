@@ -1,18 +1,20 @@
 package org.tvtower.db.validation;
 
+import java.util.stream.Collectors;
+
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
+import org.eclipse.xtext.xbase.typesystem.util.CommonTypeComputationServices;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Programme;
-import org.tvtower.db.database.ProgrammeAttractivity;
 import org.tvtower.db.database.ProgrammeData;
 import org.tvtower.db.database.ProgrammeGroups;
-import org.tvtower.db.database.ProgrammeModifier;
 import org.tvtower.db.database.ProgrammeRatings;
 import org.tvtower.db.database.ProgrammeReleaseTime;
 import org.tvtower.db.database.Programmes;
 import org.tvtower.db.database.Staff;
 
+//TODO eindeutiger Index bei staff-member?
 public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
@@ -52,6 +54,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkProgrammeData(ProgrammeData d) {
 		// TODO countries zusammensammeln
+		CommonValidation.getCountryError(d.getCountry(),true).ifPresent(e->error(e, $.getProgrammeData_Country()));
 		if (d.getCountry() != null) {
 		}
 		if (d.getDistribution() != null) {
@@ -83,18 +86,14 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkProgrammeStaff(Staff staff) {
+		int memberLength=staff.getMember().size();
+		int indexCount=staff.getMember().stream().map(m->m.getIndex()).collect(Collectors.toSet()).size();
+		if(memberLength!=indexCount) {
+			error("index duplicates",$.getStaff_Member());
+		}
 
 	}
 
-	@Check
-	public void checkModifiers(ProgrammeModifier modifier) {
-
-	}
-
-	@Check
-	public void checkProgrammeAttractivity(ProgrammeAttractivity a) {
-
-	}
 
 	@Check
 	public void checkProgrammeReleaseTime(ProgrammeReleaseTime t) {

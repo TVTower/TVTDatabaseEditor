@@ -16,11 +16,16 @@ import org.tvtower.db.constants.NewsConstants;
 public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
 	//News
+	//TODO newsType
+	//TODO newsFlags
 	@Override
 	public void completeNewsData_Genre(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		NewsConstants.newsGenre.forEach((k,v)->{
-			acceptor.accept(createCompletionProposal("\""+k+"\"",v,null, context));
+			acceptor.accept(createCompletionProposal("\""+k+"\"",k+" - "+v,null, context));
 		});
 	}
+
+	//Allgemein
+	//TODO availability
 }

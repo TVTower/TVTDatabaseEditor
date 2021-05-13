@@ -33,6 +33,12 @@ public class AdValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkAdData(AdvertisementData d) {
+		if(d.getYearRangeFrom()!=null) {
+			error("use availability", $.getAdvertisementData_YearRangeFrom());
+		}
+		if(d.getYearRangeTo()!=null) {
+			error("use availability", $.getAdvertisementData_YearRangeTo());
+		}
 		//TODO
 	}
 
