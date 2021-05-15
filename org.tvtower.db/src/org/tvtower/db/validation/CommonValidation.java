@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 public class CommonValidation {
 
-	private static List<String> supportedCountries=ImmutableList.of("D", "DDR");
+	private static List<String> supportedCountries=ImmutableList.of("D", "DDR","I","USA","CH","CS","J","RU","S","A", "IND","F","DK","SCO","CDN","GB","HK","BE","CN","PL","NL","RM","BOL","H","AFG","IRL","IL","ZA","BM","ROK","AUS","E");
 
 	public static Optional<String> getBooleanError(String value, boolean mandatory) {
 		return Optional.empty();
@@ -34,8 +34,7 @@ public class CommonValidation {
 			}
 			for (String c : split) {
 				if(!supportedCountries.contains(c)) {
-					//TODO supported contries
-//					return Optional.of("unbekanntes Land "+c);
+					return Optional.of("unbekanntes Land "+c);
 				}
 			}
 		}

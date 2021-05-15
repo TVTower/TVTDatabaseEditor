@@ -53,10 +53,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkProgrammeData(ProgrammeData d) {
-		// TODO countries zusammensammeln
 		CommonValidation.getCountryError(d.getCountry(),true).ifPresent(e->error(e, $.getProgrammeData_Country()));
-		if (d.getCountry() != null) {
-		}
 		if (d.getDistribution() != null) {
 
 		}

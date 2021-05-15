@@ -8,6 +8,7 @@ import org.tvtower.db.database.InsignificantPeople;
 import org.tvtower.db.database.Person;
 import org.tvtower.db.database.PersonData;
 import org.tvtower.db.database.PersonDetails;
+import org.tvtower.db.database.ProgrammeRole;
 
 import com.google.common.base.Strings;
 
@@ -37,6 +38,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (isInsignificant(person)) {
 			assertNotSet(person.getDetails(), "details", $.getPerson_Details());
 			assertNotSet(person.getData(), "data", $.getPerson_Data());
+			CommonValidation.getCountryError(person.getCountry(),false).ifPresent(e->error(e, $.getPerson_Country()));
 		}
 	}
 
@@ -50,6 +52,9 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 					error("gender must be defined", $.getPerson_Name());
 				}
 				//TODO falls fictional - Fehler!
+			}
+			if(person.getCountry()!=null) {
+				error("country should be defined in details", $.getPerson_Country());
 			}
 
 			if (person.getData() == null) {
@@ -73,6 +78,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkPersonDetails(PersonDetails d) {
+		CommonValidation.getCountryError(d.getCountry(),false).ifPresent(e->error(e, $.getPersonDetails_Country()));
 		//TODO - check overwriting of person attributes?
 	}
 
@@ -93,5 +99,10 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	private boolean isInsignificant(Person p) {
 		return p.eContainer() instanceof InsignificantPeople;
+	}
+
+	@Check
+	public void checkRole(ProgrammeRole r) {
+		CommonValidation.getCountryError(r.getCountry(),false).ifPresent(e->error(e, $.getProgrammeRole_Country()));
 	}
 }
