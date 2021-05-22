@@ -16,11 +16,11 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 Database:
 	('<''?xml' UnnamedProperty*'?>')?
-	'<' ('tvgdb'|'tvtdb') '>' {Database} //TODO auf "tvtdb" vereinheitlichen
+	'<' 'tvtdb' '>' {Database}
 		version=Version?
 		definitions+=Definition*
 		exportOptions=ExportOptions?
-	'</' ('tvgdb'|'tvtdb') '>';
+	'</' 'tvtdb' '>';
 
 ExportOptions:
 	'<''exportOptions' {ExportOptions}
@@ -71,6 +71,7 @@ ScriptTemplate:
 	)
 	'</''scripttemplate''>'
 ;
+ContainsLanguageStrings:Title|Description|VariableDef|Text;
 Title:
 	'<''title'{Title}
 	('/>'
@@ -126,9 +127,8 @@ ScriptData:
 			('flags''='flags=STRING)?&
 			('flags_optional''='optionalFlags=STRING)?&
 			('live_date''='live_date=STRING)?&
-			('broadcast_time_slot_start''='broadcastTimeSlotStart=STRING)?&//TODO viele der Flags nur einmal
+			('broadcast_time_slot_start''='broadcastTimeSlotStart=STRING)?&
 			('broadcast_time_slot_end''='broadcastTimeSlotEnd=STRING)?&
-			('production_time''='productionTime=STRING)?&
 			('production_limit''='productionLimit=STRING)?&
 			('production_broadcast_limit''='broadcastLimit=STRING)?&
 			('production_broadcast_flags''='broadcastFlags=STRING)?&
@@ -139,11 +139,13 @@ ScriptData:
 ScriptGenres:
 	'<''genres'
 		(
-			('maingenre''='firtName=STRING)&
-			('subgenres''='lastName=STRING)?
+			('maingenre''='mainGenre=STRING)&
+			('subgenres''='subgenres=STRING)?
 		)
 	'/>'
 ;
+
+ContainsMinMaxSlope:Blocks|Episodes|StudioSize|Outcome|Potential|Price|ProductionTime|Review|Speed;
 
 Blocks:
 	'<''blocks'
@@ -223,7 +225,7 @@ ProgrammeRole:
 	'<''programmerole'
 		(
 			('guid''='name=STRING )&
-			('first_name''='firtName=STRING)&
+			('first_name''='firstName=STRING)&
 			('last_name''='lastName=STRING)&
 			('title''='title=STRING)?&
 			('country''='country=STRING)?&

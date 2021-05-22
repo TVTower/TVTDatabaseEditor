@@ -4,6 +4,7 @@ import org.tvtower.db.database.NewsItem;
 
 import com.google.common.collect.ImmutableMap;
 
+//TODO rewrite
 public class NewsConstants {
 
 	public static final String TYPE_START_NEWS="0";

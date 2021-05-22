@@ -22,8 +22,6 @@ import com.google.common.collect.ImmutableList;
 public class NewsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
-	//TODO replace with common fictional validator
-	private static final List<String> FICTIONAL=ImmutableList.of("0","1","False","True");
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -34,8 +32,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		if (!NewsConstants.isValidNewsType(item.getType())) {
 			error("invalid news type ", $.getNewsItem_Type());
 		}
-		if(isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())){
-			error("created_by must be defined",$.getNewsItem_CreatedBy());
+		if (isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())) {
+			error("created_by must be defined", $.getNewsItem_CreatedBy());
 		}
 	}
 
@@ -48,13 +46,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		} else {
 			error("genre must be defined", $.getNewsData_Genre());
 		}
-		//fictional rein informativ - TODO auf 0,1 umstellen
-		if (data.getFictional() != null) {
-			String lower = data.getFictional();
-			if (!FICTIONAL.contains(lower)) {
-				error("invalid fictional value", $.getNewsData_Fictional());
-			}
-		}
+		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
+				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		if (data.getPrice() != null) {
 			// TODO validate price factor
 		} else {
@@ -72,13 +65,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		} else {
 			if (data.getQualityMax() == null || data.getQualityMin() == null || data.getQualitySlope() == null) {
 				error("either absolute or random quality must be defined", $.getNewsData_Quality());
-			}else {
-				//TODO validate quality
+			} else {
+				// TODO validate quality
 			}
 		}
 		if (data.getFlags() != null) {
-			//TODO flags validation
-			//2=unique event
+			// TODO flags validation
+			// 2=unique event
 //			if(!"2".equals(data.getFlags())) {
 //				error("flags must not be defined", $.getNewsData_Flags());
 //			}
@@ -139,7 +132,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkEffect(Effect e) {
-		//TODO andere Triggerwerte erlaubt
+		// TODO andere Triggerwerte erlaubt
 		if (e.getTrigger() == null) {
 			error("effect must have a (happen)-trigger", $.getEffect_Trigger());
 		} else {
@@ -195,11 +188,11 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
 			}
-			if(e.getTime()==null) {
-				//TODO validate time
+			if (e.getTime() == null) {
+				// TODO validate time
 //				error("time must be defined", $.getEffect_Trigger());
 			}
-			if(e.getFlags()!=null) {
+			if (e.getFlags() != null) {
 				error("flags not allowed", $.getEffect_Flags());
 			}
 		} else {

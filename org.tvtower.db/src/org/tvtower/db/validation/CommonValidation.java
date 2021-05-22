@@ -11,9 +11,17 @@ import com.google.common.collect.ImmutableList;
 
 public class CommonValidation {
 
-	private static List<String> supportedCountries=ImmutableList.of("D", "DDR","I","USA","CH","CS","J","RU","S","A", "IND","F","DK","SCO","CDN","GB","HK","BE","CN","PL","NL","RM","BOL","H","AFG","IRL","IL","ZA","BM","ROK","AUS","E");
+	private static List<String> supportedCountries = ImmutableList.of("D", "DDR", "I", "USA", "CH", "CS", "J", "RU",
+			"S", "A", "IND", "F", "DK", "SCO", "CDN", "GB", "HK", "BE", "CN", "PL", "NL", "RM", "BOL", "H", "AFG",
+			"IRL", "IL", "ZA", "BM", "ROK", "AUS", "E");
 
-	public static Optional<String> getBooleanError(String value, boolean mandatory) {
+	public static Optional<String> getBooleanError(String value, String fieldName, boolean mandatory) {
+		if (mandatory && Strings.isNullOrEmpty(value)) {
+			return Optional.of(fieldName + " is missing");
+		}
+		if (value != null && !("1".equals(value) || "0".equals(value))) {
+			return Optional.of("boolean value must be 0 or 1");
+		}
 		return Optional.empty();
 	}
 
@@ -21,22 +29,48 @@ public class CommonValidation {
 		return o.eResource().getURI().toString().contains("/user/");
 	}
 
-	public static Optional<String> getCountryError(String country, boolean multipleAllowed){
-		if(!Strings.isNullOrEmpty(country)) {
-			if(country.indexOf(',')>=0) {
+	public static Optional<String> getCountryError(String country, boolean multipleAllowed) {
+		if (!Strings.isNullOrEmpty(country)) {
+			if (country.indexOf(',') >= 0) {
 				return Optional.of("Separator für mehrere Länder ist /");
-			}else if(country.indexOf(' ')>=0) {
+			} else if (country.indexOf(' ') >= 0) {
 				return Optional.of("Leerzeichen nicht erlaubt");
 			}
 			List<String> split = Splitter.on('/').trimResults().splitToList(country);
-			if(!multipleAllowed && split.size()>1) {
+			if (!multipleAllowed && split.size() > 1) {
 				return Optional.of("nur ein Land erlaubt");
 			}
 			for (String c : split) {
-				if(!supportedCountries.contains(c)) {
-					return Optional.of("unbekanntes Land "+c);
+				if (!supportedCountries.contains(c)) {
+					return Optional.of("unbekanntes Land " + c);
 				}
 			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<String> getIntRangeError(String value, String fieldName, int min, int max, boolean mandatory){
+		if(mandatory && Strings.isNullOrEmpty(value)) {
+			return Optional.of(fieldName + " is missing");
+		}
+		if(!Strings.isNullOrEmpty(value)) {
+			try {
+				int asNumber = Integer.parseInt(value);
+				if(asNumber<min) {
+					return Optional.of(value+" is smaller than "+min);
+				}else if(asNumber>max) {
+					return Optional.of(value+" bigger than "+max);
+				}
+			}catch(NumberFormatException e) {
+				return Optional.of(value+" is not a valid");
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<String> getValueMissingError(String value, String fieldName) {
+		if (Strings.isNullOrEmpty(value)) {
+			return Optional.of(fieldName + " is missing");
 		}
 		return Optional.empty();
 	}

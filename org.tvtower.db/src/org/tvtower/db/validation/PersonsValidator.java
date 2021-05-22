@@ -3,6 +3,7 @@ package org.tvtower.db.validation;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
+import org.tvtower.db.constants.Constants;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.InsignificantPeople;
 import org.tvtower.db.database.Person;
@@ -26,8 +27,8 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkGeneral(Person person) {
-		if(person.getGenerator()==null) {
-			if(Strings.isNullOrEmpty(person.getFirstName()) && Strings.isNullOrEmpty(person.getLastName())) {
+		if (person.getGenerator() == null) {
+			if (Strings.isNullOrEmpty(person.getFirstName()) && Strings.isNullOrEmpty(person.getLastName())) {
 				error("name fehlt", $.getPerson_Name());
 			}
 		}
@@ -38,7 +39,8 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (isInsignificant(person)) {
 			assertNotSet(person.getDetails(), "details", $.getPerson_Details());
 			assertNotSet(person.getData(), "data", $.getPerson_Data());
-			CommonValidation.getCountryError(person.getCountry(),false).ifPresent(e->error(e, $.getPerson_Country()));
+			CommonValidation.getCountryError(person.getCountry(), false)
+					.ifPresent(e -> error(e, $.getPerson_Country()));
 		}
 	}
 
@@ -48,17 +50,18 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			assertNotSet(person.getLevelUp(), "levelup", $.getPerson_LevelUp());
 
 			if ("1".equals(person.getBookable())) {
-				if (person.getGender() == null && (person.getData() == null || person.getDetails().getGender() == null)) {
+				if (person.getGender() == null
+						&& (person.getData() == null || person.getDetails().getGender() == null)) {
 					error("gender must be defined", $.getPerson_Name());
 				}
-				//TODO falls fictional - Fehler!
+				// TODO falls fictional - Fehler!
 			}
-			if(person.getCountry()!=null) {
+			if (person.getCountry() != null) {
 				error("country should be defined in details", $.getPerson_Country());
 			}
 
 			if (person.getData() == null) {
-				//randomized
+				// randomized
 			}
 			if (person.getDetails() == null) {
 				error("details must be defined", $.getPerson_Name());
@@ -73,13 +76,13 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkPersonData(PersonData d) {
-		//TODO
+		// TODO
 	}
 
 	@Check
 	public void checkPersonDetails(PersonDetails d) {
-		CommonValidation.getCountryError(d.getCountry(),false).ifPresent(e->error(e, $.getPersonDetails_Country()));
-		//TODO - check overwriting of person attributes?
+		CommonValidation.getCountryError(d.getCountry(), false).ifPresent(e -> error(e, $.getPersonDetails_Country()));
+		// TODO - check overwriting of person attributes?
 	}
 
 	private boolean isFictional(Person p) {
@@ -103,6 +106,12 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkRole(ProgrammeRole r) {
-		CommonValidation.getCountryError(r.getCountry(),false).ifPresent(e->error(e, $.getProgrammeRole_Country()));
+		CommonValidation.getValueMissingError(r.getFirstName(), "first_name").ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
+		CommonValidation.getValueMissingError(r.getLastName(), "last_name").ifPresent(e -> error(e, $.getProgrammeRole_LastName()));
+		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
+		Constants.gender.isValidValue(r.getGender(), "gender", false).ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
+		if(Constants.gender.isUndefined(r.getGender())) {
+			error("undefined gender",$.getProgrammeRole_Gender());
+		}
 	}
 }

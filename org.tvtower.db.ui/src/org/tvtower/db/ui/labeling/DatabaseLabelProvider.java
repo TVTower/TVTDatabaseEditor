@@ -120,7 +120,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(ProgrammeRole role) {
-		String result = fromNames(role.getLastName(), role.getFirtName());
+		String result = fromNames(role.getLastName(), role.getFirstName());
 		if (result != null) {
 			return result;
 		}
