@@ -1,5 +1,7 @@
 package org.tvtower.db.validation;
 
+import java.math.BigDecimal;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -11,12 +13,7 @@ import org.tvtower.db.database.PersonData;
 import org.tvtower.db.database.PersonDetails;
 import org.tvtower.db.database.ProgrammeRole;
 
-import com.google.common.base.Strings;
-
-//TODO general gender check
-//TODO general country check, job, 
 //TODO generator, face code?
-//TODO boolean bookable, levelup, fictional
 public class PersonsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
@@ -28,9 +25,16 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkGeneral(Person person) {
 		if (person.getGenerator() == null) {
-			if (Strings.isNullOrEmpty(person.getFirstName()) && Strings.isNullOrEmpty(person.getLastName())) {
-				error("name fehlt", $.getPerson_Name());
-			}
+			CommonValidation.getValueMissingError("name", person.getFirstName(), person.getLastName())
+					.ifPresent(e -> error(e, $.getPerson_Name()));
+		}
+		Constants.job.isValidFlag(person.getJob(), "job", false).ifPresent(e -> error(e, $.getPerson_Job()));
+		CommonValidation.getBooleanError(person.getFictional(), "fictional", false)
+				.ifPresent(e -> error(e, $.getPerson_Fictional()));
+		CommonValidation.getBooleanError(person.getBookable(), "bookable", false)
+				.ifPresent(e -> error(e, $.getPerson_Bookable()));
+		if(person.getFictional()!=null && person.getDetails()!=null && person.getDetails().getFictional()!=null){
+			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
 	}
 
@@ -41,6 +45,8 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			assertNotSet(person.getData(), "data", $.getPerson_Data());
 			CommonValidation.getCountryError(person.getCountry(), false)
 					.ifPresent(e -> error(e, $.getPerson_Country()));
+			Constants.gender.isValidValue(person.getGender(), "gender", false)
+					.ifPresent(e -> error(e, $.getPerson_Gender()));
 		}
 	}
 
@@ -50,15 +56,18 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			assertNotSet(person.getLevelUp(), "levelup", $.getPerson_LevelUp());
 
 			if ("1".equals(person.getBookable())) {
-				if (person.getGender() == null
-						&& (person.getData() == null || person.getDetails().getGender() == null)) {
+				if (!isGenderDefined(person)) {
 					error("gender must be defined", $.getPerson_Name());
 				}
-				// TODO falls fictional - Fehler!
 			}
-			if (person.getCountry() != null) {
-				error("country should be defined in details", $.getPerson_Country());
+			if (isFictional(person)) {
+				if (!isGenderDefined(person)) {
+					error("cannot be used in cast", $.getPerson_Name());
+				}
 			}
+			defineInDetails(person.getCountry(), "country", $.getPerson_Country());
+			defineInDetails(person.getJob(), "job", $.getPerson_Job());
+			defineInDetails(person.getGender(), "gender", $.getPerson_Gender());
 
 			if (person.getData() == null) {
 				// randomized
@@ -66,23 +75,50 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			if (person.getDetails() == null) {
 				error("details must be defined", $.getPerson_Name());
 			}
-			if (isFictional(person)) {
-				if (!isGenderDefined(person)) {
-					error("cannot be used in cast", $.getPerson_Name());
-				}
-			}
+		}
+	}
+
+	private void defineInDetails(String value, String fieldName, EStructuralFeature feature) {
+		if (value != null) {
+			error(fieldName + "should be defined in details", feature);
 		}
 	}
 
 	@Check
 	public void checkPersonData(PersonData d) {
-		// TODO
+		CommonValidation.getIntRangeError(d.getPopularity(), "popularity", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Popularity()));
+		CommonValidation.getIntRangeError(d.getPopularityTarget(), "popularity_target", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_PopularityTarget()));
+		CommonValidation.getIntRangeError(d.getAffinity(), "affinity", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Affinity()));
+		CommonValidation.getIntRangeError(d.getFame(), "fame", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Fame()));
+		CommonValidation.getIntRangeError(d.getScandalizing(), "scandalizing", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Scandalizing()));
+		CommonValidation.getIntRangeError(d.getPower(), "power", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Power()));
+		CommonValidation.getIntRangeError(d.getHumor(), "humor", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Humor()));
+		CommonValidation.getIntRangeError(d.getCharisma(), "charisma", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Charisma()));
+		CommonValidation.getIntRangeError(d.getAppearance(), "appearance", 0, 100, false)
+				.ifPresent(e -> error(e, $.getPersonData_Appearance()));
+		Constants.programmgenre.isValidValue(d.getTopGenre(), "topgenre", false)
+				.ifPresent(e -> error(e, $.getPersonData_TopGenre()));
+		CommonValidation.getDecimalRangeError(d.getPriceMod(), "price_mod", BigDecimal.ZERO, BigDecimal.TEN, false)
+				.ifPresent(e -> error(e, $.getPersonData_PriceMod()));
 	}
 
 	@Check
 	public void checkPersonDetails(PersonDetails d) {
 		CommonValidation.getCountryError(d.getCountry(), false).ifPresent(e -> error(e, $.getPersonDetails_Country()));
-		// TODO - check overwriting of person attributes?
+		Constants.job.isValidFlag(d.getJob(), "job", false).ifPresent(e -> error(e, $.getPersonDetails_Job()));
+		Constants.gender.isValidValue(d.getGender(), "gender", true)
+				.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
+		CommonValidation.getBooleanError(d.getFictional(), "fictional", false)
+				.ifPresent(e -> error(e, $.getPersonDetails_Fictional()));
+		// TODO birthday, deathday
 	}
 
 	private boolean isFictional(Person p) {
@@ -106,12 +142,15 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkRole(ProgrammeRole r) {
-		CommonValidation.getValueMissingError(r.getFirstName(), "first_name").ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
-		CommonValidation.getValueMissingError(r.getLastName(), "last_name").ifPresent(e -> error(e, $.getProgrammeRole_LastName()));
+		CommonValidation.getValueMissingError("first_name", r.getFirstName())
+				.ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
+		CommonValidation.getValueMissingError("last_name", r.getLastName())
+				.ifPresent(e -> error(e, $.getProgrammeRole_LastName()));
 		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
-		Constants.gender.isValidValue(r.getGender(), "gender", false).ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
-		if(Constants.gender.isUndefined(r.getGender())) {
-			error("undefined gender",$.getProgrammeRole_Gender());
+		Constants.gender.isValidValue(r.getGender(), "gender", false)
+				.ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
+		if (Constants.gender.isUndefined(r.getGender())) {
+			error("undefined gender", $.getProgrammeRole_Gender());
 		}
 	}
 }

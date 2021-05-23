@@ -90,10 +90,15 @@ public class CommonValidation {
 		return Optional.empty();
 	}
 
-	public static Optional<String> getValueMissingError(String value, String fieldName) {
-		if (Strings.isNullOrEmpty(value)) {
-			return Optional.of(fieldName + " is missing");
+	public static Optional<String> getValueMissingError(String fieldName, String... values) {
+		if(values==null || values.length==0) {
+			throw new IllegalStateException("at least one value must be defined");
 		}
-		return Optional.empty();
+		for (String v : values) {
+			if(!Strings.isNullOrEmpty(v)) {
+				return Optional.empty();
+			}
+		}
+		return Optional.of(fieldName + " is missing");
 	}
 }
