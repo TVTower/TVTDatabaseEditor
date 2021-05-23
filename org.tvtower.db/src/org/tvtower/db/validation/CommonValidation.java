@@ -1,5 +1,6 @@
 package org.tvtower.db.validation;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,7 +64,27 @@ public class CommonValidation {
 					return Optional.of(value + " bigger than " + max);
 				}
 			} catch (NumberFormatException e) {
-				return Optional.of(value + " is not a valid");
+				return Optional.of(value + " is not a valid number");
+			}
+		}
+		return Optional.empty();
+	}
+
+	public static Optional<String> getDecimalRangeError(String value, String fieldName, BigDecimal min, BigDecimal max,
+			boolean mandatory) {
+		if (mandatory && Strings.isNullOrEmpty(value)) {
+			return Optional.of(fieldName + " is missing");
+		}
+		if (!Strings.isNullOrEmpty(value)) {
+			try {
+				BigDecimal asNumber = new BigDecimal(value);
+				if (asNumber.compareTo(min) < 0) {
+					return Optional.of(value + " is smaller than " + min);
+				} else if (asNumber.compareTo(max) > 0) {
+					return Optional.of(value + " bigger than " + max);
+				}
+			} catch (NumberFormatException e) {
+				return Optional.of(value + " is not a valid number");
 			}
 		}
 		return Optional.empty();

@@ -21,4 +21,6 @@ public class Constants {
 
 	public static NewsGenre newGenre=new NewsGenre();
 
+	public static AdType adTpye=new AdType();
+
 }

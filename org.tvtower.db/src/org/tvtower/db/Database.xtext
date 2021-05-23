@@ -382,10 +382,10 @@ Advertisement:
 		)
 	'>'
 	(
-		title=Title &
-		description=Description&
-		conditions=AdConditions&
-		data=AdvertisementData&
+		title=Title?&
+		description=Description?&
+		conditions=AdConditions?&
+		data=AdvertisementData?&
 		availability=Availability?
 	)
 	'</''ad''>'
@@ -396,11 +396,16 @@ AdConditions:
 		(
 			('min_audience''='minAudience=STRING)?&
 			('min_image''='minImage=STRING)?&
+			('max_image''='maxImage=STRING)?&//
+			('allowed_genre''='allowedGenre=STRING)?&//
+			('prohibited_genre''='prohibitedGenre=STRING)?&//
+			('allowed_programme_flag''='allowedProgramfeFlag=STRING)?&//
+			('prohibited_programme_flag''='prohibitedProgrammeFlag=STRING)?&//
 			('target_group''='targetGroup=STRING)?&
 			('allowed_programme_type''='allowedProgrammeType=STRING)?&
 			('prohibited_programme_type''='prohibitedProgrammeType=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
-			('contra_pressure_groups''='contraPressureGrouo=STRING)?
+			('contra_pressure_groups''='contraPressureGroup=STRING)?
 		)
 	'/>'
 ;
@@ -409,18 +414,19 @@ AdvertisementData:
 	'<''data'{AdvertisementData}
 		(
 			('quality''='quality=STRING)?&
-			('available''='available=STRING)?&//TODO nÃ¶tig
-			('type''='type=STRING)?&//TODO nÃ¶tig
+			('available''='available=STRING)?&
+			('type''='type=STRING)?&
 			('repetitions''='repetitions=STRING)?&
 			('duration''='duration=STRING)?&
 			('profit''='profit=STRING)?&
 			('fix_price''='fixPrice=STRING)?&
 			('penalty''='penalty=STRING)?&
-			('year_range_from''='yearRangeFrom=STRING)?&
-			('year_range_to''='yearRangeTo=STRING)?&
 			('infomercial''='infomercial=STRING)?&
+			('blocks''='blocks=STRING)?&
 			('infomercial_profit''='infomercialProfit=STRING)?&
-			('fix_infomercial_profit''='fixInfomercialProfit=STRING)?
+			('fix_infomercial_profit''='fixInfomercialProfit=STRING)?&
+			('pro_pressure_groups''='proPressureGroup=STRING)?&
+			('contra_pressure_groups''='contraPressureGroup=STRING)?
 		)
 	'/>'
 ;
