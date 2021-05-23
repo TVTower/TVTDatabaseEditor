@@ -1,11 +1,13 @@
 package org.tvtower.db.constants;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
-abstract class TVTEnum {
+public abstract class TVTEnum {
 
 	private LinkedHashMap<String, String> items=new LinkedHashMap<>();
 
@@ -41,5 +43,9 @@ abstract class TVTEnum {
 			}
 		}
 		return Optional.empty();
+	}
+
+	public Map<String, String> forContentAssist(){
+		return Maps.newLinkedHashMap(items);
 	}
 }

@@ -2,11 +2,10 @@ package org.tvtower.db.validation;
 
 import static org.tvtower.db.validation.CommonValidation.isUserDB;
 
-import java.util.List;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
+import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.NewsConstants;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
@@ -14,7 +13,6 @@ import org.tvtower.db.database.NewsData;
 import org.tvtower.db.database.NewsItem;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 //TODO validate time format
 //TODO validate price, quality (auch min/max), flags
@@ -39,13 +37,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void newsData(NewsData data) {
-		if (data.getGenre() != null) {
-			if (!NewsConstants.isNewsGenre(data.getGenre())) {
-				error("invalid news genre", $.getNewsData_Genre());
-			}
-		} else {
-			error("genre must be defined", $.getNewsData_Genre());
-		}
+		Constants.newGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
 		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		if (data.getPrice() != null) {

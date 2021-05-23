@@ -7,25 +7,31 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
-import org.tvtower.db.constants.NewsConstants;
+import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.TVTEnum;
 
 /**
- * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#content-assist
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#content-assist
  * on how to customize the content assistant.
  */
 public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
-	//News
-	//TODO newsType
-	//TODO newsFlags
-	@Override
-	public void completeNewsData_Genre(EObject model, Assignment assignment, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-		NewsConstants.newsGenre.forEach((k,v)->{
-			acceptor.accept(createCompletionProposal("\""+k+"\"",k+" - "+v,null, context));
+	private void mapProposal(TVTEnum tvtEnum, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+		tvtEnum.forContentAssist().forEach((k, v) -> {
+			acceptor.accept(createCompletionProposal("\"" + k + "\"", k + " - " + v, null, context));
 		});
 	}
 
-	//Allgemein
-	//TODO availability
+	// News
+	// TODO newsType
+	// TODO newsFlags
+	@Override
+	public void completeNewsData_Genre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.newGenre, acceptor, context);
+	}
+
+	// Allgemein
+	// TODO availability
 }

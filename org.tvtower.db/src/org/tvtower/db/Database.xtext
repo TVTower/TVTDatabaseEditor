@@ -293,17 +293,28 @@ Task:
 TaskData:
 	'<''data'
 		(
-			('type''='id=STRING )&
-			('minAudienceAbsolute''='minAudience=STRING)?&
-			('minReachAbsolute''='minReach=STRING)?&
+			('type''='type=STRING )&
+			('minAudienceAbsolute''='minAudienceAbs=STRING)?&
+			('minAudienceQuote''='minAudiencePercent=STRING)?&
+//TODO genres/flats not yet supported (game.achievements.bmx todo line 145)
+//			('limitToGenres''='limitToGenres=STRING)?&
+//			('limitToFlags''='limitToFlags=STRING)?&
+			('minReachAbsolute''='minReachAbs=STRING)?&
+			('minReachPercentage''='minReachPercent=STRING)?&
 			('keyword1''='keyword1=STRING)?&
 			('keyword2''='keyword2=STRING)?&
 			('keyword3''='keyword3=STRING)?&
 			('genre1''='genre1=STRING)?&
 			('genre2''='genre2=STRING)?&
 			('genre3''='genre3=STRING)?&
-			('money''='money=STRING)?&
-			('checkMinute''='checkMinute=STRING)?
+			('minQuality1''='minQuality1=STRING)?&
+			('minQuality2''='minQuality2=STRING)?&
+			('minQuality3''='minQuality3=STRING)?&
+			('maxQuality1''='maxQuality1=STRING)?&
+			('maxQuality2''='maxQuality2=STRING)?&
+			('maxQuality3''='maxQuality3=STRING)?&
+			('checkMinute''='checkMinute=STRING)?&
+			('checkHour''='checkHour=STRING)?
 		)
 	'/>'
 ;
@@ -335,7 +346,7 @@ Reward:
 RewardData:
 	'<''data'
 		(
-			('type''='id=STRING )&
+			('type''='type=STRING )&
 			('money''='money=STRING)?
 		)
 	'/>'

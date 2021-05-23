@@ -125,11 +125,11 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				CommonValidation.getIntRangeError(data.getSlope(), "slope", 0, 100, false)
 						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Slope()));
 				try {
-					if(Integer.parseInt(data.getMin())>Integer.parseInt(data.getMax())) {
+					if (Integer.parseInt(data.getMin()) > Integer.parseInt(data.getMax())) {
 						error("min must not be greater than max", data, $.getMinMaxSlope_Min());
 					}
-				}catch(NumberFormatException e) {
-					//ignore - validation of min, already done
+				} catch (NumberFormatException e) {
+					// ignore - validation of min, already done
 				}
 			}
 		}

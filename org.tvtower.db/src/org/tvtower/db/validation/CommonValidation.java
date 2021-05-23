@@ -49,20 +49,21 @@ public class CommonValidation {
 		return Optional.empty();
 	}
 
-	public static Optional<String> getIntRangeError(String value, String fieldName, int min, int max, boolean mandatory){
-		if(mandatory && Strings.isNullOrEmpty(value)) {
+	public static Optional<String> getIntRangeError(String value, String fieldName, int min, int max,
+			boolean mandatory) {
+		if (mandatory && Strings.isNullOrEmpty(value)) {
 			return Optional.of(fieldName + " is missing");
 		}
-		if(!Strings.isNullOrEmpty(value)) {
+		if (!Strings.isNullOrEmpty(value)) {
 			try {
 				int asNumber = Integer.parseInt(value);
-				if(asNumber<min) {
-					return Optional.of(value+" is smaller than "+min);
-				}else if(asNumber>max) {
-					return Optional.of(value+" bigger than "+max);
+				if (asNumber < min) {
+					return Optional.of(value + " is smaller than " + min);
+				} else if (asNumber > max) {
+					return Optional.of(value + " bigger than " + max);
 				}
-			}catch(NumberFormatException e) {
-				return Optional.of(value+" is not a valid");
+			} catch (NumberFormatException e) {
+				return Optional.of(value + " is not a valid");
 			}
 		}
 		return Optional.empty();
