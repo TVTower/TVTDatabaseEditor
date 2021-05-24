@@ -85,7 +85,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkJob(Job job) {
-		CommonValidation.getBooleanError(job.getRequired(), "required", true)
+		Constants._boolean.isValidValue(job.getRequired(), "required", true)
 				.ifPresent(e -> error(e, $.getJob_Required()));
 		Constants.job.isValidSingleFlag(job.getFunction(), "function", true)
 				.ifPresent(e -> error(e, $.getJob_Function()));

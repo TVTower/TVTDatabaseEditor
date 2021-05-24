@@ -57,7 +57,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 						.ifPresent(e -> error(e, p.getData(), $.getProgramme_Data()));
 			}
 		}
-		CommonValidation.getBooleanError(p.getFictional(), "fictional", false)
+		Constants._boolean.isValidValue(p.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getProgramme_Fictional()));
 		Constants.licenceType.isValidValue(p.getLicenceType(), "licence_type", true)
 				.ifPresent(e -> error(e, $.getProgramme_LicenceType()));

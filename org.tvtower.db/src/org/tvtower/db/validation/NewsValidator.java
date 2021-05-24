@@ -41,7 +41,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	@Check
 	public void newsData(NewsData data) {
 		Constants.newsGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
-		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
+		Constants._boolean.isValidValue(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		CommonValidation.getDecimalRangeError(data.getPrice(), "price", BigDecimal.ZERO, BigDecimal.TEN, true)
 				.ifPresent(e -> error(e, $.getNewsData_Price()));
@@ -61,8 +61,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getNewsData_SubscriptionLevel()));
 		CommonValidation.getTimeError(data.getHappenTime(), "happentime")
 				.ifPresent(e -> error(e, $.getNewsData_HappenTime()));
-		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
-				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		Constants.newsFlag.isValidFlag(data.getFlags(), "flags", false).ifPresent(e -> error(e, $.getNewsData_Flags()));
 
 	}

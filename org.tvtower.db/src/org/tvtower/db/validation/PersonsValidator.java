@@ -29,9 +29,9 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 					.ifPresent(e -> error(e, $.getPerson_Name()));
 		}
 		Constants.job.isValidFlag(person.getJob(), "job", false).ifPresent(e -> error(e, $.getPerson_Job()));
-		CommonValidation.getBooleanError(person.getFictional(), "fictional", false)
+		Constants._boolean.isValidValue(person.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPerson_Fictional()));
-		CommonValidation.getBooleanError(person.getBookable(), "bookable", false)
+		Constants._boolean.isValidValue(person.getBookable(), "bookable", false)
 				.ifPresent(e -> error(e, $.getPerson_Bookable()));
 		if(person.getFictional()!=null && person.getDetails()!=null && person.getDetails().getFictional()!=null){
 			error("fictional defined multiple times", $.getPerson_Fictional());
@@ -116,7 +116,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		Constants.job.isValidFlag(d.getJob(), "job", false).ifPresent(e -> error(e, $.getPersonDetails_Job()));
 		Constants.gender.isValidValue(d.getGender(), "gender", true)
 				.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
-		CommonValidation.getBooleanError(d.getFictional(), "fictional", false)
+		Constants._boolean.isValidValue(d.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPersonDetails_Fictional()));
 		// TODO birthday, deathday
 	}

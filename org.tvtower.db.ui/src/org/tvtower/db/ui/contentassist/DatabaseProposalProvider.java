@@ -21,7 +21,6 @@ import org.tvtower.db.constants.TVTFlag;
  */
 public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
-	//TODO boolean, country proposals
 	private void mapProposal(TVTEnum tvtEnum, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
 		AtomicInteger index = new AtomicInteger(500);
 		tvtEnum.forContentAssist().forEach((k, v) -> {
@@ -153,6 +152,30 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.pressuregroup, acceptor, context);
 	}
+
+	@Override
+	public void completeAdvertisementData_Available(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_FixPrice(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_Infomercial(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_FixInfomercialProfit(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
 	// End Ads-------------
 
 	// News
@@ -173,6 +196,11 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.newsFlag, acceptor, context);
 	}
+
+	@Override
+	public void completeNewsData_Fictional(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);	}
 
 	@Override
 	public void completeEffect_Trigger(EObject model, Assignment assignment, ContentAssistContext context,
@@ -201,9 +229,27 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
+	public void completePerson_Fictional(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completePerson_Bookable(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
 	public void completePerson_Job(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
+	public void completePerson_Country(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.country, acceptor, context);
 	}
 
 	@Override
@@ -219,9 +265,33 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
+	public void completePersonDetails_Fictional(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
 	public void completePersonDetails_Job(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
+	public void completePersonDetails_Country(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.country, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeRole_Country(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.country, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeRole_Gender(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.gender, acceptor, context);
 	}
 	// End Person-------------
 
@@ -230,6 +300,11 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeProgramme_Product(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.programmeType, acceptor, context);
+	}
+
+	public void completeProgramme_Fictional(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
 	}
 
 	@Override
@@ -272,6 +347,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeProgrammeData_Distribution(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.distribution, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_Country(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.country, acceptor, context);
 	}
 
 	@Override
@@ -323,6 +404,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeJob_Gender(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.gender, acceptor, context);
+	}
+
+	@Override
+	public void completeJob_Required(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
 	}
 
 	@Override

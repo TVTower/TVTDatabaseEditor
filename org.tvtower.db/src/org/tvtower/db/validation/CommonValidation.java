@@ -5,27 +5,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EObject;
+import org.tvtower.db.constants.Constants;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 public class CommonValidation {
-
-	//TODO rewrite as enum (for code completion)
-	private static List<String> supportedCountries = ImmutableList.of("D", "DDR", "I", "USA", "CH", "CS", "J", "RU",
-			"S", "A", "IND", "F", "DK", "SCO", "CDN", "GB", "HK", "BE", "CN", "PL", "NL", "RM", "BOL", "H", "AFG",
-			"IRL", "IL", "ZA", "BM", "ROK", "AUS", "E");
-
-	public static Optional<String> getBooleanError(String value, String fieldName, boolean mandatory) {
-		if (mandatory && Strings.isNullOrEmpty(value)) {
-			return Optional.of(fieldName + " is missing");
-		}
-		if (value != null && !("1".equals(value) || "0".equals(value))) {
-			return Optional.of("boolean value must be 0 or 1");
-		}
-		return Optional.empty();
-	}
 
 	public static boolean isUserDB(EObject o) {
 		return o.eResource().getURI().toString().contains("/user/");
@@ -34,17 +19,17 @@ public class CommonValidation {
 	public static Optional<String> getCountryError(String country, boolean multipleAllowed) {
 		if (!Strings.isNullOrEmpty(country)) {
 			if (country.indexOf(',') >= 0) {
-				return Optional.of("Separator für mehrere Länder ist /");
+				return Optional.of("separator is /");
 			} else if (country.indexOf(' ') >= 0) {
-				return Optional.of("Leerzeichen nicht erlaubt");
+				return Optional.of("no spaces allowed");
 			}
 			List<String> split = Splitter.on('/').trimResults().splitToList(country);
 			if (!multipleAllowed && split.size() > 1) {
-				return Optional.of("nur ein Land erlaubt");
+				return Optional.of("only one country allowed");
 			}
 			for (String c : split) {
-				if (!supportedCountries.contains(c)) {
-					return Optional.of("unbekanntes Land " + c);
+				if (Constants.country.isValidValue(c, "",false).isPresent()) {
+					return Optional.of("unknown country code " + c);
 				}
 			}
 		}

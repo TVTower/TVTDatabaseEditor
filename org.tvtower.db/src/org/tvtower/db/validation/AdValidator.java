@@ -37,7 +37,7 @@ public class AdValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkAdData(AdvertisementData d) {
-		CommonValidation.getBooleanError(d.getAvailable(), "available", false)
+		Constants._boolean.isValidValue(d.getAvailable(), "available", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Available()));
 		Constants.adType.isValidValue(d.getType(), "type", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Type()));
@@ -45,19 +45,19 @@ public class AdValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getAdvertisementData_Repetitions()));
 		CommonValidation.getIntRangeError(d.getDuration(), "duration", 0, 14, true)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Duration()));
-		CommonValidation.getBooleanError(d.getFixPrice(), "fix_price", false)
+		Constants._boolean.isValidValue(d.getFixPrice(), "fix_price", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_FixPrice()));
 		CommonValidation.getIntRangeError(d.getProfit(), "profit", 0, 10000, true)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Profit()));
 		CommonValidation.getIntRangeError(d.getPenalty(), "penalty", 0, 10000, true)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Penalty()));
-		CommonValidation.getBooleanError(d.getInfomercial(), "infomercial", false)
+		Constants._boolean.isValidValue(d.getInfomercial(), "infomercial", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Infomercial()));
 		CommonValidation.getIntRangeError(d.getQuality(), "quality", 0, 100, false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Quality()));
 		CommonValidation.getIntRangeError(d.getBlocks(), "blocks", 1, 5, false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Blocks()));
-		CommonValidation.getBooleanError(d.getFixInfomercialProfit(), "fix_infomercial_profit", false)
+		Constants._boolean.isValidValue(d.getFixInfomercialProfit(), "fix_infomercial_profit", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_FixInfomercialProfit()));
 		CommonValidation.getIntRangeError(d.getInfomercialProfit(), "infomercial_profit", 0, 10000, false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_InfomercialProfit()));

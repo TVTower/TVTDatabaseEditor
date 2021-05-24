@@ -14,6 +14,8 @@ public class Constants {
 
 	public static JobFlag job = new JobFlag();
 	public static Gender gender = new Gender();
+	public static Country country = new Country();
+	public static TrueFalse _boolean = new TrueFalse();
 
 	public static TargetGroup targetgroup = new TargetGroup();
 	public static PressureGroup pressuregroup = new PressureGroup();
