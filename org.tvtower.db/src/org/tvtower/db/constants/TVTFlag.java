@@ -1,11 +1,13 @@
 package org.tvtower.db.constants;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
-abstract class TVTFlag {
+public abstract class TVTFlag {
 
 	private int count=0;
 	private long MAX_FLAG;
@@ -53,5 +55,9 @@ abstract class TVTFlag {
 			return Optional.of("no flag value" + value);
 		}
 		return Optional.empty();
+	}
+
+	public Map<Long, String> forContentAssist(){
+		return Maps.newLinkedHashMap(items);
 	}
 }

@@ -396,11 +396,11 @@ AdConditions:
 		(
 			('min_audience''='minAudience=STRING)?&
 			('min_image''='minImage=STRING)?&
-			('max_image''='maxImage=STRING)?&//
-			('allowed_genre''='allowedGenre=STRING)?&//
-			('prohibited_genre''='prohibitedGenre=STRING)?&//
-			('allowed_programme_flag''='allowedProgramfeFlag=STRING)?&//
-			('prohibited_programme_flag''='prohibitedProgrammeFlag=STRING)?&//
+			('max_image''='maxImage=STRING)?&
+			('allowed_genre''='allowedGenre=STRING)?&
+			('prohibited_genre''='prohibitedGenre=STRING)?&
+			('allowed_programme_flag''='allowedProgrammeFlag=STRING)?&
+			('prohibited_programme_flag''='prohibitedProgrammeFlag=STRING)?&
 			('target_group''='targetGroup=STRING)?&
 			('allowed_programme_type''='allowedProgrammeType=STRING)?&
 			('prohibited_programme_type''='prohibitedProgrammeType=STRING)?&

@@ -93,9 +93,9 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_Price()));
 		Constants.distribution.isValidValue(d.getDistribution(), "distribution", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Distribution()));
-		Constants.programmgenre.isValidValue(d.getMaingenre(), "maingenre", false)
+		Constants.programmGenre.isValidValue(d.getMaingenre(), "maingenre", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Maingenre()));
-		Constants.programmgenre.isValidList(d.getSubgenre()).ifPresent(e -> error(e, $.getProgrammeData_Subgenre()));
+		Constants.programmGenre.isValidList(d.getSubgenre()).ifPresent(e -> error(e, $.getProgrammeData_Subgenre()));
 		Constants.programmeFlag.isValidFlag(d.getFlags(), "flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Flags()));
 		Constants.licenceFlag.isValidFlag(d.getLicenceFlags(), "licence_flags", false)

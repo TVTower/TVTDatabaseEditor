@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 
 public class CommonValidation {
 
+	//TODO rewrite as enum (for code completion)
 	private static List<String> supportedCountries = ImmutableList.of("D", "DDR", "I", "USA", "CH", "CS", "J", "RU",
 			"S", "A", "IND", "F", "DK", "SCO", "CDN", "GB", "HK", "BE", "CN", "PL", "NL", "RM", "BOL", "H", "AFG",
 			"IRL", "IL", "ZA", "BM", "ROK", "AUS", "E");

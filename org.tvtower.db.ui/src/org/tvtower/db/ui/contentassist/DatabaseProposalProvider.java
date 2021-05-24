@@ -3,12 +3,16 @@
  */
 package org.tvtower.db.ui.contentassist;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.TVTEnum;
+import org.tvtower.db.constants.TVTFlag;
 
 /**
  * See
@@ -17,20 +21,340 @@ import org.tvtower.db.constants.TVTEnum;
  */
 public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
+	//TODO boolean, country proposals
 	private void mapProposal(TVTEnum tvtEnum, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+		AtomicInteger index = new AtomicInteger(500);
 		tvtEnum.forContentAssist().forEach((k, v) -> {
-			acceptor.accept(createCompletionProposal("\"" + k + "\"", k + " - " + v, null, context));
+			acceptor.accept(createCompletionProposal("\"" + k + "\"", new StyledString(k + " - " + v), null,
+					index.decrementAndGet(), context.getPrefix(), context));
 		});
 	}
 
+	private void flagProposal(TVTFlag tvtFlag, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+		tvtFlag.forContentAssist().forEach((k, v) -> {
+			acceptor.accept(createCompletionProposal(context.getPrefix(), new StyledString(k + " - " + v), null,
+					-k.intValue(), context.getPrefix(), context));
+		});
+	}
+
+	// Achievement-------------
+	@Override
+	public void completeAchievementData_Flags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.achievementFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeAchievementData_Category(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.achievementCategory, acceptor, context);
+	}
+
+	@Override
+	public void completeTaskData_Type(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.taskType, acceptor, context);
+	}
+
+	@Override
+	public void completeTaskData_Genre1(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeTaskData_Genre2(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeTaskData_Genre3(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeRewardData_Type(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.rewardType, acceptor, context);
+	}
+	// End Achievement-------------
+
+	// Ads
+	@Override
+	public void completeAdConditions_AllowedGenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_ProhibitedGenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_AllowedProgrammeFlag(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.programmeFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_ProhibitedProgrammeFlag(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.programmeFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_AllowedProgrammeType(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmeType, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_ProhibitedProgrammeType(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmeType, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_ProPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_ContraPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+
+	@Override
+	public void completeAdConditions_TargetGroup(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.targetgroup, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_Type(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.adType, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_ProPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+
+	@Override
+	public void completeAdvertisementData_ContraPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+	// End Ads-------------
+
 	// News
-	// TODO newsType
-	// TODO newsFlags
+	@Override
+	public void completeNewsItem_Type(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.newsType, acceptor, context);
+	}
+
 	@Override
 	public void completeNewsData_Genre(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants.newGenre, acceptor, context);
+		mapProposal(Constants.newsGenre, acceptor, context);
 	}
+
+	@Override
+	public void completeNewsData_Flags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.newsFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeEffect_Trigger(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.triggerType, acceptor, context);
+	}
+
+	@Override
+	public void completeEffect_Type(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.effectType, acceptor, context);
+	}
+
+	@Override
+	public void completeEffect_Genre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+	// End News-------------
+
+	// Person
+	@Override
+	public void completePerson_Gender(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.gender, acceptor, context);
+	}
+
+	@Override
+	public void completePerson_Job(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
+	public void completePersonData_TopGenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completePersonDetails_Gender(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.gender, acceptor, context);
+	}
+
+	@Override
+	public void completePersonDetails_Job(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.job, acceptor, context);
+	}
+	// End Person-------------
+
+	// Programme
+	@Override
+	public void completeProgramme_Product(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmeType, acceptor, context);
+	}
+
+	@Override
+	public void completeProgramme_LicenceType(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.licenceType, acceptor, context);
+	}
+
+	@Override
+	public void completeStaffMember_Function(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeGroups_TargetGroup(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.targetgroup, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeGroups_OptionalTargetGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.targetgroup, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeGroups_ProPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeGroups_ContraPressureGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.pressuregroup, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_Distribution(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.distribution, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_Flags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.programmeFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_LicenceFlags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.licenceFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_Maingenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeProgrammeData_Subgenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+	// End Programme-------------
+
+	// Script
+
+	@Override
+	public void completeScriptTemplate_Product(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmeType, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptTemplate_LicenceType(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.licenceType, acceptor, context);
+	}
+
+	@Override
+	public void completeJob_Function(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
+	public void completeJob_Gender(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.gender, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptGenres_MainGenre(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptGenres_Subgenres(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants.programmGenre, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_Flags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.programmeFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_OptionalFlags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.programmeFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_LicenceFlags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.licenceFlag, acceptor, context);
+	}
+	// End Script-------------
 
 	// Allgemein
 	// TODO availability

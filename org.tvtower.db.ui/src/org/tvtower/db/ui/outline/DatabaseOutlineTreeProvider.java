@@ -58,7 +58,7 @@ public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void _createChildren(IOutlineNode parent, News n) {
 		processedNews = new HashSet<>();
-		n.getNews().stream().filter(i -> Constants.newType.isStartNews(i)).forEach(i -> {
+		n.getNews().stream().filter(i -> Constants.newsType.isStartNews(i)).forEach(i -> {
 			createEObjectNode(parent, i);
 			processedNews.add(i);
 		});

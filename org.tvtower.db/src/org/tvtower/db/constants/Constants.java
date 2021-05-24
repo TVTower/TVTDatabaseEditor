@@ -5,7 +5,7 @@ public class Constants {
 	public static final int MIN_YEAR = 1890;
 	public static final int MAX_YEAR = 2200;
 
-	public static ProgrammeGenre programmgenre = new ProgrammeGenre();
+	public static ProgrammeGenre programmGenre = new ProgrammeGenre();
 	public static ProgrammeType programmeType = new ProgrammeType();
 	public static ProgrammeDataFlag programmeFlag = new ProgrammeDataFlag();
 	public static LicenceType licenceType = new LicenceType();
@@ -23,12 +23,12 @@ public class Constants {
 	public static TaskType taskType = new TaskType();
 	public static RewardType rewardType = new RewardType();
 
-	public static NewsType newType = new NewsType();
-	public static NewsGenre newGenre = new NewsGenre();
-	public static NewsFlag newFlag = new NewsFlag();
+	public static NewsType newsType = new NewsType();
+	public static NewsGenre newsGenre = new NewsGenre();
+	public static NewsFlag newsFlag = new NewsFlag();
 	public static TriggerType triggerType = new TriggerType();
 	public static EffectType effectType = new EffectType();
 
-	public static AdType adTpye = new AdType();
+	public static AdType adType = new AdType();
 
 }

@@ -29,7 +29,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkNewsType(NewsItem item) {
-		Constants.newType.isValidValue(item.getType(), "type", true).ifPresent(e -> error(e, $.getNewsItem_Type()));
+		Constants.newsType.isValidValue(item.getType(), "type", true).ifPresent(e -> error(e, $.getNewsItem_Type()));
 		if (isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())) {
 			error("created_by must be defined", $.getNewsItem_CreatedBy());
 		}
@@ -40,7 +40,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void newsData(NewsData data) {
-		Constants.newGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
+		Constants.newsGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
 		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		CommonValidation.getDecimalRangeError(data.getPrice(), "price", BigDecimal.ZERO, BigDecimal.TEN, true)
@@ -63,7 +63,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getNewsData_HappenTime()));
 		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
-		Constants.newFlag.isValidFlag(data.getFlags(), "flags", true).ifPresent(e -> error(e, $.getNewsData_Flags()));
+		Constants.newsFlag.isValidFlag(data.getFlags(), "flags", false).ifPresent(e -> error(e, $.getNewsData_Flags()));
 
 	}
 
@@ -125,7 +125,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		Constants.triggerType.isValidValue(e.getTrigger(), "trigger", true)
 				.ifPresent(err -> error(err, $.getEffect_Trigger()));
 		Constants.effectType.isValidValue(e.getType(), "type", true).ifPresent(err -> error(err, $.getEffect_Type()));
-		Constants.programmgenre.isValidValue(e.getGenre(), "genre", false)
+		Constants.programmGenre.isValidValue(e.getGenre(), "genre", false)
 				.ifPresent(err -> error(err, $.getEffect_Genre()));
 		CommonValidation.getDecimalRangeError(e.getValueMin(), "valueMin", VALUE_MIN, VALUE_MAX, false)
 				.ifPresent(err -> error(err, $.getEffect_ValueMin()));

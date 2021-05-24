@@ -3,7 +3,6 @@
  */
 package org.tvtower.db;
 
-import org.eclipse.emf.ecore.EValidator.Registry;
 import org.eclipse.xtext.parser.antlr.Lexer;
 import org.eclipse.xtext.parser.antlr.LexerBindings;
 import org.eclipse.xtext.parser.antlr.LexerProvider;

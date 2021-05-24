@@ -83,7 +83,7 @@ public class TaskType extends TVTEnum {
 
 	private Optional<String> getGenreError(TaskData d, String value, String fieldName) {
 		if (isNewsType(d)) {
-			return Constants.newGenre.isValidValue(value, fieldName, false);
+			return Constants.newsGenre.isValidValue(value, fieldName, false);
 		} else if (value != null) {
 			return Optional.of(fieldName + " not allowed for this type");
 		}

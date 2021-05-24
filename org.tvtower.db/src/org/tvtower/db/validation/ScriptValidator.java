@@ -66,9 +66,9 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkScriptData(ScriptGenres g) {
-		Constants.programmgenre.isValidValue(g.getMainGenre(), "maingenre", true)
+		Constants.programmGenre.isValidValue(g.getMainGenre(), "maingenre", true)
 				.ifPresent(e -> error(e, $.getScriptGenres_MainGenre()));
-		Constants.programmgenre.isValidList(g.getSubgenres()).ifPresent(e -> error(e, $.getScriptGenres_Subgenres()));
+		Constants.programmGenre.isValidList(g.getSubgenres()).ifPresent(e -> error(e, $.getScriptGenres_Subgenres()));
 	}
 
 	@Check

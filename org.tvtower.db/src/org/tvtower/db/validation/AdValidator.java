@@ -39,7 +39,7 @@ public class AdValidator extends AbstractDatabaseValidator {
 	public void checkAdData(AdvertisementData d) {
 		CommonValidation.getBooleanError(d.getAvailable(), "available", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Available()));
-		Constants.adTpye.isValidValue(d.getType(), "type", false)
+		Constants.adType.isValidValue(d.getType(), "type", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Type()));
 		CommonValidation.getIntRangeError(d.getRepetitions(), "repetitions", 1, 16, true)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Repetitions()));
@@ -89,16 +89,16 @@ public class AdValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getAdConditions_MaxImage()));
 		Constants.targetgroup.isValidFlag(c.getTargetGroup(), "target_group", false)
 				.ifPresent(e -> error(e, $.getAdConditions_TargetGroup()));
-		Constants.programmgenre.isValidValue(c.getAllowedGenre(), "allowed_genre", false)
+		Constants.programmGenre.isValidValue(c.getAllowedGenre(), "allowed_genre", false)
 				.ifPresent(e -> error(e, $.getAdConditions_AllowedGenre()));
-		Constants.programmgenre.isValidValue(c.getProhibitedGenre(), "prohibited_genre", false)
+		Constants.programmGenre.isValidValue(c.getProhibitedGenre(), "prohibited_genre", false)
 				.ifPresent(e -> error(e, $.getAdConditions_ProhibitedGenre()));
 		Constants.programmeType.isValidValue(c.getAllowedProgrammeType(), "allowed_programme_type", false)
 				.ifPresent(e -> error(e, $.getAdConditions_AllowedProgrammeType()));
 		Constants.programmeType.isValidValue(c.getProhibitedProgrammeType(), "prohibited_programme_type", false)
 				.ifPresent(e -> error(e, $.getAdConditions_ProhibitedProgrammeType()));
-		Constants.programmeFlag.isValidFlag(c.getAllowedProgramfeFlag(), "allowed_programme_flag", false)
-				.ifPresent(e -> error(e, $.getAdConditions_AllowedProgramfeFlag()));
+		Constants.programmeFlag.isValidFlag(c.getAllowedProgrammeFlag(), "allowed_programme_flag", false)
+				.ifPresent(e -> error(e, $.getAdConditions_AllowedProgrammeFlag()));
 		Constants.programmeFlag.isValidFlag(c.getProhibitedProgrammeFlag(), "prohibited_programme_flag", false)
 				.ifPresent(e -> error(e, $.getAdConditions_ProhibitedProgrammeFlag()));
 		Constants.pressuregroup.isValidFlag(c.getProPressureGroup(), "pro_pressure_groups", false)

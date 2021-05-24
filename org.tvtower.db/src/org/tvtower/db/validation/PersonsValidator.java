@@ -104,7 +104,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getPersonData_Charisma()));
 		CommonValidation.getIntRangeError(d.getAppearance(), "appearance", 0, 100, false)
 				.ifPresent(e -> error(e, $.getPersonData_Appearance()));
-		Constants.programmgenre.isValidValue(d.getTopGenre(), "topgenre", false)
+		Constants.programmGenre.isValidValue(d.getTopGenre(), "topgenre", false)
 				.ifPresent(e -> error(e, $.getPersonData_TopGenre()));
 		CommonValidation.getDecimalRangeError(d.getPriceMod(), "price_mod", BigDecimal.ZERO, BigDecimal.TEN, false)
 				.ifPresent(e -> error(e, $.getPersonData_PriceMod()));
