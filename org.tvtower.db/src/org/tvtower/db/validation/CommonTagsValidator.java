@@ -31,7 +31,6 @@ import com.google.common.base.Strings;
 //TODO Sprachdoppler (ContainsLanguageString)
 //TODO validate availability script
 //TODO validate created_by defined and not empty
-//TODO validate country (Warnung falls unbekannt)
 public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;

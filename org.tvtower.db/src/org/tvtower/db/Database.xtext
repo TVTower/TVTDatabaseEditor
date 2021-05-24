@@ -703,7 +703,8 @@ ProgrammeReleaseTime:
 			('year_relative''='yearRelative=STRING)?&
 			('year_relative_min''='yearRelativeMin=STRING)?&
 			('year_relative_max''='yearRelativeMax=STRING)?
-			//TODO die weiteren Eigenschaften
+			//TODO day_random_mon, day_random_max, day_random_slope
+			//hour_random_min,hour_random_max,hour_random_slope
 		)
 	'/>'
 ;
@@ -771,6 +772,8 @@ ProgrammeData:
 			('broadcast_time_slot_start''='slotStart=STRING)?&
 			('broadcast_time_slot_end''='slotEnd=STRING)?&
 			('price_mod''='priceMod=STRING)?
+			//TODO available, broacdast_limit,data_broadcast_limit,licence_broadcast_limit
+			//boradcast_flags,data_broadcast_flags,licence_broadcast_flags
 		)
 	'/>'
 ;
