@@ -101,4 +101,9 @@ public class CommonValidation {
 		}
 		return Optional.of(fieldName + " is missing");
 	}
+
+	public static Optional<String> getTimeError(String value, String fieldName){
+		//TODO time formats
+		return Optional.empty();
+	}
 }

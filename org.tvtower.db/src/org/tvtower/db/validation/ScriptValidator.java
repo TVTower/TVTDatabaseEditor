@@ -17,6 +17,7 @@ import org.tvtower.db.database.ScriptTemplates;
 public class ScriptValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
+	private static final int SEVENDAYS = 60 * 24 * 7;
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -60,7 +61,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		checkMinMaxSlope(t.getOutcome(), 0, 100);
 		checkMinMaxSlope(t.getReview(), 0, 100);
 		checkMinMaxSlope(t.getSpeed(), 0, 100);
-		checkMinMaxSlope(t.getProductionTime(), 1, 60 * 24 * 7);
+		checkMinMaxSlope(t.getProductionTime(), 1, SEVENDAYS);
 	}
 
 	@Check

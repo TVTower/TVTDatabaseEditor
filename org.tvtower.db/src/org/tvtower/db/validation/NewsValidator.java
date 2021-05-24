@@ -2,11 +2,14 @@ package org.tvtower.db.validation;
 
 import static org.tvtower.db.validation.CommonValidation.isUserDB;
 
+import java.math.BigDecimal;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
-import org.tvtower.db.constants.NewsConstants;
+import org.tvtower.db.constants.EffectType;
+import org.tvtower.db.constants.NewsType;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.NewsData;
@@ -14,12 +17,11 @@ import org.tvtower.db.database.NewsItem;
 
 import com.google.common.base.Strings;
 
-//TODO validate time format
-//TODO validate price, quality (auch min/max), flags
-//TODO validate genre values
 public class NewsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
+	private static final BigDecimal VALUE_MIN = new BigDecimal("-3");
+	private static final BigDecimal VALUE_MAX = new BigDecimal("3");
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -27,11 +29,12 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkNewsType(NewsItem item) {
-		if (!NewsConstants.isValidNewsType(item.getType())) {
-			error("invalid news type ", $.getNewsItem_Type());
-		}
+		Constants.newType.isValidValue(item.getType(), "type", true).ifPresent(e -> error(e, $.getNewsItem_Type()));
 		if (isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())) {
 			error("created_by must be defined", $.getNewsItem_CreatedBy());
+		}
+		if (item.getModifiers() != null) {
+			error("modifiers used", $.getNewsItem_Modifiers());
 		}
 	}
 
@@ -40,34 +43,28 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		Constants.newGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
 		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
-		if (data.getPrice() != null) {
-			// TODO validate price factor
-		} else {
-			error("price must be defined", $.getNewsData_Price());
-		}
-		if (data.getQuality() != null) {
-			int q = Integer.parseInt(data.getQuality());
-			if (q < 0 || q > 100) {
-				error("quality out of range", $.getNewsData_Quality());
-			}
-			// TODO check quality
-			if (data.getQualityMax() != null || data.getQualityMin() != null || data.getQualitySlope() != null) {
-				error("if quality is defined, random quality properties must not be set", $.getNewsData_Quality());
-			}
-		} else {
-			if (data.getQualityMax() == null || data.getQualityMin() == null || data.getQualitySlope() == null) {
-				error("either absolute or random quality must be defined", $.getNewsData_Quality());
-			} else {
-				// TODO validate quality
-			}
-		}
-		if (data.getFlags() != null) {
-			// TODO flags validation
-			// 2=unique event
-//			if(!"2".equals(data.getFlags())) {
-//				error("flags must not be defined", $.getNewsData_Flags());
-//			}
-		}
+		CommonValidation.getDecimalRangeError(data.getPrice(), "price", BigDecimal.ZERO, BigDecimal.TEN, true)
+				.ifPresent(e -> error(e, $.getNewsData_Price()));
+
+		CommonValidation.getIntRangeError(data.getQuality(), "quality", 0, 100, false)
+				.ifPresent(e -> error(e, $.getNewsData_Quality()));
+		CommonValidation.getIntRangeError(data.getQualityMin(), "quality_min", 0, 100, false)
+				.ifPresent(e -> error(e, $.getNewsData_QualityMin()));
+		CommonValidation.getIntRangeError(data.getQualityMax(), "quality_max", 0, 100, false)
+				.ifPresent(e -> error(e, $.getNewsData_QualityMax()));
+		CommonValidation.getIntRangeError(data.getQualitySlope(), "quality_slope", 0, 100, false)
+				.ifPresent(e -> error(e, $.getNewsData_QualitySlope()));
+		CommonValidation.getValueMissingError("quality", data.getQuality(), data.getQualityMin(), data.getQualityMax())
+				.ifPresent(e -> error(e, $.getNewsData_Quality()));
+
+		CommonValidation.getIntRangeError(data.getSubscriptionLevel(), "min_subscription_level", 1, 3, false)
+				.ifPresent(e -> error(e, $.getNewsData_SubscriptionLevel()));
+		CommonValidation.getTimeError(data.getHappenTime(), "happentime")
+				.ifPresent(e -> error(e, $.getNewsData_HappenTime()));
+		CommonValidation.getBooleanError(data.getFictional(), "fictional", false)
+				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
+		Constants.newFlag.isValidFlag(data.getFlags(), "flags", true).ifPresent(e -> error(e, $.getNewsData_Flags()));
+
 	}
 
 	@Check
@@ -82,7 +79,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	private boolean hasNewsTrigger(NewsItem item) {
 		if (item.getEffects() != null && !item.getEffects().getEffects().isEmpty()) {
 			return item.getEffects().getEffects().stream()
-					.anyMatch(e -> e.getType() != null && e.getType().startsWith("triggernews"));
+					.anyMatch(e -> Constants.effectType.isNewsTrigger(e.getType()));
 		}
 		return false;
 	}
@@ -113,46 +110,59 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				warning("genre mismatch with triggering news", triggered.getData(), $.getNewsData_Genre());
 			}
 		}
-		if (!NewsConstants.TYPE_FOLLOWUP_NEWS.equals(triggered.getType())) {
+		if (!NewsType.FOLLOW_UP_NEWS.equals(triggered.getType())) {
 			if (hasNewsTrigger(triggered) && triggered == parentNews) {
 				// self-triggered can have 0
 				return;
 			}
-			error("triggered news must have type 2", triggered, $.getMayContainVariables_Name());
+			error("triggered news must have type " + NewsType.FOLLOW_UP_NEWS, triggered,
+					$.getMayContainVariables_Name());
 		}
 	}
 
 	@Check
 	public void checkEffect(Effect e) {
-		// TODO andere Triggerwerte erlaubt
-		if (e.getTrigger() == null) {
-			error("effect must have a (happen)-trigger", $.getEffect_Trigger());
-		} else {
-			if (!"happen".equals(e.getTrigger())) {
-				error("unsupported effect trigger - only 'happen' allowed", $.getEffect_Trigger());
-			}
-		}
+		Constants.triggerType.isValidValue(e.getTrigger(), "trigger", true)
+				.ifPresent(err -> error(err, $.getEffect_Trigger()));
+		Constants.effectType.isValidValue(e.getType(), "type", true).ifPresent(err -> error(err, $.getEffect_Type()));
+		Constants.programmgenre.isValidValue(e.getGenre(), "genre", false)
+				.ifPresent(err -> error(err, $.getEffect_Genre()));
+		CommonValidation.getDecimalRangeError(e.getValueMin(), "valueMin", VALUE_MIN, VALUE_MAX, false)
+				.ifPresent(err -> error(err, $.getEffect_ValueMin()));
+		CommonValidation.getDecimalRangeError(e.getValueMax(), "valueMax", VALUE_MIN, VALUE_MAX, false)
+				.ifPresent(err -> error(err, $.getEffect_ValueMax()));
+		CommonValidation.getIntRangeError(e.getProbability(), "probability", 0, 100, false)
+				.ifPresent(err -> error(err, $.getEffect_Probability()));
+		CommonValidation.getIntRangeError(e.getProbability1(), "probability1", 0, 100, false)
+				.ifPresent(err -> error(err, $.getEffect_Probability1()));
+		CommonValidation.getIntRangeError(e.getProbability2(), "probability2", 0, 100, false)
+				.ifPresent(err -> error(err, $.getEffect_Probability2()));
+		CommonValidation.getIntRangeError(e.getProbability3(), "probability3", 0, 100, false)
+				.ifPresent(err -> error(err, $.getEffect_Probability3()));
+		CommonValidation.getIntRangeError(e.getProbability4(), "probability4", 0, 100, false)
+				.ifPresent(err -> error(err, $.getEffect_Probability4()));
+
 		if (e.getType() != null) {
 			boolean checkMinMax = false;
 			boolean genreExpected = false;
 			boolean refExpected = false;
 			boolean choiceExpected = false;
 			switch (e.getType()) {
-			case "triggernews":
+			case EffectType.NEWS:
 				break;
-			case "triggernewschoice":
+			case EffectType.NEWS_CHOICE:
 				choiceExpected = true;
 				break;
-			case "modifyPersonPopularity":
+			case EffectType.PERSON:
 				checkMinMax = true;
 				refExpected = true;
 				break;
-			case "modifyMovieGenrePopularity":
+			case EffectType.GENRE:
 				checkMinMax = true;
 				genreExpected = true;
 				break;
 			default:
-				error("unsupported trigger type", $.getEffect_Type());
+				break;
 			}
 			effectTypeField("valueMin", e.getValueMin(), checkMinMax);
 			effectTypeField("valueMax", e.getValueMin(), checkMinMax);
@@ -180,10 +190,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
 			}
-			if (e.getTime() == null) {
-				// TODO validate time
-//				error("time must be defined", $.getEffect_Trigger());
-			}
+			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getNewsData_HappenTime()));
 			if (e.getFlags() != null) {
 				error("flags not allowed", $.getEffect_Flags());
 			}
@@ -206,5 +213,4 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			error(field + " not allowed for this effect type", $.getEffect_Type());
 		}
 	}
-
 }

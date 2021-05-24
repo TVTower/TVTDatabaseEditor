@@ -477,11 +477,11 @@ Effect:
 			('trigger''='trigger=STRING )?& 
 			('type''='type=STRING)?&
 			('news''='news=[NewsItem|STRING])?& 
-			('genre''='genre=STRING)?&//TODO nur einmal
+			('genre''='genre=STRING)?&
 			('choose''='choose=STRING)?&
 			('referenceGUID''='refs=STRING)?&//TODO reference to Person?
-			('valueMin''='valueMin=STRING)?&//TODO used?
-			('valueMax''='valueMax=STRING)?&//TODO used?
+			('valueMin''='valueMin=STRING)?&
+			('valueMax''='valueMax=STRING)?&
 			('probability''='probability=STRING)?&
 			('news1''='news1=[NewsItem|STRING])?&//TODO lieber als Children
 			('probability1''='probability1=STRING)?&
@@ -515,7 +515,7 @@ NewsData:
 			('price''='price=STRING)?&
 			('quality''='quality=STRING)?&
 			('flags''='flags=STRING)?&
-			('happen_time''='happenTime=STRING)?&//TODO nur einmal
+			('happen_time''='happenTime=STRING)?&
 			('min_subscription_level''='subscriptionLevel=STRING)?&
 			('fictional''='fictional=STRING)?&
 			//TODO stattdessen Kindelement quality mit Attributen value, min, max, slope?

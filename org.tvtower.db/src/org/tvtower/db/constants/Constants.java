@@ -23,7 +23,11 @@ public class Constants {
 	public static TaskType taskType = new TaskType();
 	public static RewardType rewardType = new RewardType();
 
+	public static NewsType newType = new NewsType();
 	public static NewsGenre newGenre = new NewsGenre();
+	public static NewsFlag newFlag = new NewsFlag();
+	public static TriggerType triggerType = new TriggerType();
+	public static EffectType effectType = new EffectType();
 
 	public static AdType adTpye = new AdType();
 

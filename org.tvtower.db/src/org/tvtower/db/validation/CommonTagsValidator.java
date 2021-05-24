@@ -85,8 +85,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					String value = kv[1].trim();
 					switch (key) {
 					case "TIME_YEAR":
-						min = 1950;
-						max = 3000;
+						min = Constants.MIN_YEAR;
+						max = Constants.MAX_YEAR;
 						result = true;
 						break;
 					case "TIME_SEASON":

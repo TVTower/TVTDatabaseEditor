@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
-import org.tvtower.db.constants.NewsConstants;
+import org.tvtower.db.constants.Constants;
 import org.tvtower.db.database.Achievement;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Database;
@@ -58,7 +58,7 @@ public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void _createChildren(IOutlineNode parent, News n) {
 		processedNews = new HashSet<>();
-		n.getNews().stream().filter(i -> NewsConstants.isStartNews(i)).forEach(i -> {
+		n.getNews().stream().filter(i -> Constants.newType.isStartNews(i)).forEach(i -> {
 			createEObjectNode(parent, i);
 			processedNews.add(i);
 		});

@@ -54,7 +54,7 @@ public class AdValidator extends AbstractDatabaseValidator {
 		CommonValidation.getBooleanError(d.getInfomercial(), "infomercial", false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Infomercial()));
 		CommonValidation.getIntRangeError(d.getQuality(), "quality", 0, 100, false)
-		.ifPresent(e -> error(e, $.getAdvertisementData_Quality()));
+				.ifPresent(e -> error(e, $.getAdvertisementData_Quality()));
 		CommonValidation.getIntRangeError(d.getBlocks(), "blocks", 1, 5, false)
 				.ifPresent(e -> error(e, $.getAdvertisementData_Blocks()));
 		CommonValidation.getBooleanError(d.getFixInfomercialProfit(), "fix_infomercial_profit", false)
