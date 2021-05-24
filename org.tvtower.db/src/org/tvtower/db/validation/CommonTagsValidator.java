@@ -1,6 +1,9 @@
 package org.tvtower.db.validation;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +23,7 @@ import org.tvtower.db.database.MayContainVariables;
 import org.tvtower.db.database.Modifier;
 import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ScriptTemplate;
+import org.tvtower.db.database.UnnamedProperty;
 import org.tvtower.db.database.VariableDef;
 import org.tvtower.db.database.Variables;
 
@@ -192,7 +196,20 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkGroupAttractivity(GroupAttractivity a) {
-		// TODO
+		Set<String> defined = new HashSet<>();
+		List<String> validKeys = Constants.targetgroup.maleFemale();
+		for (UnnamedProperty prop : a.getData()) {
+			String key = prop.getKey();
+			if (!validKeys.contains(key)) {
+				error("invalid group", prop, $.getUnnamedProperty_Key());
+			} else if (defined.contains(key)) {
+				error("duplicate group", prop, $.getUnnamedProperty_Key());
+			} else {
+				defined.add(key);
+			}
+			CommonValidation.getDecimalRangeError(prop.getValue(), key, BigDecimal.ZERO, BigDecimal.TEN, true)
+					.ifPresent(e -> error(e, prop, $.getUnnamedProperty_Value()));
+		}
 	}
 
 	@Check

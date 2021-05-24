@@ -3,7 +3,10 @@
  */
 package org.tvtower.db.ui.contentassist;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.viewers.StyledString;
@@ -13,6 +16,7 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.constants.TVTFlag;
+import org.tvtower.db.database.GroupAttractivity;
 
 /**
  * See
@@ -443,6 +447,16 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 	// End Script-------------
 
+	@Override
+	public void completeUnnamedProperty_Key(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		if(model instanceof GroupAttractivity) {
+			List<String> defined = ((GroupAttractivity) model).getData().stream().map(d->d.getKey()).collect(Collectors.toList());
+			List<String>allowed=new ArrayList<String>(Constants.targetgroup.maleFemale());
+			allowed.removeAll(defined);
+			allowed.forEach(v->acceptor.accept(createCompletionProposal(v, context)));
+		}
+	}
 	// Allgemein
 	// TODO availability
 }

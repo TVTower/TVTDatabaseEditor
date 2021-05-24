@@ -15,8 +15,8 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 
 Database:
-	('<''?xml' UnnamedProperty*'?>')?
-	'<' 'tvtdb' '>' {Database}
+	'<'{Database}('?xml' properties+=UnnamedProperty*'?>''<')?
+	 'tvtdb' '>' 
 		version=Version?
 		definitions+=Definition*
 		exportOptions=ExportOptions?
@@ -470,7 +470,6 @@ Effects:
 	)
 ;
 
-//TODO welche möglichen Trigger-Werte, welche Typen und Zusammenhänge (für Validierung und Autovervollständigung)
 Effect:
 	'<''effect'{Effect}
 		(
@@ -676,20 +675,7 @@ ProgrammeGroups:
 GroupAttractivity:
 	'<''targetgroupattractivity' {GroupAttractivity}
 		(
-			//TODO umschreiben auf allgemeine key-Value
-			//mit Validierung, da die Gruppen mit _male/_female
-			//definiert werden können
-			//data+=UnnamedProperty*
-			('teenagers''='teenagers=STRING )?&
-			('managers''='managers=STRING)?&
-			('housewives''='housewives=STRING)?&
-			('employees''='employees=STRING)?&
-			('women''='women=STRING)?&
-			('men''='men=STRING)?&
-			('teenagers_male''='teenagers_male=STRING)?&
-			('teenagers_female''='teenagers_female=STRING)?&
-			('pensioners''='pensioners=STRING)?&
-			('unemployed''='unemployed=STRING)?
+			data+=UnnamedProperty*
 		)
 	'/>'
 ;
@@ -789,10 +775,10 @@ TitleOriginal:
 ;
 
 
-Version: '<' 'version'UnnamedProperty* '/>';
-UnnamedProperty:IDorKeyword'='STRING;
+Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
+UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'teenagers'|'managers'|'housewives'|'employees'|'women'|'men'|'teenagers_male'|'teenagers_female'|'pensioners'|'unemployed'|'trigger';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet
