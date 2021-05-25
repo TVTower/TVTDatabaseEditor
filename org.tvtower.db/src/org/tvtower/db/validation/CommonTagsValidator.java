@@ -16,6 +16,7 @@ import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.database.Availability;
+import org.tvtower.db.database.ContainsLanguageStrings;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.LanguageString;
@@ -31,9 +32,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 
 //TODO globale ID-Eindeutigkeit
-//TODO allgemeine Validierung für Titel/Description/Text,Variablen
-//TODO Sprachdoppler (ContainsLanguageString)
-//TODO validate availability script
 //TODO validate created_by defined and not empty
 public class CommonTagsValidator extends AbstractDatabaseValidator {
 
@@ -93,6 +91,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 						max = Constants.MAX_YEAR;
 						result = true;
 						break;
+//					case "TIME_DAY":
+
 					case "TIME_SEASON":
 						max = 4;
 						break;
@@ -105,8 +105,32 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					case "TIME_DAYOFYEAR":
 						warning("dayofyear should not be used", $.getAvailability_Script());
 						break;
+					case "TIME_DAYSPLAYED":
+						max = 10000;
+						break;
+					case "TIME_YEARSSPLAYED":
+						max = 150;
+						break;
+					case "TIME_DAYSOFMONTH":
+						max = 31;
+						break;
 					case "TIME_HOUR":
 						max = 23;
+						break;
+					case "TIME_MINUTE":
+						max = 59;
+						break;
+					case "TIME_ISNIGHT":
+						max = 1;
+						break;
+					case "TIME_ISDAWN":
+						max = 1;
+						break;
+					case "TIME_ISDAY":
+						max = 1;
+						break;
+					case "TIME_ISDUSK":
+						max = 1;
 						break;
 					default:
 						error("no valid script key " + key, $.getAvailability_Script());
@@ -119,7 +143,6 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		return result;
 	}
 
-	// TODO extract for common usage
 	// returns whether the number is actually defined
 	private boolean checkNumber(String number, boolean allowMinusOne, int min, int max, String period,
 			EStructuralFeature f) {
@@ -129,15 +152,22 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			}
 			return false;
 		} else {
-			try {
-				int y = Integer.parseInt(number);
-				if (y < min || y > max) {
-					error(period + " out of range", f);
-				}
-			} catch (NumberFormatException e) {
-				error("illegal value for " + period, f);
-			}
+			CommonValidation.getIntRangeError(number, period, min, max, true)
+					.ifPresent(e -> error(period + ": " + e, f));
 			return true;
+		}
+	}
+
+	@Check(CheckType.NORMAL)
+	public void checkLanguageDuplicate(ContainsLanguageStrings c) {
+		Set<String> languages = new HashSet<>();
+		for (LanguageString l : c.getLstrings()) {
+			String language = l.getLangage();
+			if (languages.contains(language)) {
+				error("duplicate language", l, $.getLanguageString_Langage());
+			} else {
+				languages.add(language);
+			}
 		}
 	}
 
@@ -147,20 +177,22 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			error("language tags do not match", $.getLanguageString_Langage2());
 		}
 		String text = s.getText();
-		// TODO )% deutet auf Person-Generator hin - auch validieren?
 		if (text != null) {
 			// anything between percent not containing percent or space
 			Pattern pattern = Pattern.compile("%([^%\\s]+)%");
-
-			// Pattern pattern = Pattern.compile("%(\\w+(:\\w+)?)%");
 			Matcher matcher = pattern.matcher(text);
 			while (matcher.find()) {
 				String variable = matcher.group(1);
+				if (Constants.globalVariable.isValidValue(variable, "", false).isEmpty()) {
+					continue;
+				} else if (variable.startsWith("PERSONGENERATOR")) {
+					// TODO check person generator variable
+					continue;
+				}
+				// TODO there may be two possible containers - episode defines own variables,
+				// but parent does as well
 				MayContainVariables vContainer = getVariableContainer(s);
-				if (vContainer == null) {
-					// TODO maybe global variable used
-//					error("could not find variable definitions",$.getLanguageString_Text());
-				} else {
+				if (vContainer != null) {
 					Variables varDefs = vContainer.getVariables();
 					boolean found = false;
 					for (VariableDef def : varDefs.getVariable()) {
@@ -171,14 +203,16 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					}
 					if (!found) {
 						if (vContainer instanceof ScriptTemplate) {
-							// TODO some variables are automatically replaced
+							if (Constants.roleVariable.isValidValue(variable, "", false).isEmpty()) {
+								found = true;
+							}
 						}
 					}
 					if (!found) {
-						// TODO reenable
-						// error("variable "+variable+" not defined",$.getLanguageString_Text());
+						error("variable " + variable + " not defined", $.getLanguageString_Text());
 					}
 				}
+
 			}
 		}
 	}

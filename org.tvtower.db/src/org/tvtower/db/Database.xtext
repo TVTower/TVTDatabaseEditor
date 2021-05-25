@@ -77,13 +77,13 @@ Title:
 	('/>'
 		|
 	'>'
-		languageString+=LanguageString*
+		lstrings+=LanguageString*
 	'</''title''>'
 	)
 ;
 Description:
 	'<''description''>'{Description}
-		languageString+=LanguageString*
+		lstrings+=LanguageString*
 	'</''description''>'
 ;
 ScriptChildren:
@@ -99,7 +99,7 @@ Variables:
 
 VariableDef:
 	'<'var=IDorKeyword'>'
-		languageString+=LanguageString*
+		lstrings+=LanguageString*
 	'</'IDorKeyword'>'
 ;
 
@@ -263,7 +263,7 @@ Text:
 	('/>'
 		|
 	'>'
-		texts+=LanguageString*
+		lstrings+=LanguageString*
 	'</''text''>'
 	)
 ;

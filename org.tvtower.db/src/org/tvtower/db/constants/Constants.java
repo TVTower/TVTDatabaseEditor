@@ -12,6 +12,9 @@ public class Constants {
 	public static LicenceFlag licenceFlag = new LicenceFlag();
 	public static ProgrammeDistribution distribution = new ProgrammeDistribution();
 
+	public static GlobalVariable globalVariable = new GlobalVariable();
+	public static RoleVariable roleVariable = new RoleVariable();
+
 	public static JobFlag job = new JobFlag();
 	public static Gender gender = new Gender();
 	public static Country country = new Country();

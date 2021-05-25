@@ -24,7 +24,7 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkAchievement(Achievement a) {
-		if (a.getTitle() == null || a.getTitle().getLanguageString().isEmpty()) {
+		if (a.getTitle() == null || a.getTitle().getLstrings().isEmpty()) {
 			error("title must be defined", $.getAchievement_Id());
 		}
 		if (a.getData() == null) {
@@ -47,10 +47,10 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkTask(Task t) {
-		if (t.getTitle() == null || t.getTitle().getLanguageString().isEmpty()) {
+		if (t.getTitle() == null || t.getTitle().getLstrings().isEmpty()) {
 			error("title must be defined", $.getTask_Id());
 		}
-		if (t.getText() == null || t.getText().getTexts().isEmpty()) {
+		if (t.getText() == null || t.getText().getLstrings().isEmpty()) {
 			error("text must be defined", $.getTask_Id());
 		}
 	}
