@@ -779,7 +779,7 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet
