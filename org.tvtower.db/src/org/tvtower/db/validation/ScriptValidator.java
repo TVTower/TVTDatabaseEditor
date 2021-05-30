@@ -94,10 +94,13 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkScriptData(ScriptData d) {
-		Constants.programmeFlag.isValidFlag(d.getFlags(), "flags", false)
-				.ifPresent(e -> error(e, $.getScriptData_Flags()));
-		Constants.programmeFlag.isValidFlag(d.getOptionalFlags(), "flags_optional", false)
-				.ifPresent(e -> error(e, $.getScriptData_OptionalFlags()));
+		Constants.programmeFlag.isValidFlag(d.getProgrammeFlags(), "flags", false)
+				.ifPresent(e -> error(e, $.getScriptData_ProgrammeFlags()));
+		Constants.programmeFlag.isValidFlag(d.getOptionalProgrammeFlags(), "flags_optional", false)
+				.ifPresent(e -> error(e, $.getScriptData_OptionalProgrammeFlags()));
+		Constants.scriptFlag.isValidFlag(d.getScriptFlags(), "scriptflags", false)
+				.ifPresent(e -> error(e, $.getScriptData_ScriptFlags()));
+
 		Constants.licenceFlag.isValidFlag(d.getLicenceFlags(), "production_licence_flags", false)
 				.ifPresent(e -> error(e, $.getScriptData_LicenceFlags()));
 		// TODO livedate

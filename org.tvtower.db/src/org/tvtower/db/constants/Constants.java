@@ -36,4 +36,5 @@ public class Constants {
 
 	public static AdType adType = new AdType();
 
+	public static ScriptFlag scriptFlag = new ScriptFlag();
 }

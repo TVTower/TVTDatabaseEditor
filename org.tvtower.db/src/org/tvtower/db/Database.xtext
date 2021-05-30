@@ -124,8 +124,9 @@ Job:
 ScriptData:
 	'<''data'{ScriptData}
 		(
-			('flags''='flags=STRING)?&
-			('flags_optional''='optionalFlags=STRING)?&
+			('flags''='programmeFlags=STRING)?&
+			('flags_optional''='optionalProgrammeFlags=STRING)?&
+			('scriptflags''='scriptFlags=STRING)?&
 			('live_date''='live_date=STRING)?&
 			('broadcast_time_slot_start''='broadcastTimeSlotStart=STRING)?&
 			('broadcast_time_slot_end''='broadcastTimeSlotEnd=STRING)?&

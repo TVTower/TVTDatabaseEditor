@@ -429,13 +429,13 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void completeScriptData_Flags(EObject model, Assignment assignment, ContentAssistContext context,
+	public void completeScriptData_ProgrammeFlags(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.programmeFlag, acceptor, context);
 	}
 
 	@Override
-	public void completeScriptData_OptionalFlags(EObject model, Assignment assignment, ContentAssistContext context,
+	public void completeScriptData_OptionalProgrammeFlags(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.programmeFlag, acceptor, context);
 	}
@@ -444,6 +444,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeScriptData_LicenceFlags(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.licenceFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_ScriptFlags(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.scriptFlag, acceptor, context);
 	}
 	// End Script-------------
 
