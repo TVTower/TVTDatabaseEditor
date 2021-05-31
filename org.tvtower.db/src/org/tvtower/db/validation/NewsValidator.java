@@ -188,10 +188,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
 			}
-			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getNewsData_HappenTime()));
-			if (e.getFlags() != null) {
-				error("flags not allowed", $.getEffect_Flags());
-			}
+			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getEffect_Time()));
 		} else {
 			error("effect must have type", $.getEffect_Type());
 		}

@@ -491,7 +491,6 @@ Effect:
 			('probability3''='probability3=STRING)?&
 			('news4''='news4=[NewsItem|STRING])?&
 			('probability4''='probability4=STRING)?&
-			('flags''='flags=STRING)?&//TODO nur einmal
 			('time''='time=STRING)?
 		)
 	'/>'
