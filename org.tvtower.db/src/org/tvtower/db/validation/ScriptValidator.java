@@ -121,22 +121,30 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 			if (data.getValue() != null) {
 				CommonValidation.getIntRangeError(data.getValue(), "value", min, max, true)
 						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Value()));
+				// currently the grammar prevents this inconsistency, but the error message is
+				// not very nice
+//				assertNotSet(data.getMin(), "min", data,  $.getMinMaxSlope_Min());
+//				assertNotSet(data.getMax(), "max", data,  $.getMinMaxSlope_Max());
+//				assertNotSet(data.getSlope(), "slope", data,  $.getMinMaxSlope_Slope());
 			} else {
 				CommonValidation.getIntRangeError(data.getMin(), "min", min, max, true)
 						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Min()));
 				CommonValidation.getIntRangeError(data.getMax(), "max", min, max, true)
 						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Max()));
+				CommonValidation.getMinMaxError(data.getMin(), data.getMax())
+						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Min()));
+
 				CommonValidation.getIntRangeError(data.getSlope(), "slope", 0, 100, false)
 						.ifPresent(e -> error(e, data, $.getMinMaxSlope_Slope()));
-				try {
-					if (Integer.parseInt(data.getMin()) > Integer.parseInt(data.getMax())) {
-						error("min must not be greater than max", data, $.getMinMaxSlope_Min());
-					}
-				} catch (NumberFormatException e) {
-					// ignore - validation of min, already done
-				}
+//				assertNotSet(data.getValue(), "value", data,  $.getMinMaxSlope_Value());
 			}
 		}
 	}
+
+//	private void assertNotSet(String value, String field, MinMaxSlope data, EStructuralFeature f) {
+//		if(!Strings.isNullOrEmpty(value)) {
+//			error(field +" must not be set", data, f);
+//		}
+//	}
 
 }

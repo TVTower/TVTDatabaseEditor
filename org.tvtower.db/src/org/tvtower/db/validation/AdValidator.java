@@ -87,6 +87,8 @@ public class AdValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getAdConditions_MinImage()));
 		CommonValidation.getIntRangeError(c.getMaxImage(), "max_image", 0, 100, false)
 				.ifPresent(e -> error(e, $.getAdConditions_MaxImage()));
+		CommonValidation.getMinMaxError(c.getMinImage(), c.getMaxImage())
+				.ifPresent(e -> error(e, $.getAdConditions_MinImage()));
 		Constants.targetgroup.isValidFlag(c.getTargetGroup(), "target_group", false)
 				.ifPresent(e -> error(e, $.getAdConditions_TargetGroup()));
 		Constants.programmGenre.isValidValue(c.getAllowedGenre(), "allowed_genre", false)

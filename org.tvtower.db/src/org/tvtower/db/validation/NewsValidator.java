@@ -40,7 +40,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void newsData(NewsData data) {
-		Constants.newsGenre.isValidValue(data.getGenre(), "genre", true).ifPresent(e -> error(e, $.getNewsData_Genre()));
+		Constants.newsGenre.isValidValue(data.getGenre(), "genre", true)
+				.ifPresent(e -> error(e, $.getNewsData_Genre()));
 		Constants._boolean.isValidValue(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
 		CommonValidation.getDecimalRangeError(data.getPrice(), "price", BigDecimal.ZERO, BigDecimal.TEN, true)
@@ -52,6 +53,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getNewsData_QualityMin()));
 		CommonValidation.getIntRangeError(data.getQualityMax(), "quality_max", 0, 100, false)
 				.ifPresent(e -> error(e, $.getNewsData_QualityMax()));
+		CommonValidation.getMinMaxError(data.getQualityMin(), data.getQualityMax())
+				.ifPresent(e -> error(e, $.getNewsData_QualityMin()));
 		CommonValidation.getIntRangeError(data.getQualitySlope(), "quality_slope", 0, 100, false)
 				.ifPresent(e -> error(e, $.getNewsData_QualitySlope()));
 		CommonValidation.getValueMissingError("quality", data.getQuality(), data.getQualityMin(), data.getQualityMax())
@@ -63,6 +66,19 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getNewsData_HappenTime()));
 		Constants.newsFlag.isValidFlag(data.getFlags(), "flags", false).ifPresent(e -> error(e, $.getNewsData_Flags()));
 
+		if (!Strings.isNullOrEmpty(data.getQuality())) {
+			assertNotSet(data.getQualityMin(), $.getNewsData_QualityMin());
+			assertNotSet(data.getQualityMax(), $.getNewsData_QualityMax());
+			assertNotSet(data.getQualitySlope(), $.getNewsData_QualitySlope());
+		} else if (!Strings.isNullOrEmpty(data.getQualityMin()) || !Strings.isNullOrEmpty(data.getQualityMax())) {
+			assertNotSet(data.getQuality(), $.getNewsData_Quality());
+		}
+	}
+
+	private void assertNotSet(String value, EStructuralFeature f) {
+		if (!Strings.isNullOrEmpty(value)) {
+			error("value must not be set", f);
+		}
 	}
 
 	@Check
@@ -164,6 +180,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			}
 			effectTypeField("valueMin", e.getValueMin(), checkMinMax);
 			effectTypeField("valueMax", e.getValueMin(), checkMinMax);
+			CommonValidation.getMinMaxError(e.getValueMin(), e.getValueMax())
+					.ifPresent(err -> error(err, $.getEffect_ValueMin()));
 			effectTypeField("genre", e.getGenre(), genreExpected);
 			effectTypeField("choice", e.getChoose(), choiceExpected);
 			effectTypeField("reference", e.getRefs(), refExpected);

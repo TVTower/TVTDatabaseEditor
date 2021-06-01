@@ -204,6 +204,9 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMin()));
 		CommonValidation.getIntRangeError(t.getYearRelativeMax(), "year_relative_max", Constants.MIN_YEAR, Constants.MAX_YEAR, false)
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMax()));
+		CommonValidation.getMinMaxError(t.getYearRelativeMin(), t.getYearRelativeMax())
+				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMin()));
+
 	}
 
 	private boolean isMainEntry(Programme p) {

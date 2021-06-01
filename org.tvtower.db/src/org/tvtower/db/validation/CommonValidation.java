@@ -28,7 +28,7 @@ public class CommonValidation {
 				return Optional.of("only one country allowed");
 			}
 			for (String c : split) {
-				if (Constants.country.isValidValue(c, "",false).isPresent()) {
+				if (Constants.country.isValidValue(c, "", false).isPresent()) {
 					return Optional.of("unknown country code " + c);
 				}
 			}
@@ -76,20 +76,33 @@ public class CommonValidation {
 		return Optional.empty();
 	}
 
+	public static Optional<String> getMinMaxError(String min, String max) {
+		if (!Strings.isNullOrEmpty(min) && !Strings.isNullOrEmpty(max)) {
+			try {
+				if (new BigDecimal(min).compareTo(new BigDecimal(max)) > 0) {
+					return Optional.of("min-value is greater than max-value");
+				}
+			} catch (NumberFormatException e) {
+				// ignore - handled elsewhere
+			}
+		}
+		return Optional.empty();
+	}
+
 	public static Optional<String> getValueMissingError(String fieldName, String... values) {
-		if(values==null || values.length==0) {
+		if (values == null || values.length == 0) {
 			throw new IllegalStateException("at least one value must be defined");
 		}
 		for (String v : values) {
-			if(!Strings.isNullOrEmpty(v)) {
+			if (!Strings.isNullOrEmpty(v)) {
 				return Optional.empty();
 			}
 		}
 		return Optional.of(fieldName + " is missing");
 	}
 
-	public static Optional<String> getTimeError(String value, String fieldName){
-		//TODO time formats
+	public static Optional<String> getTimeError(String value, String fieldName) {
+		// TODO time formats
 		return Optional.empty();
 	}
 }

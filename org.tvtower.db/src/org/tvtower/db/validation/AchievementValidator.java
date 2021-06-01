@@ -85,15 +85,7 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 	}
 
 	private void minMaxError(String min, String max, TaskData d, EStructuralFeature feature) {
-		if (min != null && max != null) {
-			try {
-				if (Integer.parseInt(min) > Integer.parseInt(max)) {
-					error("min value greater than max value", d, feature);
-				}
-			} catch (NumberFormatException e) {
-				// ignore - dealt with before
-			}
-		}
+		CommonValidation.getMinMaxError(min, max).ifPresent(e -> error(e, d, feature));
 	}
 
 	// TODO wenn nur ID gegeben, prüfen, dass ID an anderer Stelle vollständig
