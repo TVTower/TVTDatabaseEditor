@@ -44,6 +44,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getNewsData_Genre()));
 		Constants._boolean.isValidValue(data.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getNewsData_Fictional()));
+		Constants._boolean.isValidValue(data.getAvailable(), "available", false)
+				.ifPresent(e -> error(e, $.getNewsData_Available()));
 		CommonValidation.getDecimalRangeError(data.getPrice(), "price", BigDecimal.ZERO, BigDecimal.TEN, true)
 				.ifPresent(e -> error(e, $.getNewsData_Price()));
 
@@ -155,14 +157,20 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(err -> error(err, $.getEffect_Probability3()));
 		CommonValidation.getIntRangeError(e.getProbability4(), "probability4", 0, 100, false)
 				.ifPresent(err -> error(err, $.getEffect_Probability4()));
+		Constants._boolean.isValidValue(e.getEnable(), "enable", false)
+				.ifPresent(err -> error(err, $.getEffect_Enable()));
 
 		if (e.getType() != null) {
 			boolean checkMinMax = false;
 			boolean genreExpected = false;
 			boolean refExpected = false;
 			boolean choiceExpected = false;
+			boolean enableExpected = false;
+			boolean newsExpected = false;
+
 			switch (e.getType()) {
 			case EffectType.NEWS:
+				newsExpected = true;
 				break;
 			case EffectType.NEWS_CHOICE:
 				choiceExpected = true;
@@ -175,6 +183,12 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				checkMinMax = true;
 				genreExpected = true;
 				break;
+			case EffectType.NEWS_AVAILABILITY:
+				newsExpected = true;
+				enableExpected = true;
+				//TODO remove warning when implementation is fixed
+				warning("should not be used yet, implementation has error", $.getEffect_Type());
+				break;
 			default:
 				break;
 			}
@@ -185,6 +199,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			effectTypeField("genre", e.getGenre(), genreExpected);
 			effectTypeField("choice", e.getChoose(), choiceExpected);
 			effectTypeField("reference", e.getRefs(), refExpected);
+			effectTypeField("enable", e.getEnable(), enableExpected);
 
 			// check choices
 			if (e.getChoose() != null) {
@@ -205,7 +220,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability2(), $.getEffect_Probability2());
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
+				if (newsExpected && e.getNews() == null) {
+					error("news missing", $.getEffect_News());
+				} else if (!newsExpected && e.getNews() != null) {
+					error("news not allowed for this effect type", $.getEffect_News());
+				}
 			}
+			// TODO time not always needed
 			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getEffect_Time()));
 		} else {
 			error("effect must have type", $.getEffect_Type());

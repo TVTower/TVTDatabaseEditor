@@ -491,6 +491,7 @@ Effect:
 			('probability3''='probability3=STRING)?&
 			('news4''='news4=[NewsItem|STRING])?&
 			('probability4''='probability4=STRING)?&
+			('enable''='enable=STRING)?&
 			('time''='time=STRING)?
 		)
 	'/>'
@@ -517,6 +518,7 @@ NewsData:
 			('happen_time''='happenTime=STRING)?&
 			('min_subscription_level''='subscriptionLevel=STRING)?&
 			('fictional''='fictional=STRING)?&
+			('available''='available=STRING)?&
 			//TODO stattdessen Kindelement quality mit Attributen value, min, max, slope?
 			('quality_min''='qualityMin=STRING)?&
 			('quality_max''='qualityMax=STRING)?&
@@ -778,7 +780,7 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet

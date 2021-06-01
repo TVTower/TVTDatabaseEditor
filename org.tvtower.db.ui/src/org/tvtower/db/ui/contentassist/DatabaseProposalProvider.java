@@ -207,6 +207,11 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 		mapProposal(Constants._boolean, acceptor, context);	}
 
 	@Override
+	public void completeNewsData_Available(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);	}
+
+	@Override
 	public void completeEffect_Trigger(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.triggerType, acceptor, context);
@@ -223,7 +228,13 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.programmGenre, acceptor, context);
 	}
-	// End News-------------
+
+	@Override
+	public void completeEffect_Enable(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+// End News-------------
 
 	// Person
 	@Override

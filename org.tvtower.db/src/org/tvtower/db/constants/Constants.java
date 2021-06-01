@@ -96,12 +96,14 @@ public class Constants {
 				.put($.getNewsData_Genre(), newsGenre)
 				.put($.getNewsData_Flags(), newsFlag)
 				.put($.getNewsData_Fictional(), _boolean)
+				.put($.getNewsData_Available(), _boolean)
 				.put($.getNewsData_HappenTime(), timeProvider)
 
 				.put($.getEffect_Trigger(), triggerType)
 				.put($.getEffect_Type(), effectType)
 				.put($.getEffect_Genre(), programmGenre)
 				.put($.getEffect_Time(), timeProvider)
+				.put($.getEffect_Enable(), _boolean)
 
 				.put($.getPerson_Bookable(), _boolean)
 				.put($.getPerson_Fictional(), _boolean)
