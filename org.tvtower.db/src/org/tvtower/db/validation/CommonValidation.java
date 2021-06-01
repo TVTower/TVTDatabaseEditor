@@ -45,9 +45,9 @@ public class CommonValidation {
 			try {
 				int asNumber = Integer.parseInt(value);
 				if (asNumber < min) {
-					return Optional.of(value + " is smaller than " + min);
+					return Optional.of(fieldName+": "+ value + " is smaller than " + min);
 				} else if (asNumber > max) {
-					return Optional.of(value + " bigger than " + max);
+					return Optional.of(fieldName+": "+ value + " bigger than " + max);
 				}
 			} catch (NumberFormatException e) {
 				return Optional.of(value + " is not a valid number");
@@ -102,7 +102,6 @@ public class CommonValidation {
 	}
 
 	public static Optional<String> getTimeError(String value, String fieldName) {
-		// TODO time formats
-		return Optional.empty();
+		return new DatabaseTime(value).getError();
 	}
 }

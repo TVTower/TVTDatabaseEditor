@@ -4,13 +4,14 @@
 package org.tvtower.db.validation;
 
 import org.eclipse.xtext.validation.ComposedChecks;
+import org.eclipse.xtext.validation.NamesAreUniqueValidator;
 
 /**
  * This class contains custom validation rules. 
  *
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
-@ComposedChecks(validators = { NewsValidator.class, CommonTagsValidator.class, PersonsValidator.class,
+@ComposedChecks(validators = { NamesAreUniqueValidator.class, NewsValidator.class, CommonTagsValidator.class, PersonsValidator.class,
 		AdValidator.class, ProgrammeValidator.class, ScriptValidator.class, AchievementValidator.class })
 public class DatabaseValidator extends AbstractDatabaseValidator {
 	
