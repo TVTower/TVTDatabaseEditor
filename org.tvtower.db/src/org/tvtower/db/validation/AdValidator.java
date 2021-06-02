@@ -22,16 +22,16 @@ public class AdValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkAd(Advertisement ad) {
 		if (ad.getTitle() == null) {
-			error("title must be defined", $.getAdvertisement_Id());
+			error("title must be defined", $.getAdvertisement_Name());
 		}
 		if (ad.getData() == null) {
-			error("data must be defined", $.getAdvertisement_Id());
+			error("data must be defined", $.getAdvertisement_Name());
 		}
 		if (ad.getConditions() == null) {
-			error("conditions must be defined", $.getAdvertisement_Id());
+			error("conditions must be defined", $.getAdvertisement_Name());
 		}
 		if (ad.getDescription() == null) {
-			error("description must be defined", $.getAdvertisement_Id());
+			error("description must be defined", $.getAdvertisement_Name());
 		}
 	}
 

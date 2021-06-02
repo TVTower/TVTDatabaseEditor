@@ -18,16 +18,24 @@ public class DatabaseHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getHoverInfoAsHtml(EObject o) {
-		String result = super.getHoverInfoAsHtml(o);
+		String result = getFeatureInfo(o);
 		if (result != null) {
 			return result;
 		} else {
-			//find hovered object property
-			for (EStructuralFeature f : o.eClass().getEAllStructuralFeatures()) {
-				List<INode> nodes = NodeModelUtils.findNodesForFeature(o, f);
-				for (INode iNode : nodes) {
-					if (iNode.getTextRegion().contains(currentRegion.getOffset())) {
-						return getFeatureInfo(o, f);
+			return super.getHoverInfoAsHtml(o);
+		}
+	}
+
+	private String getFeatureInfo(EObject o) {
+		for (EStructuralFeature f : o.eClass().getEAllStructuralFeatures()) {
+			List<INode> nodes = NodeModelUtils.findNodesForFeature(o, f);
+			for (INode iNode : nodes) {
+				if (iNode.getTextRegion().contains(currentRegion.getOffset())) {
+					TVTHoverInfoCreator infoCreator = Constants.getHoverInfoCreator(f);
+					if (infoCreator != null) {
+						return infoCreator.createHoverInfo(o.eGet(f));
+					} else {
+						return null; //do not try other features
 					}
 				}
 			}
@@ -35,18 +43,10 @@ public class DatabaseHoverProvider extends DefaultEObjectHoverProvider {
 		return null;
 	}
 
-	private String getFeatureInfo(EObject o, EStructuralFeature f) {
-		TVTHoverInfoCreator infoCreator = Constants.getHoverInfoCreator(f);
-		if(infoCreator!=null) {
-			return infoCreator.createHoverInfo(o.eGet(f));
-		}
-		return null;
-	}
-
 	@Override
 	protected XtextBrowserInformationControlInput getHoverInfo(EObject element, IRegion hoverRegion,
 			XtextBrowserInformationControlInput previous) {
-		//store region, so that more specifc info can be created
+		// store region, so that more specifc info can be created
 		this.currentRegion = hoverRegion;
 		return super.getHoverInfo(element, hoverRegion, previous);
 	}

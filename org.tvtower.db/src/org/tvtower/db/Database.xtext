@@ -244,7 +244,7 @@ Achievements:
 Achievement:
 	'<''achievement'
 		(
-			(('id')'='id=STRING )&
+			(('id')'='name=STRING )&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -376,7 +376,7 @@ Advertisements:
 Advertisement:
 	'<''ad'
 		(
-			('id''='id=STRING )&
+			('id''='name=STRING )&
 			('comment''='comment=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -479,7 +479,7 @@ Effect:
 			('news''='news=[NewsItem|STRING])?& 
 			('genre''='genre=STRING)?&
 			('choose''='choose=STRING)?&
-			('referenceGUID''='refs=STRING)?&//TODO reference to Person?
+			('referenceGUID''='refs=[Person|STRING])?&
 			('valueMin''='valueMin=STRING)?&
 			('valueMax''='valueMax=STRING)?&
 			('probability''='probability=STRING)?&
@@ -621,7 +621,7 @@ Programmes:
 Programme:
 	'<''programme'
 		(
-			('id''='id=STRING )&
+			('id''='name=STRING )&
 			('product''='product=STRING )?&
 			('licence_type''='licenceType=STRING )?&
 			('tmdb_id''='tmdbId=STRING )?&

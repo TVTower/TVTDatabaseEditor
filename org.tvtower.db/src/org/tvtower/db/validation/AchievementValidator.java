@@ -25,10 +25,10 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkAchievement(Achievement a) {
 		if (a.getTitle() == null || a.getTitle().getLstrings().isEmpty()) {
-			error("title must be defined", $.getAchievement_Id());
+			error("title must be defined", $.getAchievement_Name());
 		}
 		if (a.getData() == null) {
-			error("data must be defined", $.getAdvertisement_Id());
+			error("data must be defined", $.getAchievement_Name());
 		}
 	}
 

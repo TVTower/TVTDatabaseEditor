@@ -49,7 +49,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 		if (title != null) {
 			return title;
 		}
-		return a.getId();
+		return a.getName();
 	}
 
 	String text(Advertisements achievements) {
@@ -61,7 +61,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 		if (title != null) {
 			return title;
 		}
-		return a.getId();
+		return a.getName();
 	}
 
 	String text(News news) {
@@ -92,7 +92,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 		if (title != null) {
 			return title;
 		}
-		return p.getId();
+		return p.getName();
 	}
 
 	String text(ScriptTemplates programmes) {

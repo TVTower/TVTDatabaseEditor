@@ -35,14 +35,14 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	public void checkProgramme(Programme p) {
 		boolean isMainEntry = isMainEntry(p);
 		if (p.getTitle() == null) {
-			error("title must be defined", $.getProgramme_Id());
+			error("title must be defined", $.getProgramme_Name());
 		}
 		if (p.getDescription() == null && isMainEntry) {
-			error("description must be defined", $.getProgramme_Id());
+			error("description must be defined", $.getProgramme_Name());
 		}
 		if (p.getData() == null) {
 			if (isMainEntry) {
-				error("data must be defined", $.getProgramme_Id());
+				error("data must be defined", $.getProgramme_Name());
 			}
 		} else {
 			if (p.getData().getYear() != null && p.getReleaseTime() != null) {

@@ -198,8 +198,9 @@ public class NewsValidator extends AbstractDatabaseValidator {
 					.ifPresent(err -> error(err, $.getEffect_ValueMin()));
 			effectTypeField("genre", e.getGenre(), genreExpected);
 			effectTypeField("choice", e.getChoose(), choiceExpected);
-			effectTypeField("reference", e.getRefs(), refExpected);
 			effectTypeField("enable", e.getEnable(), enableExpected);
+			referenceField("reference", e.getRefs(), refExpected);
+			referenceField("news", e.getNews(), newsExpected);
 
 			// check choices
 			if (e.getChoose() != null) {
@@ -220,11 +221,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				assertChoiceValueNotSet(e.getProbability2(), $.getEffect_Probability2());
 				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
 				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
-				if (newsExpected && e.getNews() == null) {
-					error("news missing", $.getEffect_News());
-				} else if (!newsExpected && e.getNews() != null) {
-					error("news not allowed for this effect type", $.getEffect_News());
-				}
 			}
 			// TODO time not always needed
 			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getEffect_Time()));
@@ -236,6 +232,14 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	private void assertChoiceValueNotSet(Object value, EStructuralFeature f) {
 		if (value != null) {
 			error("without choose this value must not be set", f);
+		}
+	}
+
+	private void referenceField(String field, Object value, boolean expected) {
+		if(expected && value ==null) {
+			error(field+ " expected for this effect type", $.getEffect_Type());
+		}else if(!expected&& value!=null) {
+			error(field + " not allowed for this effect type", $.getEffect_Type());
 		}
 	}
 
