@@ -4,18 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-//TODO in some cases ranges allowed?
-public class DatabaseTime {
+import org.tvtower.db.constants.DayOfWeek;
+import org.tvtower.db.constants.TVTHoverInfoCreator;
+
+public class DatabaseTime implements TVTHoverInfoCreator {
+	private static final DayOfWeek days = new DayOfWeek();
+
 	private String value;
+	private String[] segments;
+	private String type;
 
 	public DatabaseTime(String value) {
-		this.value = value;
+		setValue(value);
+	}
+
+	private void setValue(String value) {
+		if (value != null) {
+			segments = value.split(",", -1);
+			type = segments[0];
+		}
 	}
 
 	public Optional<String> getError() {
 		if (value != null) {
-			String[] segments = value.split(",", -1);
-			String type = segments[0];
 			List<TimeSegmentValidator> validators = new ArrayList<>();
 			switch (type) {
 			case "0":
@@ -115,4 +126,71 @@ public class DatabaseTime {
 		}
 	}
 
+	@Override
+	public String createHoverInfo(Object value) {
+		if (value != null) {
+			setValue(value.toString());
+			String[] p = new String[15];
+			for (int i = 0; i < 15; i++) {
+				p[i] = "?";
+			}
+			for (int i = 0; i < segments.length; i++) {
+				p[i] = segments[i];
+			}
+			if (getError().isEmpty()) {
+				switch (type) {
+				case "0":
+					return "immediately";
+				case "1":
+					if (p[1].equals(p[2])) {
+						return String.format("in %s hours", p[1]);
+					} else {
+						return String.format("in %s to %s hours", p[1], p[2]);
+					}
+				case "2":// in x days between h1,h2
+					return String.format("%s %s", inDays(p[1], p[2]), hours(p[3], p[4], "00", "00"));
+				case "3":// next X between h1, h2
+					return String.format("next %s %s", days.createHoverInfo(p[1]), hours(p[2], p[3], "00", "00"));
+				case "4":
+					// TODO relative year
+					return String.format("%s-%s-%s %s", p[1], p[2], p[3], hours(p[4], p[4], p[5], p[5]));
+				case "5":
+					// TODO relative year?
+					return String.format("between %s-%s-%s %s:%s and %s-%s-%s %s:%s", p[1], p[3], p[5], p[7], p[9],
+							p[2], p[4], p[6], p[8], p[10]);
+				case "6":
+					// TODO relative year?
+					return String.format("year %s game day %s %s:%s", p[1], p[2], p[3], p[4]);
+				case "7":
+					// TODO relative year?
+					// TODO nicer minutes
+					return String.format("between year %s game day %s %s:%s and year %s game day %s %s:%s", p[1], p[3],
+							p[5], p[7], p[2], p[4], p[6], p[8]);
+				case "8":
+					return String.format("on a work day %s days from now %s", p[1], hours(p[2], p[3], p[4], p[5]));
+				default:
+					return "some complicated Time";
+				}
+			}
+		}
+		return null;
+	}
+
+	private String inDays(String d1, String d2) {
+		if (d1.equals(d2)) {
+			return String.format("in %s days", d1);
+		} else {
+			return String.format("in %s to %s days", d1, d2);
+		}
+	}
+
+	private String hours(String h1, String h2, String m1, String m2) {
+		String min1 = "?".equals(m1) ? "00" : m1;
+		String min2 = "?".equals(m2) ? "00" : m2;
+		if (h1.equals(h2) && m1.equals(m2)) {
+			return String.format("at %s:%s", h1, min1);
+		} else {
+			return String.format("between %s:%s and %s:%s", h1, min1, h2, min2);
+		}
+	}
 }

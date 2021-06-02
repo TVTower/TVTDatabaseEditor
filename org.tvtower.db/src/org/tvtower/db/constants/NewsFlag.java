@@ -4,8 +4,8 @@ public class NewsFlag extends TVTFlag {
 
 	NewsFlag() {
 		add("none");
-		add("unique event");
 		add("send immediately");
+		add("unique event");
 		add("unskippable");
 		add("send to all");
 		add("keep ticker time");
