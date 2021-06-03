@@ -1,11 +1,13 @@
 package org.tvtower.db.validation;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
@@ -25,8 +27,6 @@ import org.tvtower.db.database.Modifier;
 import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.UnnamedProperty;
-import org.tvtower.db.database.VariableDef;
-import org.tvtower.db.database.Variables;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -178,6 +178,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		}
 		String text = s.getText();
 		if (text != null) {
+			List<String> definedVariables=null;
 			// anything between percent not containing percent or space
 			Pattern pattern = Pattern.compile("%([^%\\s]+)%");
 			Matcher matcher = pattern.matcher(text);
@@ -189,42 +190,45 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					// TODO check person generator variable
 					continue;
 				}
-				// TODO there may be two possible containers - episode defines own variables,
-				// but parent does as well
-				MayContainVariables vContainer = getVariableContainer(s);
-				if (vContainer != null) {
-					Variables varDefs = vContainer.getVariables();
-					boolean found = false;
-					for (VariableDef def : varDefs.getVariable()) {
-						if (variable.equalsIgnoreCase(def.getVar().toUpperCase())) {
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						if (vContainer instanceof ScriptTemplate) {
-							if (Constants.roleVariable.isValidValue(variable, "", false).isEmpty()) {
-								found = true;
-							}
-						}
-					}
-					if (!found) {
-						error("variable " + variable + " not defined", $.getLanguageString_Text());
+				if (definedVariables == null) {
+					definedVariables = getVariablesFromContainers(s);
+				}
+				if(definedVariables.isEmpty()) {
+					error("no variable definitions found", $.getLanguageString_Text());
+					continue;
+				}
+				boolean found = false;
+				for (String def : definedVariables) {
+					if (variable.equalsIgnoreCase(def)) {
+						found = true;
+						break;
 					}
 				}
-
+				if (!found) {
+					MayContainVariables varibaleContainer = EcoreUtil2.getContainerOfType(s, MayContainVariables.class);
+					if (varibaleContainer instanceof ScriptTemplate) {
+						if (Constants.roleVariable.isValidValue(variable, "", false).isEmpty()) {
+							found = true;
+						}
+					}
+				}
+				if (!found) {
+					error("variable " + variable + " not defined", $.getLanguageString_Text());
+				}
 			}
 		}
 	}
 
-	private MayContainVariables getVariableContainer(EObject o) {
+	private List<String> getVariablesFromContainers(EObject o) {
 		MayContainVariables vContainer = EcoreUtil2.getContainerOfType(o, MayContainVariables.class);
 		if (vContainer == null) {
-			return null;
-		} else if (vContainer.getVariables() == null) {
-			return getVariableContainer(vContainer.eContainer());
+			return new ArrayList<>();
 		} else {
-			return vContainer;
+			List<String> result = getVariablesFromContainers(vContainer.eContainer());
+			if(vContainer.getVariables()!=null) {
+				result.addAll(vContainer.getVariables().getVariable().stream().map(v->v.getVar()).collect(Collectors.toList()));
+			}
+			return result;
 		}
 	}
 
