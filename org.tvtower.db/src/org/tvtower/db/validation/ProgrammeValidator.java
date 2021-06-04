@@ -34,21 +34,22 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkProgramme(Programme p) {
 		boolean isMainEntry = isMainEntry(p);
-		if (p.getTitle() == null) {
+		boolean isRef = (p.getRef() != null);
+		if (p.getTitle() == null && !isRef) {
 			error("title must be defined", $.getProgramme_Name());
 		}
-		if (p.getDescription() == null && isMainEntry) {
+		if (p.getDescription() == null && isMainEntry && !isRef) {
 			error("description must be defined", $.getProgramme_Name());
 		}
 		if (p.getData() == null) {
-			if (isMainEntry) {
+			if (isMainEntry && !isRef) {
 				error("data must be defined", $.getProgramme_Name());
 			}
 		} else {
 			if (p.getData().getYear() != null && p.getReleaseTime() != null) {
 				error("release time must be defined only once", $.getProgramme_ReleaseTime());
 			}
-			if (isMainEntry) {
+			if (isMainEntry && !isRef) {
 				CommonValidation.getValueMissingError("country", p.getData().getCountry())
 						.ifPresent(e -> error(e, p.getData(), $.getProgramme_Data()));
 				CommonValidation.getValueMissingError("maingenre", p.getData().getMaingenre())
@@ -59,9 +60,9 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 		}
 		Constants._boolean.isValidValue(p.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getProgramme_Fictional()));
-		Constants.licenceType.isValidValue(p.getLicenceType(), "licence_type", true)
+		Constants.licenceType.isValidValue(p.getLicenceType(), "licence_type", !isRef)
 				.ifPresent(e -> error(e, $.getProgramme_LicenceType()));
-		Constants.programmeType.isValidValue(p.getLicenceType(), "product", true)
+		Constants.programmeType.isValidValue(p.getLicenceType(), "product", !isRef)
 				.ifPresent(e -> error(e, $.getProgramme_Product()));
 
 		if (p.getChildren() != null) {
@@ -137,28 +138,28 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	public void checkProgrammeStaff(Staff staff) {
 		int offset = getParentStaffCount(staff);
 		if (offset > 0) {
-			Set<Integer> indexes=new HashSet<>();
-			int nextIndex=offset;
+			Set<Integer> indexes = new HashSet<>();
+			int nextIndex = offset;
 			EList<StaffMember> members = staff.getMember();
-			for(int i=0; i<members.size(); i++) {
+			for (int i = 0; i < members.size(); i++) {
 				StaffMember member = members.get(i);
 				try {
 					int index = Integer.parseInt(member.getIndex());
-					if(indexes.contains(index)) {
-						error("duplicate index", member,  $.getStaffMember_Index());
-					}else {
+					if (indexes.contains(index)) {
+						error("duplicate index", member, $.getStaffMember_Index());
+					} else {
 						indexes.add(index);
-						if(index<offset) {
-							//overwrite existing job
+						if (index < offset) {
+							// overwrite existing job
 						} else {
-							if(index>(nextIndex)) {
-								error("expected "+nextIndex, member, $.getStaffMember_Index());
+							if (index > (nextIndex)) {
+								error("expected " + nextIndex, member, $.getStaffMember_Index());
 							}
 							nextIndex++;
-						} 
+						}
 					}
-				}catch(NumberFormatException e) {
-					error("invalid index", member,  $.getStaffMember_Index());
+				} catch (NumberFormatException e) {
+					error("invalid index", member, $.getStaffMember_Index());
 				}
 			}
 		} else {
@@ -191,7 +192,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkProgrammeReleaseTime(ProgrammeReleaseTime t) {
-		CommonValidation.getIntRangeError(t.getYear(), "year",Constants.MIN_YEAR, Constants.MAX_YEAR, false)
+		CommonValidation.getIntRangeError(t.getYear(), "year", Constants.MIN_YEAR, Constants.MAX_YEAR, false)
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_Year()));
 		CommonValidation.getIntRangeError(t.getDay(), "year", 1, 366, false)
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_Day()));
@@ -200,10 +201,10 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 		CommonValidation.getIntRangeError(t.getYearRelative(), "year_relative", -100, 100, false)
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelative()));
-		CommonValidation.getIntRangeError(t.getYearRelativeMin(), "year_relative_min", Constants.MIN_YEAR, Constants.MAX_YEAR, false)
-				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMin()));
-		CommonValidation.getIntRangeError(t.getYearRelativeMax(), "year_relative_max", Constants.MIN_YEAR, Constants.MAX_YEAR, false)
-				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMax()));
+		CommonValidation.getIntRangeError(t.getYearRelativeMin(), "year_relative_min", Constants.MIN_YEAR,
+				Constants.MAX_YEAR, false).ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMin()));
+		CommonValidation.getIntRangeError(t.getYearRelativeMax(), "year_relative_max", Constants.MIN_YEAR,
+				Constants.MAX_YEAR, false).ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMax()));
 		CommonValidation.getMinMaxError(t.getYearRelativeMin(), t.getYearRelativeMax())
 				.ifPresent(e -> error(e, $.getProgrammeReleaseTime_YearRelativeMin()));
 

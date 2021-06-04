@@ -627,13 +627,14 @@ Programme:
 			('tmdb_id''='tmdbId=STRING )?&
 			('imdb_id''='imdbId=STRING )?&
 			('fictional''='fictional=STRING )?&
+			('programmedata_id''='ref=[Programme|STRING])?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
 	'>'
 	(
-		title=Title &
-		titleOrig=TitleOriginal? &
+		title=Title?&
+		titleOrig=TitleOriginal?&
 		description=Description?&
 		groups=ProgrammeGroups?&
 		attractivity=GroupAttractivity?&

@@ -105,7 +105,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		if (item.getEffects() != null) {
 			String thread = item.getThreadId();
 			if (thread != null) {
-				item.getEffects().getEffects().forEach(e -> {
+				item.getEffects().getEffects().stream().filter(e->Constants.effectType.isNewsTrigger(e.getType()))
+				.forEach(e -> {
 					checkTriggeredNews(item, e, e.getNews(), $.getEffect_News());
 					checkTriggeredNews(item, e, e.getNews1(), $.getEffect_News1());
 					checkTriggeredNews(item, e, e.getNews2(), $.getEffect_News2());
@@ -117,6 +118,9 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	}
 
 	private void checkTriggeredNews(NewsItem parentNews, Effect e, NewsItem triggered, EStructuralFeature feature) {
+		if(triggered.eIsProxy()) {
+			return;
+		}
 		String triggeredThread = triggered.getThreadId();
 		if (!parentNews.getThreadId().equals(triggeredThread)) {
 			warning("triggered news must belong to the same thread", e, feature);
@@ -186,8 +190,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			case EffectType.NEWS_AVAILABILITY:
 				newsExpected = true;
 				enableExpected = true;
-				//TODO remove warning when implementation is fixed
-				warning("should not be used yet, implementation has error", $.getEffect_Type());
 				break;
 			default:
 				break;
