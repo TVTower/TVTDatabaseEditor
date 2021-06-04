@@ -665,9 +665,9 @@ Staff:
 ;
 
 ProgrammeGroups:
-	'<''groups'
+	'<''groups' {ProgrammeGroups}
 		(
-			('target_groups''='targetGroup=STRING )&
+			('target_groups''='targetGroup=STRING )?&
 			('target_groups_optional''='optionalTargetGroup=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
 			('contra_pressure_groups''='contraPressureGroup=STRING)?

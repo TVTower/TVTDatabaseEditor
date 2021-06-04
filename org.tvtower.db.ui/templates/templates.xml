@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<templates>
+<template id="newsItem" autoinsert="true" context="org.tvtower.db.Database.NewsItem" deleted="false" description="news item" enabled="true" name="news">&lt;news id="${id}" type="0" creator=""&gt;&#13;
+	&lt;title&gt;&#13;
+		&lt;de&gt;${titleGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${titleEnglish}&lt;/en&gt;&#13;
+	&lt;/title&gt;&#13;
+	&lt;description&gt;&#13;
+		&lt;de&gt;${descriptionGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${descriptionEnglish}&lt;/en&gt;&#13;
+	&lt;/description&gt;&#13;
+	&lt;effects&gt;&#13;
+	&lt;/effects&gt;&#13;
+	&lt;data genre="${genre}" price="1.0" quality="${quality}" /&gt;&#13;
+&lt;/news&gt;</template>
+<template id="mlTag" autoinsert="true" context="org.tvtower.db.Database.kw_&lt;" deleted="false" description="multi line tag" enabled="true" name="tag">&lt;${tag}&gt;&#13;
+	${cursor}&#13;
+&lt;/${tag}&gt;</template>
+</templates>
