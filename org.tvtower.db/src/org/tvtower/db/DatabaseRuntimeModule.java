@@ -3,6 +3,8 @@
  */
 package org.tvtower.db;
 
+import org.eclipse.xtext.naming.IQualifiedNameProvider;
+import org.eclipse.xtext.naming.SimpleNameProvider;
 import org.eclipse.xtext.parser.antlr.Lexer;
 import org.eclipse.xtext.parser.antlr.LexerBindings;
 import org.eclipse.xtext.parser.antlr.LexerProvider;
@@ -38,5 +40,10 @@ public class DatabaseRuntimeModule extends AbstractDatabaseRuntimeModule {
 		binder.bind(Lexer.class)
 			.annotatedWith(Names.named(LexerBindings.RUNTIME))
 			.to(CustomDatabaseLexer.class);
+	}
+
+	@Override
+	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+		return SimpleNameProvider.class;
 	}
 }

@@ -27,6 +27,9 @@ public class DatabaseHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	private String getFeatureInfo(EObject o) {
+		if(currentRegion==null) {
+			return null;
+		}
 		for (EStructuralFeature f : o.eClass().getEAllStructuralFeatures()) {
 			List<INode> nodes = NodeModelUtils.findNodesForFeature(o, f);
 			for (INode iNode : nodes) {
