@@ -80,7 +80,7 @@
 		<page
 			class="org.tvtower.db.ui.DatabaseExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
 			id="org.tvtower.db.Database"
-			name="Database">
+			name="TVTower Database">
 			<keywordReference id="org.tvtower.db.ui.keyword_Database"/>
 		</page>
 		<page
@@ -103,7 +103,7 @@
 		<page
 			class="org.tvtower.db.ui.DatabaseExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
 			id="org.tvtower.db.Database"
-			name="Database">
+			name="TVTower Database">
 			<keywordReference id="org.tvtower.db.ui.keyword_Database"/>
 			<enabledWhen>
 				<adapt type="org.eclipse.core.resources.IProject"/>
@@ -115,7 +115,7 @@
 		point="org.eclipse.ui.keywords">
 		<keyword
 			id="org.tvtower.db.ui.keyword_Database"
-			label="Database"/>
+			label="TVTower Database"/>
 	</extension>
 	<extension
 		point="org.eclipse.ui.commands">
@@ -431,5 +431,55 @@
 			extension="xml"
 			type="text">
 		</fileTypes>
+	</extension>
+	<extension
+		point="org.eclipse.ui.newWizards">
+		<category id="org.tvtower.db.ui.category" name="TVTower Database">
+		</category>
+		<wizard
+			category="org.tvtower.db.ui.category"
+			class="org.tvtower.db.ui.DatabaseExecutableExtensionFactory:org.eclipse.xtext.ui.wizard.template.TemplateNewFileWizard"
+			id="org.tvtower.db.ui.wizard.DatabaseNewFileWizard"
+			name="TVTower Database File"
+			icon="icons/new_Database_file.png">
+		</wizard>
+	</extension>
+	<extension
+		point="org.eclipse.xtext.ui.fileTemplate">
+		<fileTemplateProvider
+			class="org.tvtower.db.ui.DatabaseExecutableExtensionFactory:org.tvtower.db.ui.wizard.DatabaseFileTemplateProvider"
+			grammarName="org.tvtower.db.Database">
+		</fileTemplateProvider>
+	</extension>
+	<extension
+		point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="org.eclipse.ui.resourcePerspective">
+			<newWizardShortcut id="org.tvtower.db.ui.wizard.DatabaseNewFileWizard"/>
+		</perspectiveExtension>
+		<perspectiveExtension targetID="org.eclipse.jdt.ui.JavaPerspective">
+			<newWizardShortcut id="org.tvtower.db.ui.wizard.DatabaseNewFileWizard"/>
+		</perspectiveExtension>
+	</extension>
+	<extension
+		point="org.eclipse.ui.menus">
+		<menuContribution
+			allPopups="false"
+			locationURI="toolbar:org.eclipse.ui.main.toolbar">
+			<toolbar
+				id="org.tvtower.db.ui.toolbar">
+				<!--
+					For some reason the tooltip is not shown when hovering over the toolbar button
+					See also https://www.eclipse.org/forums/index.php/t/1079111/
+				-->
+				<command
+					commandId="org.eclipse.ui.newWizard"
+					tooltip="Create a new TVTower Database file">
+					<parameter
+						name="newWizardId"
+						value="org.tvtower.db.ui.wizard.DatabaseNewFileWizard">
+					</parameter>
+				</command>
+			</toolbar>
+		</menuContribution>
 	</extension>
 </plugin>
