@@ -22,6 +22,7 @@ import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.constants.TVTFlag;
 import org.tvtower.db.database.GroupAttractivity;
+import org.tvtower.db.validation.DatabaseTime;
 
 /**
  * See
@@ -49,6 +50,17 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 			acceptor.accept(createCompletionProposal(context.getPrefix(), new StyledString(k + " - " + v), null,
 					-k.intValue(), context.getPrefix(), context));
 		});
+	}
+
+	private void createTimeProposals(ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+		DatabaseTime t = new DatabaseTime(null);
+		String[] examples = new String[] { "0", "1,4,6", "2,1,9,13", "3,4,8,12", "4,1990,11,3,9,30",
+				"5,1990,1990,5,8,9,13,11,7,0,30", "6,2004,6,14,22", "7,2002,2004,3,7,8,11,30,45", "8,2,7,9,15,45" };
+		for (String e : examples) {
+			String type = e.split(",", -1)[0];
+			acceptor.accept(
+					createCompletionProposal("\"" + e + "\"", type + " - " + t.createHoverInfo(e), null, context));
+		}
 	}
 
 	//simple tag proposal: self-closing tag set cursor position one space after the tag name
@@ -263,6 +275,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 		mapProposal(Constants._boolean, acceptor, context);	}
 
 	@Override
+	public void completeNewsData_HappenTime(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		createTimeProposals(acceptor, context);
+	}
+
+	@Override
 	public void completeEffect_Trigger(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.triggerType, acceptor, context);
@@ -284,6 +302,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeEffect_Enable(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completeEffect_Time(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		createTimeProposals(acceptor, context);
 	}
 
 	@Override

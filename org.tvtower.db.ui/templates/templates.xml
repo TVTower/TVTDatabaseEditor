@@ -102,7 +102,7 @@ ${cursor}</template>
 &lt;/title&gt;&#13;
 ${cursor}</template>
 
-<template id="simpleNewsEffect" autoinsert="true" context="org.tvtower.db.Database.Effect" deleted="false" description="trigger single news effect" enabled="true" name="triggerNews">&lt;effect trigger="happen" type="triggernews" news=${triggeredNews} time="${tirggerTime}" /&gt;</template>
+<template id="simpleNewsEffect" autoinsert="true" context="org.tvtower.db.Database.Effect" deleted="false" description="trigger single news effect" enabled="true" name="triggerNews">&lt;effect trigger="happen" type="triggernews" news=${triggeredNews} time=${tirggerTime} /&gt;</template>
 
 <template id="variable" autoinsert="true" context="org.tvtower.db.Database.VariableDef" deleted="false" description="" enabled="true" name="variable">&lt;${variable}&gt;&#13;
 	&lt;de&gt;${contentGerman}&lt;/de&gt;&#13;
