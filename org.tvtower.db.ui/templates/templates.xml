@@ -1,5 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<templates>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><templates>
+
+<template id="description" autoinsert="true" context="org.tvtower.db.Database.Description" deleted="false" description="" enabled="true" name="description">&lt;description&gt;&#13;
+	&lt;de&gt;${descriptionGerman}&lt;/de&gt;&#13;
+	&lt;en&gt;${descriptionEnglish}&lt;/en&gt;&#13;
+&lt;/description&gt;&#13;
+${cursor}</template>
+
+<template id="effects" autoinsert="true" context="org.tvtower.db.Database.Effects" deleted="false" description="" enabled="true" name="effects">&lt;effects&gt;&#13;
+	${cursor}&#13;
+&lt;/effects&gt;</template>
+
+<template id="languageString" autoinsert="true" context="org.tvtower.db.Database.LanguageString" deleted="false" description="" enabled="true" name="language">&lt;${language}&gt;${cursor}&lt;/${language}&gt;</template>
+
 <template id="newsItem" autoinsert="true" context="org.tvtower.db.Database.NewsItem" deleted="false" description="news item" enabled="true" name="news">&lt;news id="${id}" type="0" creator=""&gt;&#13;
 	&lt;title&gt;&#13;
 		&lt;de&gt;${titleGerman}&lt;/de&gt;&#13;
@@ -11,9 +23,101 @@
 	&lt;/description&gt;&#13;
 	&lt;effects&gt;&#13;
 	&lt;/effects&gt;&#13;
-	&lt;data genre="${genre}" price="1.0" quality="${quality}" /&gt;&#13;
+	&lt;data genre=${genre} price="1.0" quality="${quality}" /&gt;&#13;
 &lt;/news&gt;</template>
+
+<template id="celebrityPerson" autoinsert="true" context="org.tvtower.db.Database.Person" deleted="false" description="celebrity" enabled="true" name="person">&lt;person id="${id}" tmdb_id="0" imdb_id="" creator="" created_by=""&gt;&#13;
+	&lt;first_name&gt;${firstName}&lt;/first_name&gt;&#13;
+	&lt;last_name&gt;${lastName}&lt;/last_name&gt;&#13;
+	&lt;details job="${job}" gender=${gender} birthday="" deathday="" country=${country} fictional=${fictional} /&gt;&#13;
+	&lt;data popularity="${popularity}" affinity="${affinity}" fame="${fame}" scandalizing="0" price_mod="1" power="${power}" humor="${humor}" charisma="${charisma}" appearance="${appearance}" topgenre=${genre} /&gt;&#13;
+&lt;/person&gt;&#13;
+${cursor}</template>
+
+<template id="simpleProgramme" autoinsert="true" context="org.tvtower.db.Database.Programme" deleted="false" description="simple programme" enabled="true" name="programme">&lt;programme id="${id}" product=${product} licence_type=${licence} creator="" created_by=""&gt;&#13;
+	&lt;title&gt;&#13;
+		&lt;de&gt;${titleGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${titleEnglish}&lt;/en&gt;&#13;
+	&lt;/title&gt;&#13;
+	&lt;description&gt;&#13;
+		&lt;de&gt;${descriptionGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${descriptionEnglish}&lt;/en&gt;&#13;
+	&lt;/description&gt;&#13;
+	&lt;staff&gt;&#13;
+		&lt;member index="0" function="${job}"&gt;${person}&lt;/member&gt;&#13;
+	&lt;/staff&gt;&#13;
+	&lt;groups target_groups="0" pro_pressure_groups="0" contra_pressure_groups="0" /&gt;&#13;
+	&lt;data country=${country} year="${releaseYear}" distribution=${distribution} maingenre=${genre} subgenre="" flags="${flags}" blocks="${blocks}" price_mod="${priceModifier}" /&gt;&#13;
+	&lt;ratings critics="${critics}" speed="${speed}" outcome="${outcome}" /&gt;&#13;
+&lt;/programme&gt;&#13;
+${cursor}</template>
+
+<template id="programmeRole" autoinsert="true" context="org.tvtower.db.Database.ProgrammeRole" deleted="false" description="" enabled="true" name="role">&lt;programmerole guid="${id}" first_name="${firstName}" last_name="${lastName}" gender=${gender} country=${country} /&gt;&#13;
+</template>
+
+<template id="simpleTemplate" autoinsert="true" context="org.tvtower.db.Database.ScriptTemplate" deleted="false" description="simple script template" enabled="true" name="script">&lt;scripttemplate product=${product} licence_type=${licence} guid="${id}"&gt;&#13;
+	&lt;title&gt;&#13;
+		&lt;de&gt;${titleGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${titleEnglish}&lt;/en&gt;&#13;
+	&lt;/title&gt;&#13;
+	&lt;description&gt;&#13;
+		&lt;de&gt;${descriptionGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${descriptionEnglish}&lt;/en&gt;&#13;
+	&lt;/description&gt;&#13;
+	&lt;variables&gt;&#13;
+		&lt;${variable}&gt;&#13;
+			&lt;de&gt;${contentGerman}&lt;/de&gt;&#13;
+			&lt;en&gt;${contentEnglish}&lt;/en&gt;&#13;
+		&lt;/${variable}&gt;&#13;
+	&lt;/variables&gt;&#13;
+	&lt;jobs&gt;&#13;
+		&lt;job index="0" function="${job1}" required="1" /&gt;&#13;
+		&lt;job index="1" function="${job2}" required="1" gender=${gender} /&gt;&#13;
+	&lt;/jobs&gt;&#13;
+	&lt;genres maingenre=${genre} subgenres=${subGenre}/&gt;&#13;
+	&lt;potential min="${potentialMin}" max="${potentialMax}" slope="50" /&gt;&#13;
+	&lt;outcome min="${outcomeMin}" max="${outcomeMax}" slope="50" /&gt;&#13;
+	&lt;review min="${reviewMin}" max="${reviewMax}" slope="50" /&gt;&#13;
+	&lt;speed min="${speedMin}" max="${speedMax}" slope="50" /&gt;&#13;
+	&lt;price min="${priceMin}" max="${priceMax}" slope="50" /&gt;&#13;
+	&lt;blocks min="${blocksMin}" max="${blocksMax}" slope="50" /&gt;&#13;
+	&lt;data flags="${flags}" /&gt;&#13;
+&lt;/scripttemplate&gt;</template>
+
 <template id="mlTag" autoinsert="true" context="org.tvtower.db.Database.kw_&lt;" deleted="false" description="multi line tag" enabled="true" name="tag">&lt;${tag}&gt;&#13;
 	${cursor}&#13;
 &lt;/${tag}&gt;</template>
+
+<template id="slTag" autoinsert="true" context="org.tvtower.db.Database.kw_&lt;" deleted="false" description="single line tag" enabled="true" name="tag">&lt;${tag}&gt;${cursor}&lt;/${tag}&gt;</template>
+
+<template id="text" autoinsert="true" context="org.tvtower.db.Database.Text" deleted="false" description="" enabled="true" name="text">&lt;text&gt;&#13;
+	&lt;de&gt;${textGerman}&lt;/de&gt;&#13;
+	&lt;en&gt;${textEnglish}&lt;/en&gt;&#13;
+&lt;/text&gt;&#13;
+${cursor}</template>
+
+<template id="title" autoinsert="true" context="org.tvtower.db.Database.Title" deleted="false" description="" enabled="true" name="title">&lt;title&gt;&#13;
+	&lt;de&gt;${titleGerman}&lt;/de&gt;&#13;
+	&lt;en&gt;${titleEnglish}&lt;/en&gt;&#13;
+&lt;/title&gt;&#13;
+${cursor}</template>
+
+<template id="simpleNewsEffect" autoinsert="true" context="org.tvtower.db.Database.Effect" deleted="false" description="trigger single news effect" enabled="true" name="triggerNews">&lt;effect trigger="happen" type="triggernews" news=${triggeredNews} time="${tirggerTime}" /&gt;</template>
+
+<template id="variable" autoinsert="true" context="org.tvtower.db.Database.VariableDef" deleted="false" description="" enabled="true" name="variable">&lt;${variable}&gt;&#13;
+	&lt;de&gt;${contentGerman}&lt;/de&gt;&#13;
+	&lt;en&gt;${contentEnglish}&lt;/en&gt;&#13;
+&lt;/${variable}&gt;&#13;
+${cursor}&#13;
+</template>
+
+<template id="variables" autoinsert="true" context="org.tvtower.db.Database.Variables" deleted="false" description="" enabled="true" name="variables">&lt;variables&gt;&#13;
+	&lt;${variable}&gt;&#13;
+		&lt;de&gt;${contentGerman}&lt;/de&gt;&#13;
+		&lt;en&gt;${contentEnglish}&lt;/en&gt;&#13;
+	&lt;/${variable}&gt;&#13;
+	${cursor}&#13;
+&lt;/variables&gt;&#13;
+</template>
+
 </templates>

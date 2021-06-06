@@ -52,7 +52,7 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	//simple tag proposal: self-closing tag set cursor position one space after the tag name
-	private void oneLineTagProposal(String tag, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+	private void selfClosingTagProposal(String tag, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
 		ContentAssistContext newContext = context.copy().setMatcher(tagPrefixMatcher).toContext();
 		ICompletionProposal proposal = createCompletionProposal("<"+tag +"  />", newContext);
 		if(proposal!=null) {
@@ -107,19 +107,19 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_AchievementData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_TaskData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_RewardData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 	// End Achievement-------------
 
@@ -223,13 +223,13 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_AdConditions(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("conditions", acceptor, context);
+		selfClosingTagProposal("conditions", acceptor, context);
 	}
 
 	@Override
 	public void complete_AdvertisementData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 	// End Ads-------------
 
@@ -289,13 +289,13 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_NewsData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_Effect(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("effect", acceptor, context);
+		selfClosingTagProposal("effect", acceptor, context);
 	}
 // End News-------------
 
@@ -375,13 +375,19 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_PersonData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_PersonDetails(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("details", acceptor, context);
+		selfClosingTagProposal("details", acceptor, context);
+	}
+
+	@Override
+	public void complete_ProgrammeRole(EObject model, RuleCall ruleCall, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		selfClosingTagProposal("programmerole", acceptor, context);
 	}
 	// End Person-------------
 
@@ -472,25 +478,25 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_ProgrammeReleaseTime(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("releaseTime", acceptor, context);
+		selfClosingTagProposal("releaseTime", acceptor, context);
 	}
 
 	@Override
 	public void complete_ProgrammeRatings(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("ratings", acceptor, context);
+		selfClosingTagProposal("ratings", acceptor, context);
 	}
 
 	@Override
 	public void complete_ProgrammeData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_StaffMember(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("member", acceptor, context);
+		selfClosingTagProposal("member", acceptor, context);
 	}
 	// End Programme-------------
 
@@ -562,75 +568,81 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
+	public void completeJobs_Job(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.job, acceptor, context);
+	}
+
+	@Override
 	public void complete_ScriptGenres(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("genres", acceptor, context);
+		selfClosingTagProposal("genres", acceptor, context);
 	}
 
 	@Override
 	public void complete_Job(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("job", acceptor, context);
+		selfClosingTagProposal("job", acceptor, context);
 	}
 
 	@Override
 	public void complete_ScriptData(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("data", acceptor, context);
+		selfClosingTagProposal("data", acceptor, context);
 	}
 
 	@Override
 	public void complete_Episodes(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("episodes", acceptor, context);
+		selfClosingTagProposal("episodes", acceptor, context);
 	}
 
 	@Override
 	public void complete_StudioSize(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("studio_size", acceptor, context);
+		selfClosingTagProposal("studio_size", acceptor, context);
 	}
 
 	@Override
 	public void complete_Blocks(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("blocks", acceptor, context);
+		selfClosingTagProposal("blocks", acceptor, context);
 	}
 
 	@Override
 	public void complete_Price(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("price", acceptor, context);
+		selfClosingTagProposal("price", acceptor, context);
 	}
 
 	@Override
 	public void complete_Potential(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("potential", acceptor, context);
+		selfClosingTagProposal("potential", acceptor, context);
 	}
 
 	@Override
 	public void complete_Outcome(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("outcome", acceptor, context);
+		selfClosingTagProposal("outcome", acceptor, context);
 	}
 
 	@Override
 	public void complete_Review(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("review", acceptor, context);
+		selfClosingTagProposal("review", acceptor, context);
 	}
 
 	@Override
 	public void complete_Speed(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("speed", acceptor, context);
+		selfClosingTagProposal("speed", acceptor, context);
 	}
 
 	@Override
 	public void complete_ProductionTime(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("production_time", acceptor, context);
+		selfClosingTagProposal("production_time", acceptor, context);
 	}
 	// End Script-------------
 
@@ -658,24 +670,24 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void complete_GroupAttractivity(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("targetgroupattractivity", acceptor, context);
+		selfClosingTagProposal("targetgroupattractivity", acceptor, context);
 	}
 
 	@Override
 	public void complete_ProgrammeGroups(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("groups", acceptor, context);
+		selfClosingTagProposal("groups", acceptor, context);
 	}
 
 	@Override
 	public void complete_Availability(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("availability", acceptor, context);
+		selfClosingTagProposal("availability", acceptor, context);
 	}
 
 	@Override
 	public void complete_Modifier(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		oneLineTagProposal("modifier", acceptor, context);
+		selfClosingTagProposal("modifier", acceptor, context);
 	}
 }
