@@ -123,7 +123,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		}
 		String triggeredThread = triggered.getThreadId();
 		if (!parentNews.getThreadId().equals(triggeredThread)) {
-			warning("triggered news must belong to the same thread", e, feature);
+			warning("triggered news should belong to the same thread", e, feature);
 		}
 		if (parentNews.getData() != null && parentNews.getData().getGenre() != null && triggered.getData() != null) {
 			if (!parentNews.getData().getGenre().equals(triggered.getData().getGenre())) {
