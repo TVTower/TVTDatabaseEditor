@@ -10,9 +10,8 @@ import org.tvtower.db.constants.TVTHoverInfoCreator;
 public class DatabaseTime implements TVTHoverInfoCreator {
 	private static final DayOfWeek days = new DayOfWeek();
 
-	private String value;
-	private String[] segments;
 	private String type;
+	private String[] segments;
 
 	public DatabaseTime(String value) {
 		setValue(value);
@@ -26,7 +25,7 @@ public class DatabaseTime implements TVTHoverInfoCreator {
 	}
 
 	public Optional<String> getError() {
-		if (value != null) {
+		if (type != null) {
 			List<TimeSegmentValidator> validators = new ArrayList<>();
 			switch (type) {
 			case "0":
@@ -50,8 +49,9 @@ public class DatabaseTime implements TVTHoverInfoCreator {
 				validators.add(new TimeSegmentValidator(1, 0, Integer.MAX_VALUE));
 				validators.add(new TimeSegmentValidator(2, 1, 12));
 				validators.add(new TimeSegmentValidator(3, 1, 31));
-				validators.add(new TimeSegmentValidator(4, 0, 23));
-				validators.add(new TimeSegmentValidator(5, 0, 59));
+				//time removed from real time type
+//				validators.add(new TimeSegmentValidator(4, 0, 23));
+//				validators.add(new TimeSegmentValidator(5, 0, 59));
 				break;
 			case "5":
 				validators.add(new TimeSegmentValidator(1, 0, Integer.MAX_VALUE));
@@ -60,10 +60,11 @@ public class DatabaseTime implements TVTHoverInfoCreator {
 				validators.add(new TimeSegmentValidator(4, 1, 12));
 				validators.add(new TimeSegmentValidator(5, 1, 31));
 				validators.add(new TimeSegmentValidator(6, 1, 31));
-				validators.add(new TimeSegmentValidator(7, 0, 23));
-				validators.add(new TimeSegmentValidator(8, 0, 23));
-				validators.add(new TimeSegmentValidator(9, 0, 59));
-				validators.add(new TimeSegmentValidator(10, 0, 59));
+				//time removed from real time type
+//				validators.add(new TimeSegmentValidator(7, 0, 23));
+//				validators.add(new TimeSegmentValidator(8, 0, 23));
+//				validators.add(new TimeSegmentValidator(9, 0, 59));
+//				validators.add(new TimeSegmentValidator(10, 0, 59));
 				break;
 			case "6":
 				validators.add(new TimeSegmentValidator(1, 0, Integer.MAX_VALUE));
