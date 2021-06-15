@@ -54,8 +54,8 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
 	private void createTimeProposals(ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
 		DatabaseTime t = new DatabaseTime(null);
-		String[] examples = new String[] { "0", "1,4,6", "2,1,9,13", "3,4,8,12", "4,1990,11,3,9,30",
-				"5,1990,1990,5,8,9,13,11,7,0,30", "6,2004,6,14,22", "7,2002,2004,3,7,8,11,30,45", "8,2,7,9,15,45" };
+		String[] examples = new String[] { "0", "1,4,6", "2,1,9,13,17", "3,4,8,12", "4,1990,11,3",
+				"5,1990,1990,5,8,9,13", "6,2004,6,14,22", "7,2002,2004,3,7,8,11,30,45", "8,2,7,9,15,45" };
 		for (String e : examples) {
 			String type = e.split(",", -1)[0];
 			acceptor.accept(
