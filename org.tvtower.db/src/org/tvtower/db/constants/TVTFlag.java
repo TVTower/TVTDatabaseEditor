@@ -36,10 +36,10 @@ public abstract class TVTFlag implements TVTHoverInfoCreator {
 		}
 		try {
 			if (!Strings.isNullOrEmpty(value) && !items.containsKey(Long.parseLong(value))) {
-				return Optional.of("invalid value " + value);
+				return Optional.of(value + " is not a valid single flag");
 			}
 		} catch (NumberFormatException e) {
-			return Optional.of("no flag value" + value);
+			return Optional.of(value + " is not a number");
 		}
 		return Optional.empty();
 	}
