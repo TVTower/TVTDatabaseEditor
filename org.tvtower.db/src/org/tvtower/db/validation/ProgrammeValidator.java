@@ -109,7 +109,10 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_SlotEnd()));
 		CommonValidation.getDecimalRangeError(d.getPriceMod(), "price_mod", BigDecimal.ZERO, BigDecimal.TEN, false)
 				.ifPresent(e -> error(e, $.getProgrammeData_PriceMod()));
-
+		CommonValidation.getIntRangeError(d.getBroadcastLimit(), "broadcast_limit", 1, 100, false)
+				.ifPresent(e -> error(e, $.getProgrammeData_BroadcastLimit()));
+		Constants.broadcastFlag.isValidFlag(d.getBroadcastFlags(), "broadcast_flags", false)
+				.ifPresent(e -> error(e, $.getProgrammeData_BroadcastFlags()));
 	}
 
 	@Check

@@ -105,8 +105,9 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getScriptData_LicenceFlags()));
 		CommonValidation.getTimeError(d.getLive_date(), "live_date")
 				.ifPresent(e -> error(e, $.getScriptData_Live_date()));
-		
-		// TODO productionBroadcastFlags
+		Constants.licenceFlag.isValidFlag(d.getBroadcastFlags(), "production_broadcast_flags", false)
+		.ifPresent(e -> error(e, $.getScriptData_BroadcastFlags()));
+
 		CommonValidation.getIntRangeError(d.getBroadcastTimeSlotStart(), "broadcast_time_slot_start", 0, 23, false)
 				.ifPresent(e -> error(e, $.getScriptData_BroadcastTimeSlotStart()));
 		CommonValidation.getIntRangeError(d.getBroadcastTimeSlotEnd(), "broadcast_time_slot_end", 0, 23, false)

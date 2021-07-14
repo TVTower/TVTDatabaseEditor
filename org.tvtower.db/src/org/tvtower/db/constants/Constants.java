@@ -18,6 +18,7 @@ public class Constants {
 	public static ProgrammeDataFlag programmeFlag = new ProgrammeDataFlag();
 	public static LicenceType licenceType = new LicenceType();
 	public static LicenceFlag licenceFlag = new LicenceFlag();
+	public static BroadcastFlag broadcastFlag = new BroadcastFlag();
 	public static ProgrammeDistribution distribution = new ProgrammeDistribution();
 
 	public static GlobalVariable globalVariable = new GlobalVariable();
@@ -67,8 +68,7 @@ public class Constants {
 				.put($.getScriptData_LicenceFlags(), licenceFlag)
 				.put($.getScriptData_ScriptFlags(), scriptFlag)
 				.put($.getScriptData_Live_date(), timeProvider)
-				//TODO broadcast flags!!
-//				.put($.getScriptData_BroadcastFlags())
+				.put($.getScriptData_BroadcastFlags(), broadcastFlag)
 				.put($.getScriptGenres_MainGenre(), programmGenre)
 				.put($.getScriptGenres_Subgenres(), programmGenre)
 
@@ -126,6 +126,7 @@ public class Constants {
 				.put($.getProgrammeData_Subgenre(), programmGenre)
 				.put($.getProgrammeData_Flags(), programmeFlag)
 				.put($.getProgrammeData_LicenceFlags(), licenceFlag)
+				.put($.getProgrammeData_BroadcastFlags(), broadcastFlag)
 
 				.put($.getProgrammeGroups_TargetGroup(), targetgroup)
 				.put($.getProgrammeGroups_OptionalTargetGroup(), targetgroup)
