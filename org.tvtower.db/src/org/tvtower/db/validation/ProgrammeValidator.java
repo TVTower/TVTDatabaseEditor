@@ -51,11 +51,11 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 			}
 			if (isMainEntry && !isRef) {
 				CommonValidation.getValueMissingError("country", p.getData().getCountry())
-						.ifPresent(e -> error(e, p.getData(), $.getProgramme_Data()));
+						.ifPresent(e -> error(e, $.getProgramme_Data()));
 				CommonValidation.getValueMissingError("maingenre", p.getData().getMaingenre())
-						.ifPresent(e -> error(e, p.getData(), $.getProgramme_Data()));
+						.ifPresent(e -> error(e, $.getProgramme_Data()));
 				CommonValidation.getValueMissingError("distribution", p.getData().getDistribution())
-						.ifPresent(e -> error(e, p.getData(), $.getProgramme_Data()));
+						.ifPresent(e -> error(e, $.getProgramme_Data()));
 			}
 		}
 		Constants._boolean.isValidValue(p.getFictional(), "fictional", false)
