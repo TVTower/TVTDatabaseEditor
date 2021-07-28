@@ -65,6 +65,17 @@ public abstract class TVTFlag implements TVTHoverInfoCreator {
 		return Maps.newLinkedHashMap(items);
 	}
 
+	public final boolean hasFlag(String value, long flag) {
+		if (value != null) {
+			try {
+				return (Long.parseLong(value) & flag) > 0;
+			} catch (NumberFormatException e) {
+				// ignore
+			}
+		}
+		return false;
+	}
+
 	@Override
 	public String createHoverInfo(Object value) {
 		if (value != null) {

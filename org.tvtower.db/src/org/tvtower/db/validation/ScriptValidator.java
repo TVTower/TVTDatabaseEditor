@@ -1,8 +1,13 @@
 package org.tvtower.db.validation;
 
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
+import org.tvtower.db.constants.BroadcastFlag;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.LicenceType;
+import org.tvtower.db.constants.ProgrammeDataFlag;
+import org.tvtower.db.constants.ProgrammeType;
 import org.tvtower.db.database.ContainsMinMaxSlope;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Job;
@@ -13,6 +18,8 @@ import org.tvtower.db.database.ScriptData;
 import org.tvtower.db.database.ScriptGenres;
 import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.ScriptTemplates;
+
+import com.google.common.base.Strings;
 
 public class ScriptValidator extends AbstractDatabaseValidator {
 
@@ -62,6 +69,45 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		checkMinMaxSlope(t.getReview(), 0, 100);
 		checkMinMaxSlope(t.getSpeed(), 0, 100);
 		checkMinMaxSlope(t.getProductionTime(), 1, SEVENDAYS);
+
+		if (t.getData() != null && t.getData().getProductionLimit() != null) {
+			checkProductionLimit(t);
+		}
+		if (hasLiveFlag(t)) {
+			checkLiveDate(t);
+		}
+	}
+
+	private boolean hasLiveFlag(ScriptTemplate t) {
+		ProgrammeDataFlag flags = Constants.programmeFlag;
+		return t.getData() != null && (flags.hasFlag(t.getData().getProgrammeFlags(), flags.LIVE)
+				|| flags.hasFlag(t.getData().getOptionalProgrammeFlags(), flags.LIVE));
+	}
+
+	private void checkProductionLimit(ScriptTemplate t) {
+		String limit = t.getData().getProductionLimit();
+		if (!Strings.isNullOrEmpty(limit) && !"1".equals(limit)) {
+			EStructuralFeature f = $.getScriptData_ProductionLimit();
+			if (t.getChildren() != null) {
+				error("limit definition not allowed if there are child templates", t.getData(), f);
+			} else if (!LicenceType.SINGLE.equals(t.getLicenceType())) {
+				error("limit definition only allowed for licence type 'single'", t.getData(), f);
+			} else if (!ProgrammeType.SHOW.equals(t.getProduct())) {
+				error("limit definition only allowed for product 'show'", t.getData(), f);
+			}
+		}
+	}
+
+	private void checkLiveDate(ScriptTemplate t) {
+		ScriptData data = t.getData();
+		BroadcastFlag bcFlags = Constants.broadcastFlag;
+		if (data.getLive_date() == null && (data.getBroadcastFlags() == null
+				|| !bcFlags.hasFlag(data.getBroadcastFlags(), bcFlags.ALWAYS_LIVE))) {
+			EStructuralFeature f = t.getData().getProgrammeFlags() != null ? $.getScriptData_ProgrammeFlags()
+					: $.getScriptData_OptionalProgrammeFlags();
+			warning("if the programme is to be live, either the live time has to be defined or the Always-Live-Flag has to be set",
+					t.getData(), f);
+		}
 	}
 
 	@Check
@@ -87,8 +133,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 	public void checkJob(Job job) {
 		Constants._boolean.isValidValue(job.getRequired(), "required", true)
 				.ifPresent(e -> error(e, $.getJob_Required()));
-		Constants.job.isValidCastJob(job.getFunction(), "function", true)
-				.ifPresent(e -> error(e, $.getJob_Function()));
+		Constants.job.isValidCastJob(job.getFunction(), "function", true).ifPresent(e -> error(e, $.getJob_Function()));
 		Constants.gender.isValidValue(job.getGender(), "gender", false).ifPresent(e -> error(e, $.getJob_Gender()));
 	}
 

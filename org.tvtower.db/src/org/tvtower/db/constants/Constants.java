@@ -127,6 +127,7 @@ public class Constants {
 				.put($.getProgrammeData_Flags(), programmeFlag)
 				.put($.getProgrammeData_LicenceFlags(), licenceFlag)
 				.put($.getProgrammeData_BroadcastFlags(), broadcastFlag)
+				.put($.getProgrammeData_LicenceBroadcastFlags(), broadcastFlag)
 
 				.put($.getProgrammeGroups_TargetGroup(), targetgroup)
 				.put($.getProgrammeGroups_OptionalTargetGroup(), targetgroup)

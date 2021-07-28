@@ -494,6 +494,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
+	public void completeProgrammeData_LicenceBroadcastFlags(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.broadcastFlag, acceptor, context);
+	}
+
+	@Override
 	public void completeProgrammeData_Maingenre(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.programmGenre, acceptor, context);
@@ -613,6 +619,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void complete_ScriptGenres(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		selfClosingTagProposal("genres", acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_Live_date(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		createTimeProposals(acceptor, context);
 	}
 
 	@Override

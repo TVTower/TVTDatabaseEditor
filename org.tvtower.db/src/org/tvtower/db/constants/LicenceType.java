@@ -2,9 +2,11 @@ package org.tvtower.db.constants;
 
 public class LicenceType extends TVTEnum {
 
+	public static String SINGLE="1";
+
 	LicenceType() {
 		add("0", "unknown");
-		add("1", "single");
+		add(SINGLE, "single");
 		add("2", "episode");
 		add("3", "series");
 		add("4", "collection");

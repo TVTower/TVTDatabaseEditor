@@ -2,11 +2,13 @@ package org.tvtower.db.constants;
 
 public class ProgrammeType extends TVTEnum {
 
+	public static final String SHOW="3";
+
 	ProgrammeType() {
 		add("0", "undefined");
 		add("1", "movie");
 		add("2", "series");
-		add("3", "show");
+		add(SHOW, "show");
 		add("4", "feature");
 		add("5", "infomercial");
 		add("6", "event");

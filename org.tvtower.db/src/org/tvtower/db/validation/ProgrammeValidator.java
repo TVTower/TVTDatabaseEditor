@@ -113,6 +113,10 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_BroadcastLimit()));
 		Constants.broadcastFlag.isValidFlag(d.getBroadcastFlags(), "broadcast_flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_BroadcastFlags()));
+		CommonValidation.getIntRangeError(d.getLicenceBroadcastLimit(), "licence_broadcast_limit", 1, 100, false)
+				.ifPresent(e -> error(e, $.getProgrammeData_LicenceBroadcastLimit()));
+		Constants.broadcastFlag.isValidFlag(d.getLicenceBroadcastFlags(), "licence_broadcast_flags", false)
+				.ifPresent(e -> error(e, $.getProgrammeData_LicenceBroadcastFlags()));
 	}
 
 	@Check

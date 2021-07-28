@@ -762,12 +762,11 @@ ProgrammeData:
 			('broadcast_time_slot_end''='slotEnd=STRING)?&
 			('broadcast_limit''='broadcastLimit=STRING)?&
 			('broadcast_flags''='broadcastFlags=STRING)?&
+			('licence_broadcast_limit''='licenceBroadcastLimit=STRING)?&
+			('licence_broadcast_flags''='licenceBroadcastFlags=STRING)?&
 			('price_mod''='priceMod=STRING)?
 			//TODO noch nicht alles unterstützt
 			//available, //noch kein sinnvoller Anwendungsfall in DB
-			//für Limits und Flags unterstützt der Editor aktuell nur die globale "Fallback"-Variante
-			//data_broadcast_limit,licence_broadcast_limit
-			//data_broadcast_flags,licence_broadcast_flags
 		)
 	'/>'
 ;
