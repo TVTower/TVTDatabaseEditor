@@ -184,7 +184,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			Matcher matcher = pattern.matcher(text);
 			while (matcher.find()) {
 				String variable = matcher.group(1);
-				if (Constants.globalVariable.isValidValue(variable, "", false).isEmpty()) {
+				if (!Constants.globalVariable.isValidValue(variable, "", false).isPresent()) {
 					continue;
 				} else if (variable.startsWith("PERSONGENERATOR")) {
 					// TODO check person generator variable
@@ -207,7 +207,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 				if (!found) {
 					MayContainVariables varibaleContainer = EcoreUtil2.getContainerOfType(s, MayContainVariables.class);
 					if (varibaleContainer instanceof ScriptTemplate) {
-						if (Constants.roleVariable.isValidValue(variable, "", false).isEmpty()) {
+						if (!Constants.roleVariable.isValidValue(variable, "", false).isPresent()) {
 							found = true;
 						}
 					}

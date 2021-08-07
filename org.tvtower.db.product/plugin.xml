@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            name="Standalone TVTower DB Editor"
+            application="org.eclipse.ui.ide.workbench">
+         <property
+               name="startupForegroundColor"
+               value="ffffff">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="2,290,450,10">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="7,265,320,25">
+         </property>
+         <property
+               name="appName"
+               value="Standalone TVTower DB Editor">
+         </property>
+         <property
+               name="aboutText"
+               value="See https://github.com/TVTower/Documentation">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
+   </extension>
+
+</plugin>

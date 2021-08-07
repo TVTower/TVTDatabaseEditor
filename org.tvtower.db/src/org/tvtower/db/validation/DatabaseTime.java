@@ -84,7 +84,8 @@ public class DatabaseTime implements TVTHoverInfoCreator {
 				rangeError = getRangeError(segments, 1, 2);
 				break;
 			case "2":
-				rangeError = getRangeError(segments, 1, 2).or(() -> getRangeError(segments, 3, 4));
+				Optional<String> tmp = getRangeError(segments, 1, 2);
+				rangeError = tmp.isPresent() ? tmp : getRangeError(segments, 3, 4);
 				break;
 			case "3":
 				rangeError = getRangeError(segments, 2, 3);
@@ -185,7 +186,7 @@ public class DatabaseTime implements TVTHoverInfoCreator {
 			for (int i = 0; i < segments.length; i++) {
 				p[i] = segments[i];
 			}
-			if (getError().isEmpty()) {
+			if (!getError().isPresent()) {
 				switch (type) {
 				case "0":
 					return "immediately";
