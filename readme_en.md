@@ -14,10 +14,12 @@ The actual xml files are edited for full control over the changes made (text dif
 
 # Setting up the editor
 
-The Eclipse-Update site of the latest snapshot version is currently located at `https://www.nittka.de/download/tvtdb`.
+A detailed [description for the setup](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_en/installation.md) and the general [documentation for the editor](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_en/main.md) can be found in the [TVTower documentation repository](https://github.com/TVTower/Documentation).
 
-For setting up the editor via the Eclipse installer you can use the setup located at `https://raw.githubusercontent.com/TVTower/TVTDatabaseEditor/master/TVTDbEditor.setup`.
-A detailed [description for the setup](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_en/installation.md) and the general [documentation for the editor](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_en/main.md) can also be found in [TVTower documentation repository](https://github.com/TVTower/Documentation).
+A standalone version exists.
+Those familiar with Eclipse can set up the editor via the Eclipse installer using the setup file located at `https://raw.githubusercontent.com/TVTower/TVTDatabaseEditor/master/TVTDbEditor.setup`.
+
+The Eclipse-Update site of the latest snapshot version is currently located at `https://www.nittka.de/download/tvtdb`.
 
 # Bugs/Feature requests/Problems
 

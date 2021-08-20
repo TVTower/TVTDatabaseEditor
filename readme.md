@@ -15,10 +15,12 @@ Und das alles während man direkt die Orignialdatei bearbeitet und Kontrolle üb
 
 # Einrichten des Editors
 
-Die Eclipse-Updatesite für die neuste Snapshot-Version ist aktuell unter `https://www.nittka.de/download/tvtdb` verfügbar.
-
-Für das Einrichten des Editors via Eclipse-Installer kann das unter `https://raw.githubusercontent.com/TVTower/TVTDatabaseEditor/master/TVTDbEditor.setup` liegende Setup verwendet werde.
 Eine ausführliche [Beschreibung für das Einrichten](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_de/installation.md) und die allgemeine [Dokumentation für den Editor](https://github.com/TVTower/Documentation/blob/master/database_editor/xtext_de/main.md) befindet sich im [TVTower-Dokumentationsrepository](https://github.com/TVTower/Documentation).
+
+Es gibt eine Standalone-Variante.
+Wer aber mit Eclipse vertraut ist, kann für das Einrichten des Editors via Eclipse-Installer das unter `https://raw.githubusercontent.com/TVTower/TVTDatabaseEditor/master/TVTDbEditor.setup` liegende Setup verwenden.
+
+Die Eclipse-Updatesite für die neuste Snapshot-Version ist aktuell unter `https://www.nittka.de/download/tvtdb` verfügbar.
 
 # Fehler/Änderungswünsche/Probleme melden
 
