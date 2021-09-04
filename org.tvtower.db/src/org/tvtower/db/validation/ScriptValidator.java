@@ -5,6 +5,7 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.BroadcastFlag;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.LicenceFlag;
 import org.tvtower.db.constants.LicenceType;
 import org.tvtower.db.constants.ProgrammeDataFlag;
 import org.tvtower.db.constants.ProgrammeType;
@@ -74,7 +75,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 			checkProductionLimit(t);
 		}
 		if (hasLiveFlag(t)) {
-			checkLiveDate(t);
+			checkLiveDateAndFlags(t);
 		}
 	}
 
@@ -98,7 +99,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		}
 	}
 
-	private void checkLiveDate(ScriptTemplate t) {
+	private void checkLiveDateAndFlags(ScriptTemplate t) {
 		ScriptData data = t.getData();
 		BroadcastFlag bcFlags = Constants.broadcastFlag;
 		if (data.getLive_date() == null && (data.getBroadcastFlags() == null
@@ -107,6 +108,11 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 					: $.getScriptData_OptionalProgrammeFlags();
 			warning("if the programme is to be live, either the live time has to be defined or the Always-Live-Flag has to be set",
 					t.getData(), f);
+		}
+		LicenceFlag lFlags = Constants.licenceFlag;
+		if(lFlags.hasFlag(data.getLicenceFlags(), lFlags.REFILL_BROADCAST_LIMIT)){
+			warning("live scipts should not reset the broadcast limit (script can be bought again)",
+					t.getData(), $.getScriptData_LicenceFlags());
 		}
 	}
 
