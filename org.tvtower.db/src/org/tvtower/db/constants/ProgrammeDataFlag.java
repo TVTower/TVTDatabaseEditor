@@ -23,4 +23,9 @@ public class ProgrammeDataFlag extends TVTFlag {
 		add("invisible");
 		add("live on tape");
 	}
+
+//	@Override
+//	protected long getObsoleteOrUnsupportedFlags() {
+//		return LIVE;
+//	}
 }

@@ -54,6 +54,10 @@ public abstract class TVTFlag implements TVTHoverInfoCreator {
 				if (asNumber < 0 || asNumber >= MAX_FLAG) {
 					return Optional.of("invalid value " + value);
 				}
+				long unsupported=asNumber & getObsoleteOrUnsupportedFlags();
+				if(unsupported > 0) {
+					return Optional.of("value contains unsupported flags: "+unsupported);
+				}
 			}
 		} catch (NumberFormatException e) {
 			return Optional.of("no flag value" + value);
@@ -99,5 +103,14 @@ public abstract class TVTFlag implements TVTHoverInfoCreator {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * flags may provide a bitmap of flags not to be used in the database
+	 * 
+	 * This can also be used temporarily to find all entries using a particular flag
+	 */
+	protected long getObsoleteOrUnsupportedFlags() {
+		return 0;
 	}
 }

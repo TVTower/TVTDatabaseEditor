@@ -3,6 +3,7 @@ package org.tvtower.db.constants;
 public class BroadcastFlag extends TVTFlag {
 
 	public final long ALWAYS_LIVE;
+	public final long LIVE_TIME_FIXED;
 
 	BroadcastFlag() {
 		add("unknown");
@@ -20,8 +21,12 @@ public class BroadcastFlag extends TVTFlag {
 		add("ignored by betty");
 		add("ignored by awards");
 		add("exclusive to one owner");
-		add("live time fixed");
+		LIVE_TIME_FIXED=add("live time fixed");
 		add("keep time slot restriction");
-		add("time slot restriction active");
+	}
+
+	@Override
+	protected long getObsoleteOrUnsupportedFlags() {
+		return LIVE_TIME_FIXED;
 	}
 }
