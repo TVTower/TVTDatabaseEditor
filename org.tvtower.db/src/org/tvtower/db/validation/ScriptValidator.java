@@ -59,6 +59,12 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				} else if (!("" + i).equals(child.getIndex())) {
 					error("index " + i + " expected", child, $.getScriptTemplate_Index());
 				}
+				if(child.getData()!=null && child.getData().getLicenceFlags() != null) {
+					error("children must not have licence flags", child.getData(), $.getScriptData_LicenceFlags());
+				}
+				if(child.getData()!=null && child.getData().getScriptFlags() != null) {
+					error("children must not have script flags", child.getData(), $.getScriptData_ScriptFlags());
+				}
 			}
 		}
 		checkMinMaxSlope(t.getEpisodes(), 1, 32);
@@ -77,6 +83,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		if (hasLiveFlag(t)) {
 			checkLiveDateAndFlags(t);
 		}
+		validateEpisodes(t);
 	}
 
 	private boolean hasLiveFlag(ScriptTemplate t) {
@@ -121,6 +128,13 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		Constants.programmGenre.isValidValue(g.getMainGenre(), "maingenre", true)
 				.ifPresent(e -> error(e, $.getScriptGenres_MainGenre()));
 		Constants.programmGenre.isValidList(g.getSubgenres()).ifPresent(e -> error(e, $.getScriptGenres_Subgenres()));
+	}
+
+	private void validateEpisodes(ScriptTemplate t) {
+		//TODO episodes only for series with zero or one child, or series episode
+//		if(t.getEpisodes()!=null) {
+//			error("episodes must not be defined if children are", $.getScriptTemplate_Episodes());
+//		}
 	}
 
 	@Check

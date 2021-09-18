@@ -81,6 +81,9 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				if (!Objects.equal(p.getProduct(), child.getProduct())) {
 					error("product mismatch", child, $.getProgramme_Product());
 				}
+				if(child.getData()!=null && child.getData().getLicenceFlags() != null) {
+					error("children must not have licence flags", child.getData(), $.getProgrammeData_LicenceFlags());
+				}
 			}
 		}
 	}
