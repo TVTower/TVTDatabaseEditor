@@ -2,13 +2,15 @@ package org.tvtower.db.constants;
 
 public class LicenceType extends TVTEnum {
 
-	public static String SINGLE="1";
+	public static final String SINGLE="1";
+	public static final String EPISODE="2";
+	public static final String SERIES="3";
 
 	LicenceType() {
 		add("0", "unknown");
 		add(SINGLE, "single");
-		add("2", "episode");
-		add("3", "series");
+		add(EPISODE, "episode");
+		add(SERIES, "series");
 		add("4", "collection");
 		add("5", "collectionElement");
 		add("6", "franchise");
@@ -17,8 +19,8 @@ public class LicenceType extends TVTEnum {
 	//valid child type
 	public String getChildType(String parentType) {
 		switch (parentType) {
-		case "3":
-			return "2";
+		case SERIES:
+			return EPISODE;
 		case "4":
 			return "5";
 		default:

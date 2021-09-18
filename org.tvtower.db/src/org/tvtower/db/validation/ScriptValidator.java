@@ -131,10 +131,24 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 	}
 
 	private void validateEpisodes(ScriptTemplate t) {
-		//TODO episodes only for series with zero or one child, or series episode
-//		if(t.getEpisodes()!=null) {
-//			error("episodes must not be defined if children are", $.getScriptTemplate_Episodes());
-//		}
+		boolean hasEpisodes = t.getEpisodes() != null;
+		if (LicenceType.SERIES.equals(t.getLicenceType())) {
+			if (hasEpisodes && t.getChildren() != null) {
+				if (t.getChildren().getChild().size() > 1) {
+					//TODO activate
+//					error("episodes must not be defined if there is more than one child",
+//							$.getScriptTemplate_Episodes());
+				}
+				if (t.getChildren().getChild().stream()
+						.anyMatch(c -> c != null && c.getData() != null && c.getEpisodes() != null)) {
+					error("episodes must not be defined in parent and child", $.getScriptTemplate_Episodes());
+				}
+			}
+		} else if (!LicenceType.EPISODE.equals(t.getLicenceType())) {
+			if (hasEpisodes) {
+				error("only series may have episodes", $.getScriptTemplate_Episodes());
+			}
+		}
 	}
 
 	@Check
