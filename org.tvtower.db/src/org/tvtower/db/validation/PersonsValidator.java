@@ -12,6 +12,7 @@ import org.tvtower.db.database.Person;
 import org.tvtower.db.database.PersonData;
 import org.tvtower.db.database.PersonDetails;
 import org.tvtower.db.database.ProgrammeRole;
+import org.tvtower.db.resource.PersonUtil;
 
 //TODO generator, face code?
 public class PersonsValidator extends AbstractDatabaseValidator {
@@ -60,7 +61,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 					error("gender must be defined", $.getPerson_Name());
 				}
 			}
-			if (isFictional(person)) {
+			if (PersonUtil.isFictional(person)) {
 				if (!isGenderDefined(person)) {
 					error("cannot be used in cast", $.getPerson_Name());
 				}
@@ -119,10 +120,6 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		Constants._boolean.isValidValue(d.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPersonDetails_Fictional()));
 		// TODO birthday, deathday
-	}
-
-	private boolean isFictional(Person p) {
-		return "1".equals(p.getFictional()) || (p.getDetails() != null && "1".equals(p.getDetails().getFictional()));
 	}
 
 	private boolean isGenderDefined(Person p) {

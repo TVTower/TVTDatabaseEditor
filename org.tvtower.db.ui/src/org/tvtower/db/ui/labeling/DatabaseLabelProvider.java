@@ -23,8 +23,8 @@ import org.tvtower.db.database.Programmes;
 import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.ScriptTemplates;
 import org.tvtower.db.database.Title;
+import org.tvtower.db.resource.PersonUtil;
 
-import com.google.common.base.Strings;
 import com.google.inject.Inject;
 
 /**
@@ -120,7 +120,7 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(ProgrammeRole role) {
-		String result = fromNames(role.getLastName(), role.getFirstName());
+		String result = PersonUtil.fromNames(role.getLastName(), role.getFirstName());
 		if (result != null) {
 			return result;
 		}
@@ -128,24 +128,19 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(Person p) {
-		String result = fromNames(p.getLastName(), p.getFirstName());
+		String result = PersonUtil.displayName(p);
 		if (result != null) {
-			return result;
+			return withFictional(p, result);
 		}
-		return p.getName();
+		return withFictional(p, p.getName());
 	}
 
-	String fromNames(String lastName, String firstName) {
-		String l = Strings.emptyToNull(lastName);
-		String f = Strings.emptyToNull(firstName);
-		if (l != null && f != null) {
-			return l + ", " + f;
-		} else if (l != null) {
-			return l;
-		} else if (f != null) {
-			return f;
-		}
-		return null;
+	String image(Person p) {
+		return (PersonUtil.isFictional(p) ? "fictional" : "real") + ".png";
+	}
+
+	private String withFictional(Person p, String name) {
+		return name + (PersonUtil.isFictional(p) ? " (fictional)" : " (real)");
 	}
 
 	private String fromTitle(Title t) {

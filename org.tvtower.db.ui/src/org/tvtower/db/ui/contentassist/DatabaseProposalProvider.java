@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal;
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
@@ -21,7 +23,11 @@ import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.constants.TVTFlag;
+import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.GroupAttractivity;
+import org.tvtower.db.database.Person;
+import org.tvtower.db.database.StaffMember;
+import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.validation.DatabaseTime;
 
 /**
@@ -31,7 +37,7 @@ import org.tvtower.db.validation.DatabaseTime;
  */
 public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
-	private static final PrefixMatcher tagPrefixMatcher=new PrefixMatcher() {
+	private static final PrefixMatcher tagPrefixMatcher = new PrefixMatcher() {
 		public boolean isCandidateMatchingPrefix(String name, String prefix) {
 			return name.contains(prefix);
 		};
@@ -63,12 +69,14 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 		}
 	}
 
-	//simple tag proposal: self-closing tag set cursor position one space after the tag name
-	private void selfClosingTagProposal(String tag, ICompletionProposalAcceptor acceptor, ContentAssistContext context) {
+	// simple tag proposal: self-closing tag set cursor position one space after the
+	// tag name
+	private void selfClosingTagProposal(String tag, ICompletionProposalAcceptor acceptor,
+			ContentAssistContext context) {
 		ContentAssistContext newContext = context.copy().setMatcher(tagPrefixMatcher).toContext();
-		ICompletionProposal proposal = createCompletionProposal("<"+tag +"  />", newContext);
-		if(proposal!=null) {
-			((ConfigurableCompletionProposal)proposal).shiftOffset(-3);
+		ICompletionProposal proposal = createCompletionProposal("<" + tag + "  />", newContext);
+		if (proposal != null) {
+			((ConfigurableCompletionProposal) proposal).shiftOffset(-3);
 			acceptor.accept(proposal);
 		}
 	}
@@ -267,12 +275,14 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void completeNewsData_Fictional(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants._boolean, acceptor, context);	}
+		mapProposal(Constants._boolean, acceptor, context);
+	}
 
 	@Override
 	public void completeNewsData_Available(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants._boolean, acceptor, context);	}
+		mapProposal(Constants._boolean, acceptor, context);
+	}
 
 	@Override
 	public void completeNewsData_HappenTime(EObject model, Assignment assignment, ContentAssistContext context,
@@ -534,6 +544,7 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 			ICompletionProposalAcceptor acceptor) {
 		selfClosingTagProposal("member", acceptor, context);
 	}
+
 	// End Programme-------------
 
 	// Script
@@ -586,8 +597,8 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void completeScriptData_OptionalProgrammeFlags(EObject model, Assignment assignment, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
+	public void completeScriptData_OptionalProgrammeFlags(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.programmeFlag, acceptor, context);
 	}
 
@@ -697,11 +708,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void completeUnnamedProperty_Key(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
-		if(model instanceof GroupAttractivity) {
-			List<String> defined = ((GroupAttractivity) model).getData().stream().map(d->d.getKey()).collect(Collectors.toList());
-			List<String>allowed=new ArrayList<String>(Constants.targetgroup.maleFemale());
+		if (model instanceof GroupAttractivity) {
+			List<String> defined = ((GroupAttractivity) model).getData().stream().map(d -> d.getKey())
+					.collect(Collectors.toList());
+			List<String> allowed = new ArrayList<String>(Constants.targetgroup.maleFemale());
 			allowed.removeAll(defined);
-			allowed.forEach(v->acceptor.accept(createCompletionProposal(v, context)));
+			allowed.forEach(v -> acceptor.accept(createCompletionProposal(v, context)));
 		}
 	}
 
@@ -709,7 +721,7 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	@Override
 	public void completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext,
 			ICompletionProposalAcceptor acceptor) {
-		if("<".equals(keyword.getValue())){
+		if ("<".equals(keyword.getValue())) {
 			return;
 		}
 		super.completeKeyword(keyword, contentAssistContext, acceptor);
@@ -737,5 +749,61 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void complete_Modifier(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		selfClosingTagProposal("modifier", acceptor, context);
+	}
+
+	@Override
+	protected StyledString getStyledDisplayString(IEObjectDescription desc) {
+		// for persons show name and fictional flag if possible
+		if (desc.getEClass() == DatabasePackage.eINSTANCE.getPerson()) {
+			String name = desc.getUserData(DatabaseResourceDescriptionStrategy.PERSON_NAME_KEY);
+			if (name != null) {
+				if (desc.getUserData(DatabaseResourceDescriptionStrategy.PERSON_FICTIONAL_KEY) != null) {
+					name = name + " (fictional)";
+				}
+				return new StyledString(name).append(" - " + desc.getQualifiedName(), StyledString.QUALIFIER_STYLER);
+			}
+		}
+
+		return super.getStyledDisplayString(desc);
+	}
+
+	@Override
+	protected Image getImage(IEObjectDescription description) {
+		//implementation does not use DescriptionLabelProvider but regular label provider with proxy
+		//so we simply enrich the proxy
+		if (description.getEClass() == DatabasePackage.eINSTANCE.getPerson()) {
+			Person eObjectOrProxy = (Person)description.getEObjectOrProxy();
+			if ("1".equals(description.getUserData(DatabaseResourceDescriptionStrategy.PERSON_FICTIONAL_KEY))) {
+				eObjectOrProxy.setFictional("1");
+			}
+			return getImage(eObjectOrProxy);
+		}
+		return super.getImage(description);
+	}
+
+	//person reference proposals should match the persons name as well
+	//so the matcher depends on the actual person, not only on the proposal text and the prefix
+	@Override
+	protected ICompletionProposal createCompletionProposal(String proposal, StyledString displayString, Image image,
+			int priority, String prefix, ContentAssistContext context) {
+		if (context.getCurrentModel() instanceof StaffMember) {
+			final String personDisplayStringLower=displayString.toString().toLowerCase();
+			//if the prefix already matches, create a proposal with a person-sensitive matcher
+			if (personPrefixMatch(personDisplayStringLower, prefix)) {
+				ContentAssistContext newContext = context.copy().setMatcher(new PrefixMatcher() {
+					@Override
+					public boolean isCandidateMatchingPrefix(String name, String prefix) {
+						return personPrefixMatch(personDisplayStringLower, prefix);
+					}
+				}).toContext();
+				return doCreateProposal(proposal, displayString, image, priority, newContext);
+			}
+		}
+
+		return super.createCompletionProposal(proposal, displayString, image, priority, prefix, context);
+	}
+
+	private boolean personPrefixMatch(String personDisplayString, String prefix) {
+		return personDisplayString.contains(prefix.toLowerCase());
 	}
 }

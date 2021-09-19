@@ -3,23 +3,56 @@
  */
 package org.tvtower.db.ui.labeling;
 
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider;
+import org.tvtower.db.constants.Constants;
+import org.tvtower.db.database.DatabasePackage;
+import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 
 /**
  * Provides labels for IEObjectDescriptions and IResourceDescriptions.
  * 
- * See https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
+ * See
+ * https://www.eclipse.org/Xtext/documentation/310_eclipse_support.html#label-provider
  */
 public class DatabaseDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
 
 	// Labels and icons can be computed like this:
-//	@Override
-//	public String text(IEObjectDescription ele) {
-//		return ele.getName().toString();
-//	}
-//	
-//	@Override
-//	public String image(IEObjectDescription ele) {
-//		return ele.getEClass().getName() + ".gif";
-//	}
+	@Override
+	public Object text(IEObjectDescription element) {
+		if (element.getEClass() == DatabasePackage.eINSTANCE.getPerson()) {
+			String name = element.getUserData(DatabaseResourceDescriptionStrategy.PERSON_NAME_KEY);
+			if (name != null) {
+				if (element.getUserData(DatabaseResourceDescriptionStrategy.PERSON_FICTIONAL_KEY) != null) {
+					name = name + " (fictional)";
+				}
+				return name +" - " +element.getQualifiedName();
+			}
+		} else if (element.getEClass() == DatabasePackage.eINSTANCE.getProgramme()) {
+			String name = element.getUserData(DatabaseResourceDescriptionStrategy.PROGRAMME_TITLE_KEY);
+			if (name != null) {
+				String type = element.getUserData(DatabaseResourceDescriptionStrategy.PROGRAMME_TYPE_KEY);
+				if(type!=null) {
+					String text = Constants.programmeType.createHoverInfo(type);
+					if(text!=null) {
+						name=name+" ("+text+")";
+					}
+				}
+				return name+" - " +element.getQualifiedName();
+			}
+		}
+		return super.text(element);
+	}
+
+	@Override
+	public Object image(IEObjectDescription ele) {
+		if (ele.getEClass() == DatabasePackage.eINSTANCE.getPerson()) {
+			if ("1".equals(ele.getUserData(DatabaseResourceDescriptionStrategy.PERSON_FICTIONAL_KEY))) {
+				return "fictional.png";
+			} else {
+				return "real.png";
+			}
+		}
+		return super.image(ele);
+	}
 }

@@ -8,8 +8,10 @@ import org.eclipse.xtext.naming.SimpleNameProvider;
 import org.eclipse.xtext.parser.antlr.Lexer;
 import org.eclipse.xtext.parser.antlr.LexerBindings;
 import org.eclipse.xtext.parser.antlr.LexerProvider;
+import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 import org.tvtower.db.parser.antlr.internal.InternalDatabaseLexer;
+import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.resource.DatabaseResourceServiceProvider;
 
 import com.google.inject.Binder;
@@ -45,5 +47,9 @@ public class DatabaseRuntimeModule extends AbstractDatabaseRuntimeModule {
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return SimpleNameProvider.class;
+	}
+
+	public Class<? extends IDefaultResourceDescriptionStrategy> bindIndexingStrategy() {
+		return DatabaseResourceDescriptionStrategy.class;
 	}
 }
