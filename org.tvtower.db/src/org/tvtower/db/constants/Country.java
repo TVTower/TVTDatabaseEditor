@@ -19,6 +19,7 @@ public class Country extends TVTEnum {
 		add("E","Spain");
 		add("F","France");
 		add("GB","United Kingdom");
+		add("GR", "Greece");
 		add("H","Hungary");
 		add("HK","Hongkong");
 		add("I","Italy");
@@ -27,12 +28,14 @@ public class Country extends TVTEnum {
 		add("IRL","Ireland");
 		add("J","Japan");
 		add("NL","Netherlands");
+		add("P","Portugal");
 		add("PL","Poland");
 		add("RM","Republic of Moldavia");
 		add("ROK","South Korea");
 		add("S","Sweden");
 		add("SCO","Scotland");
 		add("SU","Soviet Union");
+		add("TR","Turkey");
 		add("USA","USA");
 		add("ZA","South Africa");
 	}
