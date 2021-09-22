@@ -1,5 +1,8 @@
 package org.tvtower.db.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -60,10 +63,10 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 					error("index " + i + " expected", child, $.getScriptTemplate_Index());
 				}
 				if(child.getData()!=null && child.getData().getLicenceFlags() != null) {
-					error("children must not have licence flags", child.getData(), $.getScriptData_LicenceFlags());
+					warning("be careful when defining child licence flags", child.getData(), $.getScriptData_LicenceFlags());
 				}
 				if(child.getData()!=null && child.getData().getScriptFlags() != null) {
-					error("children must not have script flags", child.getData(), $.getScriptData_ScriptFlags());
+					warning("be careful when defining child script flags", child.getData(), $.getScriptData_ScriptFlags());
 				}
 			}
 		}
@@ -195,7 +198,33 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getScriptData_ProductionLimit()));
 		CommonValidation.getIntRangeError(d.getBroadcastLimit(), "production_broadcast_limit", 1, 256, false)
 				.ifPresent(e -> error(e, $.getScriptData_BroadcastLimit()));
+		ensureLimitHandling(d, d.getBroadcastLimit(), $.getScriptData_BroadcastLimit());
 	}
+
+	private void ensureLimitHandling(ScriptData d, String limit, EStructuralFeature limitFeature) {
+		if(limit!=null) {
+			try {
+				int l = Integer.parseInt(limit);
+				if(l > 0) {
+					List<String> applicableLicenceFlags=new ArrayList<>();
+					applicableLicenceFlags.add(d.getLicenceFlags());
+					ScriptTemplate script = ((ScriptTemplate)d.eContainer());
+					if(script.eContainer() instanceof ScriptChildren) {
+						ScriptTemplate parent = (ScriptTemplate)script.eContainer().eContainer();
+						if(parent.getData()!=null) {
+							applicableLicenceFlags.add(parent.getData().getLicenceFlags());
+						}
+					}
+					if(applicableLicenceFlags.stream().noneMatch(s->Constants.licenceFlag.isLimitHandled(s))) {
+						error("if limit is defined, licence flag handling the limit must be set", d, limitFeature);
+					}
+				}
+			}catch(NumberFormatException e) {
+				//ignore
+			}
+		}
+	}
+
 
 	private void checkMinMaxSlope(ContainsMinMaxSlope container, int min, int max) {
 		if (container != null) {

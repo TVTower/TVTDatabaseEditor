@@ -1,11 +1,14 @@
 package org.tvtower.db.validation;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
@@ -82,7 +85,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 					error("product mismatch", child, $.getProgramme_Product());
 				}
 				if(child.getData()!=null && child.getData().getLicenceFlags() != null) {
-					error("children must not have licence flags", child.getData(), $.getProgrammeData_LicenceFlags());
+					warning("be careful when defining child licence flags", child.getData(), $.getProgrammeData_LicenceFlags());
 				}
 			}
 		}
@@ -120,6 +123,32 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_LicenceBroadcastLimit()));
 		Constants.broadcastFlag.isValidFlag(d.getLicenceBroadcastFlags(), "licence_broadcast_flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_LicenceBroadcastFlags()));
+		ensureLimitHandling(d, d.getBroadcastLimit(), $.getProgrammeData_BroadcastLimit());
+		ensureLimitHandling(d, d.getLicenceBroadcastLimit(), $.getProgrammeData_LicenceBroadcastLimit());
+	}
+
+	private void ensureLimitHandling(ProgrammeData d, String limit, EStructuralFeature limitFeature) {
+		if(limit!=null) {
+			try {
+				int l = Integer.parseInt(limit);
+				if(l > 0) {
+					List<String> applicableLicenceFlags=new ArrayList<>();
+					applicableLicenceFlags.add(d.getLicenceFlags());
+					Programme programme = ((Programme)d.eContainer());
+					if(!isMainEntry(programme)) {
+						Programme parent = (Programme)programme.eContainer().eContainer();
+						if(parent.getData()!=null) {
+							applicableLicenceFlags.add(parent.getData().getLicenceFlags());
+						}
+					}
+					if(applicableLicenceFlags.stream().noneMatch(s->Constants.licenceFlag.isLimitHandled(s))) {
+						error("if limit is defined, licence flag handling the limit must be set", d, limitFeature);
+					}
+				}
+			}catch(NumberFormatException e) {
+				//ignore
+			}
+		}
 	}
 
 	@Check
