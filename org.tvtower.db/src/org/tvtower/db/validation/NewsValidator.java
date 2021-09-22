@@ -31,7 +31,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	public void checkNewsType(NewsItem item) {
 		Constants.newsType.isValidValue(item.getType(), "type", true).ifPresent(e -> error(e, $.getNewsItem_Type()));
 		if (isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy())) {
-			error("created_by must be defined", $.getNewsItem_CreatedBy());
+			error("created_by must be defined", $.getMayContainVariables_Name());
 		}
 		if (item.getModifiers() != null) {
 			error("modifiers used", $.getNewsItem_Modifiers());

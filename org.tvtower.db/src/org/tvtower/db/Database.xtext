@@ -46,7 +46,9 @@ ScriptTemplate:
 			('guid''='name=STRING)&
 			('product''='product=STRING)&
 			('licence_type''='licenceType=STRING)&
-			('index''='index=STRING)?
+			('index''='index=STRING)?&
+			('creator''='creator=STRING)?&
+			('created_by''='createdBy=STRING)?
 		)
 	'>'
 	(
