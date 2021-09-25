@@ -1,7 +1,7 @@
 # Das Editor-Produkt-Plugin
 
 Dieses Plugin-Projekt dient einzig der Erstellung des Standalone-Editors.
-Um Java-8-Kompatibilität sicherzustellen, sollte für die Erstellung ein Eclipse4Java-Produkt in der Version 2020-06 zusammen mit einem Java-8-JDK verwendet werden.
+Um Java-8-Kompatibilität sicherzustellen, sollte für die Erstellung ein Eclipse für RAP/RCP in der Version 2020-06 zusammen mit einem Java-8-JDK verwendet werden (in der Java-Version müsste man API-Tooling für PDE nachinstallieren).
 Spätere Eclipse-Versionen verlangen Java-11.
 Mir war es zu ungewiss, Java-8 lediglich als Runtime-Umgebung festzusetzen.
 
@@ -17,7 +17,7 @@ Der Basisworkspace liegt unter resources.
 Bei einem Export müssen also noch
 * das Exportverzeichnis umbenannt
 * der workspace ergänzt
-* die Datenbankdateien in das Projekt kopiert
+* die Datenbankdateien (unterhalb und ohne /database/) in das Projekt kopiert
 
 werden.
 Das Ergebnis zippen, teststarten und veröffentlichen.

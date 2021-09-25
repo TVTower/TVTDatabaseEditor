@@ -13,7 +13,7 @@
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-Xms120m -Xmx2048m -Dosgi.instance.area=../workspace
+      <vmArgs>-Xms120m -Xmx2048m -Dosgi.instance.area=../workspace -DTVT_DB_FOLDER_MARKER=/TVTower-Database/
       </vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
@@ -31,11 +31,9 @@
       </win>
    </launcher>
 
-
    <vm>
       <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
    </vm>
-
 
    <plugins>
       <plugin id="ch.qos.logback.classic"/>

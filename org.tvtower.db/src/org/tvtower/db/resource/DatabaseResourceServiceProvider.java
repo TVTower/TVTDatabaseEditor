@@ -9,11 +9,13 @@ public class DatabaseResourceServiceProvider extends DefaultResourceServiceProvi
 	//https://git.eclipse.org/c/m2e/m2e-core.git/tree/org.eclipse.m2e.core/src/org/eclipse/m2e/core/internal/content/TextContentDescriber.java?id=fbb4f5902cade92cc1689e73209c60a6413a5ef7
 	//https://dzone.com/articles/associating-xtext-editors-file	
 
+	private String databaseFolderMarker=System.getProperty("TVT_DB_FOLDER_MARKER", "/database/");
+	
 	@Override
 	public boolean canHandle(URI uri) {
 		String extension = uri.fileExtension();
-		if(extension!=null && "xml".equals(extension)){
-			if(uri.toString().contains("/database/")) {
+		if (extension != null && "xml".equals(extension)) {
+			if (uri.toString().contains(databaseFolderMarker)) {
 				return true;
 			}
 		}
