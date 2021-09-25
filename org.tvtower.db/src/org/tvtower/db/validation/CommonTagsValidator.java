@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -159,8 +160,9 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	}
 
 	@Check(CheckType.NORMAL)
-	public void checkLanguageDuplicate(ContainsLanguageStrings c) {
+	public void checkLanguageStringsContainer(ContainsLanguageStrings c) {
 		Set<String> languages = new HashSet<>();
+		AtomicInteger optionsCount = new AtomicInteger(-1);
 		for (LanguageString l : c.getLstrings()) {
 			String language = l.getLangage();
 			if (languages.contains(language)) {
@@ -168,6 +170,22 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			} else {
 				languages.add(language);
 			}
+			validateOptionsCount(l, optionsCount);
+		}
+	}
+
+	private void validateOptionsCount(LanguageString s, AtomicInteger optionsCount) {
+		int count = -1;
+		if (!Strings.isNullOrEmpty(s.getText())) {
+			//remove reference like [1|Full] from the text
+			count = s.getText().replaceAll("\\[\\w+\\|\\w+\\]", " ").split("\\|").length;
+		}
+		if (optionsCount.get() < 0) {
+			if (count >= 0) {
+				optionsCount.set(count);
+			}
+		} else if (count >= 0 && count != optionsCount.get()) {
+			error("options count mismatch with other language", s, $.getLanguageString_Text());
 		}
 	}
 
