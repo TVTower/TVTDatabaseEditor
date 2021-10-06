@@ -128,25 +128,25 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	}
 
 	private void ensureLimitHandling(ProgrammeData d, String limit, EStructuralFeature limitFeature) {
-		if(limit!=null) {
+		if (limit != null) {
 			try {
 				int l = Integer.parseInt(limit);
-				if(l > 0) {
-					List<String> applicableLicenceFlags=new ArrayList<>();
+				if (l > 0) {
+					List<String> applicableLicenceFlags = new ArrayList<>();
 					applicableLicenceFlags.add(d.getLicenceFlags());
-					Programme programme = ((Programme)d.eContainer());
-					if(!isMainEntry(programme)) {
-						Programme parent = (Programme)programme.eContainer().eContainer();
-						if(parent.getData()!=null) {
+					Programme programme = ((Programme) d.eContainer());
+					if (!isMainEntry(programme)) {
+						Programme parent = (Programme) programme.eContainer().eContainer();
+						if (parent.getData() != null) {
 							applicableLicenceFlags.add(parent.getData().getLicenceFlags());
 						}
 					}
-					if(applicableLicenceFlags.stream().noneMatch(s->Constants.licenceFlag.isLimitHandled(s))) {
-						error("if limit is defined, licence flag handling the limit must be set", d, limitFeature);
+					if (applicableLicenceFlags.stream().noneMatch(s -> Constants.licenceFlag.isLimitHandled(s))) {
+						warning("if limit is defined, licence flag handling the limit should be set", d, limitFeature);
 					}
 				}
-			}catch(NumberFormatException e) {
-				//ignore
+			} catch (NumberFormatException e) {
+				// ignore
 			}
 		}
 	}

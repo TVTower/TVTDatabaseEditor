@@ -70,7 +70,6 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				}
 			}
 		}
-		checkMinMaxSlope(t.getEpisodes(), 1, 32);
 		checkMinMaxSlope(t.getStudioSize(), 1, 3);
 		checkMinMaxSlope(t.getBlocks(), 1, 8);
 		checkMinMaxSlope(t.getPrice(), 0, 10000000);
@@ -121,7 +120,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		}
 		LicenceFlag lFlags = Constants.licenceFlag;
 		if(lFlags.hasFlag(data.getLicenceFlags(), lFlags.REFILL_BROADCAST_LIMIT)){
-			warning("live scipts should not reset the broadcast limit (script can be bought again)",
+			warning("live scripts should not reset the broadcast limit (script can be bought again)",
 					t.getData(), $.getScriptData_LicenceFlags());
 		}
 	}
@@ -135,21 +134,23 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 
 	private void validateEpisodes(ScriptTemplate t) {
 		boolean hasEpisodes = t.getEpisodes() != null;
-		if (LicenceType.SERIES.equals(t.getLicenceType())) {
-			if (hasEpisodes && t.getChildren() != null) {
-				if (t.getChildren().getChild().size() > 1) {
-					//TODO activate
-//					error("episodes must not be defined if there is more than one child",
-//							$.getScriptTemplate_Episodes());
+		if (hasEpisodes) {
+			String licenceType = t.getLicenceType();
+			if (LicenceType.SERIES.equals(licenceType)) {
+				if (t.getChildren() == null) {
+					error("if episodes are defined for a series, child templates must be present",
+							$.getScriptTemplate_Episodes());
+				} else {
+					int count = t.getChildren().getChild().size();
+					checkMinMaxSlope(t.getEpisodes(), 1, count);
+					if (t.getChildren().getChild().stream().anyMatch(c -> c.getEpisodes() != null)) {
+						error("episodes in parent and children are not supported", $.getScriptTemplate_Episodes());
+					}
 				}
-				if (t.getChildren().getChild().stream()
-						.anyMatch(c -> c != null && c.getData() != null && c.getEpisodes() != null)) {
-					error("episodes must not be defined in parent and child", $.getScriptTemplate_Episodes());
-				}
-			}
-		} else if (!LicenceType.EPISODE.equals(t.getLicenceType())) {
-			if (hasEpisodes) {
-				error("only series may have episodes", $.getScriptTemplate_Episodes());
+			} else if (LicenceType.EPISODE.equals(licenceType)) {
+				checkMinMaxSlope(t.getEpisodes(), 0, 32);
+			} else {
+				error("episodes not supported for this licence type", t, $.getScriptTemplate_Episodes());
 			}
 		}
 	}
@@ -202,25 +203,25 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 	}
 
 	private void ensureLimitHandling(ScriptData d, String limit, EStructuralFeature limitFeature) {
-		if(limit!=null) {
+		if (limit != null) {
 			try {
 				int l = Integer.parseInt(limit);
-				if(l > 0) {
-					List<String> applicableLicenceFlags=new ArrayList<>();
+				if (l > 0) {
+					List<String> applicableLicenceFlags = new ArrayList<>();
 					applicableLicenceFlags.add(d.getLicenceFlags());
-					ScriptTemplate script = ((ScriptTemplate)d.eContainer());
-					if(script.eContainer() instanceof ScriptChildren) {
-						ScriptTemplate parent = (ScriptTemplate)script.eContainer().eContainer();
-						if(parent.getData()!=null) {
+					ScriptTemplate script = ((ScriptTemplate) d.eContainer());
+					if (script.eContainer() instanceof ScriptChildren) {
+						ScriptTemplate parent = (ScriptTemplate) script.eContainer().eContainer();
+						if (parent.getData() != null) {
 							applicableLicenceFlags.add(parent.getData().getLicenceFlags());
 						}
 					}
-					if(applicableLicenceFlags.stream().noneMatch(s->Constants.licenceFlag.isLimitHandled(s))) {
-						error("if limit is defined, licence flag handling the limit must be set", d, limitFeature);
+					if (applicableLicenceFlags.stream().noneMatch(s -> Constants.licenceFlag.isLimitHandled(s))) {
+						warning("if limit is defined, licence flag handling the limit should be set", d, limitFeature);
 					}
 				}
-			}catch(NumberFormatException e) {
-				//ignore
+			} catch (NumberFormatException e) {
+				// ignore
 			}
 		}
 	}
