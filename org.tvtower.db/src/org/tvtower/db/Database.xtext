@@ -47,6 +47,7 @@ ScriptTemplate:
 			('product''='product=STRING)&
 			('licence_type''='licenceType=STRING)&
 			('index''='index=STRING)?&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -69,7 +70,8 @@ ScriptTemplate:
 		review=Review?&
 		speed=Speed?&
 		productionTime=ProductionTime?&
-		children=ScriptChildren?
+		children=ScriptChildren?&
+		progDataModifiers=TemplateProgrammeModifiers?
 	)
 	'</''scripttemplate''>'
 ;
@@ -247,6 +249,7 @@ Achievement:
 	'<''achievement'
 		(
 			(('id')'='name=STRING )&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -281,6 +284,7 @@ Task:
 	'<''task'
 		(
 			(('id')'='id=STRING )&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -332,6 +336,7 @@ Reward:
 	'<''reward'
 		(
 			(('id')'='id=STRING )&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -389,7 +394,8 @@ Advertisement:
 		description=Description?&
 		conditions=AdConditions?&
 		data=AdvertisementData?&
-		availability=Availability?
+		availability=Availability?&
+		modifiers=Modifiers?
 	)
 	'</''ad''>'
 ;
@@ -447,6 +453,7 @@ NewsItem:
 			('thread_id''='threadId=STRING )?&
 			('type''='type=STRING )?&
 			('creator''='creator=STRING)?&
+			('comment''='comment=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
 	'>'
@@ -560,6 +567,9 @@ Person:
 			('country''='country=STRING)?&
 			('generator''='generator=STRING)?&
 			('job''='job=STRING)?&
+			('birthday''='birthday=STRING)?&
+			('deathday''='deathday=STRING)?&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -630,6 +640,7 @@ Programme:
 			('imdb_id''='imdbId=STRING )?&
 			('fictional''='fictional=STRING )?&
 			('programmedata_id''='ref=[Programme|STRING])?&
+			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -726,6 +737,12 @@ Modifiers:
 	'</''modifiers''>'
 ;
 
+TemplateProgrammeModifiers:
+	'<''programme_data_modifiers''>'{Modifiers}
+	modifier+=Modifier*
+	'</''programme_data_modifiers''>'
+;
+
 Modifier:
 	'<''modifier'
 		(
@@ -787,7 +804,7 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifies'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet

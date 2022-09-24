@@ -18,6 +18,7 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.ContainsLanguageStrings;
 import org.tvtower.db.database.DatabasePackage;
@@ -25,18 +26,24 @@ import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.LanguageString;
 import org.tvtower.db.database.MayContainVariables;
 import org.tvtower.db.database.Modifier;
+import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.UnnamedProperty;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 //TODO globale ID-Eindeutigkeit
 //TODO validate created_by defined and not empty
 public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
+	private static BigDecimal _100=new BigDecimal(100);
+	private static List<String> progModifiers=ImmutableList.of("price","topicality::age","topicality::refresh","topicality::trailerRefresh", "topicality::wearoff","topicality::trailerWearoff","topicality::firstBroadcastDone","topicality::notLive","topicality::timesBroadcasted","callin::perViewerRevenue");
+	private static List<String> scriptProgModifiers=progModifiers;
+	private static List<String> adModifiers=ImmutableList.of("topicality::infomercialRefresh","topicality::infomercialWearoff");
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -163,6 +170,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	public void checkLanguageStringsContainer(ContainsLanguageStrings c) {
 		Set<String> languages = new HashSet<>();
 		AtomicInteger optionsCount = new AtomicInteger(-1);
+		//prepare duplicate entry checks
+//		Set<String> lcontent=new HashSet<>();
 		for (LanguageString l : c.getLstrings()) {
 			String language = l.getLangage();
 			if (languages.contains(language)) {
@@ -170,6 +179,13 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			} else {
 				languages.add(language);
 			}
+//			String content = l.getText();
+//			if (lcontent.contains(content)) {
+//				error("duplicate content " + (Strings.isNullOrEmpty(content) ? "<EMPTY>" : content), l,
+//						$.getLanguageString_Langage());
+//			} else {
+//				lcontent.add(content);
+//			}
 			validateOptionsCount(l, optionsCount);
 		}
 	}
@@ -282,7 +298,22 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkModifiers(Modifier modifier) {
-		// TODO
+		CommonValidation.getDecimalRangeError(modifier.getValue(), "value", BigDecimal.ZERO, _100, true)
+				.ifPresent(e -> error(e, $.getModifier_Value()));
+		EObject container=modifier.eContainer().eContainer();
+		List<String> allowedNames=null;
+		if(container instanceof ScriptTemplate) {
+			allowedNames=scriptProgModifiers;
+		}else if(container instanceof Programme) {
+			allowedNames=progModifiers;
+		}else if(container instanceof Advertisement) {
+			allowedNames=adModifiers;
+		}
+		if(allowedNames!=null) {
+			if(!allowedNames.contains(modifier.getModName())) {
+				warning("unbekannter Modifier", $.getModifier_ModName());
+			}
+		}
 	}
 
 }

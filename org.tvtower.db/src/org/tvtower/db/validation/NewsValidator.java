@@ -9,6 +9,7 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.EffectType;
+import org.tvtower.db.constants.NewsFlag;
 import org.tvtower.db.constants.NewsType;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
@@ -137,6 +138,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			}
 			error("triggered news must have type " + NewsType.FOLLOW_UP_NEWS, triggered,
 					$.getMayContainVariables_Name());
+		}
+		NewsFlag newsFlags = Constants.newsFlag;
+		if(triggered != parentNews && !newsFlags.hasFlag(parentNews.getData().getFlags(), newsFlags.INVISIBLE)) {
+			if(triggered.getVariables()!=null) {
+				error("variables in triggered news will cause problems", triggered,
+						$.getMayContainVariables_Variables());
+			}
 		}
 	}
 

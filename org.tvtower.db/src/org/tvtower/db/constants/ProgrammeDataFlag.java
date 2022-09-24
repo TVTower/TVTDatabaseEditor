@@ -5,12 +5,13 @@ public class ProgrammeDataFlag extends TVTFlag {
 	public final long LIVE;
 	public final long PAID;
 	public final long SERIES;
+	public final long CULTURE;
 
 	ProgrammeDataFlag() {
 		add("none");
 		LIVE=add("live");
 		add("animation");
-		add("culture");
+		CULTURE=add("culture");
 		add("cult");
 		add("trash");
 		add("b-movie");

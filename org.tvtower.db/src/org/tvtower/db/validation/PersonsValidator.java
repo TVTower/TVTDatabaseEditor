@@ -37,6 +37,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if(person.getFictional()!=null && person.getDetails()!=null && person.getDetails().getFictional()!=null){
 			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
+		checkNameChanges(person);
 	}
 
 	@Check
@@ -149,5 +150,15 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (Constants.gender.isUndefined(r.getGender())) {
 			error("undefined gender", $.getProgrammeRole_Gender());
 		}
+	}
+
+	private void checkNameChanges(Person person) {
+		//TODO check and improve names
+//		if(person.getFirstNameOrig()!=null && person.getLastNameOrig()!=null) {
+//			if((person.getLastNameOrig().startsWith(person.getLastName()) || person.getLastName().startsWith(person.getLastNameOrig()))
+//					&&person.getFirstName().equals(person.getFirstNameOrig())){
+//				error("names too similar", $.getPerson_LastNameOrig());
+//			}
+//		}
 	}
 }

@@ -2,6 +2,8 @@ package org.tvtower.db.constants;
 
 public class NewsFlag extends TVTFlag {
 
+	public final long INVISIBLE;
+
 	NewsFlag() {
 		add("none");
 		add("send immediately");
@@ -12,6 +14,6 @@ public class NewsFlag extends TVTFlag {
 		add("reset ticker time");
 		add("reset happen time");
 		add("special event");
-		add("invisible event");
+		INVISIBLE = add("invisible event");
 	}
 }

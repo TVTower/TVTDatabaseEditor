@@ -73,14 +73,15 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 			ProgrammeChildren children = p.getChildren();
 			for (int i = 0; i < children.getChild().size(); i++) {
 				Programme child = children.getChild().get(i);
-				String parentFictional = p.getFictional();
+//mismatch of fictional flag in children possible
+//				String parentFictional = p.getFictional();
 				if (!expectedChildLicenceType.equals(child.getLicenceType())) {
 					error("expect licence_type " + expectedChildLicenceType, child, $.getProgramme_LicenceType());
 				}
-				if (parentFictional != null && child.getFictional() != null
-						&& !parentFictional.equals(child.getFictional())) {
-					error("fictional mismatch", child, $.getProgramme_Fictional());
-				}
+//				if (parentFictional != null && child.getFictional() != null
+//						&& !parentFictional.equals(child.getFictional())) {
+//					error("fictional mismatch", child, $.getProgramme_Fictional());
+//				}
 				if (!Objects.equal(p.getProduct(), child.getProduct())) {
 					error("product mismatch", child, $.getProgramme_Product());
 				}
@@ -224,8 +225,10 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkStaffMember(StaffMember m) {
-		Constants.job.isValidSingleFlag(m.getFunction(), "function", true)
+		Constants.job.isValidFlag(m.getFunction(), "function", true)
 				.ifPresent(e -> error(e, $.getStaffMember_Function()));
+		Constants.job.isValidSingleFlag(m.getFunction(), "function", true)
+				.ifPresent(e -> info(e, $.getStaffMember_Function()));
 		// TODO validate generator?
 	}
 
