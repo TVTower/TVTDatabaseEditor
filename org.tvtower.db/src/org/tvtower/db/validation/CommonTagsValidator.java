@@ -18,6 +18,7 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.NewsType;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.ContainsLanguageStrings;
@@ -26,6 +27,7 @@ import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.LanguageString;
 import org.tvtower.db.database.MayContainVariables;
 import org.tvtower.db.database.Modifier;
+import org.tvtower.db.database.NewsItem;
 import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ScriptTemplate;
@@ -79,7 +81,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	private boolean checkScript(Availability a) {
 		boolean result = false;
 		Pattern logicalOperatorPattern = Pattern.compile("\\|\\| | &amp;&amp;");
-		String compareOperatorPattern = "=|<=|>=";
+		String compareOperatorPattern = "=|<=|>=|<|>";
 		String script = a.getScript();
 		if (!Strings.isNullOrEmpty(a.getScript())) {
 			List<String> compontens = Splitter.on(logicalOperatorPattern).trimResults().omitEmptyStrings()
@@ -116,7 +118,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					case "TIME_DAYSPLAYED":
 						max = 10000;
 						break;
-					case "TIME_YEARSSPLAYED":
+					case "TIME_YEARSPLAYED":
 						max = 150;
 						break;
 					case "TIME_DAYSOFMONTH":
@@ -205,6 +207,15 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		}
 	}
 
+	//TODO implement variable validation for followup news
+	private boolean isFollowUpNews(LanguageString s) {
+		NewsItem newsItem = EcoreUtil2.getContainerOfType(s, NewsItem.class);
+		if(newsItem!=null && NewsType.FOLLOW_UP_NEWS.equals(newsItem.getType())) {
+			return true;
+		}
+		return false;
+	}
+
 	@Check(CheckType.NORMAL)
 	public void checkLanguageString(LanguageString s) {
 		if (!s.getLangage().equals(s.getLangage2())) {
@@ -228,7 +239,9 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					definedVariables = getVariablesFromContainers(s);
 				}
 				if(definedVariables.isEmpty()) {
-					error("no variable definitions found", $.getLanguageString_Text());
+					if(!isFollowUpNews(s)) {
+						error("no variable definitions found", $.getLanguageString_Text());
+					}
 					continue;
 				}
 				boolean found = false;
@@ -271,22 +284,27 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		Set<String> defined = new HashSet<>();
 		List<String> validKeys = Constants.targetgroup.maleFemale();
 		for (UnnamedProperty prop : a.getData()) {
+			boolean checkNumber=true;
 			String key = prop.getKey();
-			if (!validKeys.contains(key)) {
+			if("comment".equals(key)) {
+				checkNumber=false;
+			}else if (!validKeys.contains(key)) {
 				error("invalid group", prop, $.getUnnamedProperty_Key());
 			} else if (defined.contains(key)) {
 				error("duplicate group", prop, $.getUnnamedProperty_Key());
 			} else {
 				defined.add(key);
 			}
-			CommonValidation.getDecimalRangeError(prop.getValue(), key, BigDecimal.ZERO, BigDecimal.TEN, true)
-					.ifPresent(e -> error(e, prop, $.getUnnamedProperty_Value()));
+			if(checkNumber) {
+				CommonValidation.getDecimalRangeError(prop.getValue(), key, BigDecimal.ZERO, new BigDecimal(2), true)
+				.ifPresent(e -> error(e, prop, $.getUnnamedProperty_Value()));
+			}
 		}
 	}
 
 	@Check
 	public void checkProgrammeGroups(ProgrammeGroups g) {
-		Constants.targetgroup.isValidFlag(g.getTargetGroup(), "target_groups", true)
+		Constants.targetgroup.isValidFlag(g.getTargetGroup(), "target_groups", false)
 				.ifPresent(e -> error(e, $.getProgrammeGroups_TargetGroup()));
 		Constants.targetgroup.isValidFlag(g.getOptionalTargetGroup(), "target_groups_optional", false)
 				.ifPresent(e -> error(e, $.getProgrammeGroups_OptionalTargetGroup()));

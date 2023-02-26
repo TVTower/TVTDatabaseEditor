@@ -102,7 +102,7 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				error("limit definition not allowed if there are child templates", t.getData(), f);
 			} else if (!LicenceType.SINGLE.equals(t.getLicenceType())) {
 				error("limit definition only allowed for licence type 'single'", t.getData(), f);
-			} else if (!ProgrammeType.SHOW.equals(t.getProduct())) {
+			} else if (!(ProgrammeType.SHOW.equals(t.getProduct()) || ProgrammeType.FEATURE.equals(t.getProduct()))) {
 				error("limit definition only allowed for product 'show'", t.getData(), f);
 			}
 		}

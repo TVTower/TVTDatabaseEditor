@@ -14,6 +14,8 @@ import org.tvtower.db.database.PersonDetails;
 import org.tvtower.db.database.ProgrammeRole;
 import org.tvtower.db.resource.PersonUtil;
 
+import com.google.common.base.Strings;
+
 //TODO generator, face code?
 public class PersonsValidator extends AbstractDatabaseValidator {
 
@@ -143,16 +145,37 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		CommonValidation.getValueMissingError("first_name", r.getFirstName())
 				.ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
 		CommonValidation.getValueMissingError("last_name", r.getLastName())
-				.ifPresent(e -> error(e, $.getProgrammeRole_LastName()));
+				.ifPresent(e -> warning(e, $.getProgrammeRole_LastName()));
 		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
 		Constants.gender.isValidValue(r.getGender(), "gender", false)
 				.ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
 		if (Constants.gender.isUndefined(r.getGender())) {
-			error("undefined gender", $.getProgrammeRole_Gender());
+			warning("undefined gender", $.getProgrammeRole_Gender());
 		}
 	}
 
 	private void checkNameChanges(Person person) {
+		if(!PersonUtil.isFictional(person)){
+			if(!Strings.isNullOrEmpty(person.getNickName())){
+				if(Strings.isNullOrEmpty(person.getNickNameOrig())){
+					warning("Original Nickname is missing", $.getPerson_NickName());
+				}
+			}
+			if(!isInsignificant(person)) {
+				//there are non-fictional spoof versions in fictional file, where original names are not given
+				if(!Strings.isNullOrEmpty(person.getFirstName())){
+					if(Strings.isNullOrEmpty(person.getFirstNameOrig())){
+						warning("Original First is missing", $.getPerson_FirstName());
+					}
+				}
+				if(!Strings.isNullOrEmpty(person.getLastName())){
+					if(Strings.isNullOrEmpty(person.getLastNameOrig())){
+						warning("Original Last is missing", $.getPerson_LastName());
+					}
+				}
+			}
+		}
+
 		//TODO check and improve names
 //		if(person.getFirstNameOrig()!=null && person.getLastNameOrig()!=null) {
 //			if((person.getLastNameOrig().startsWith(person.getLastName()) || person.getLastName().startsWith(person.getLastNameOrig()))

@@ -29,7 +29,7 @@ public class TargetGroup extends TVTFlag {
 		result.remove("all");
 		List<String> variants=new ArrayList<>();
 		for (String s : result) {
-			if(!s.contains("men") && !s.contains("wives")) {
+			if(!s.contains("men")) {
 				variants.add(s+"_male");
 				variants.add(s+"_female");
 			}

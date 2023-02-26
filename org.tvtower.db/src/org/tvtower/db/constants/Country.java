@@ -9,9 +9,11 @@ public class Country extends TVTEnum {
 		add("BE","Belgium");
 		add("BM","Bermudas");
 		add("BOL","Bolivia");
+		add("BR","Brazil");
 		add("CDN","Canada");
 		add("CH","Switzerland");
 		add("CN","China");
+		add("CO","Colombia");
 		add("CS","Tchechoslovakia");
 		add("D","Germany");
 		add("DDR","GDR");
@@ -30,6 +32,7 @@ public class Country extends TVTEnum {
 		add("NL","Netherlands");
 		add("P","Portugal");
 		add("PL","Poland");
+		add("RA","Argentina");
 		add("RM","Republic of Moldavia");
 		add("ROK","South Korea");
 		add("S","Sweden");
