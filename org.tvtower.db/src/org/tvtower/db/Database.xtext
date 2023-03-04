@@ -71,6 +71,7 @@ ScriptTemplate:
 		speed=Speed?&
 		productionTime=ProductionTime?&
 		children=ScriptChildren?&
+		attractivity=GroupAttractivity?&
 		progDataModifiers=TemplateProgrammeModifiers?
 	)
 	'</''scripttemplate''>'
