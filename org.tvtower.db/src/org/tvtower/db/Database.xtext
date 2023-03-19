@@ -16,10 +16,15 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 Database:
 	'<'{Database}('?xml' properties+=UnnamedProperty*'?>''<')?
-	 'tvtdb' '>' 
-		version=Version?
-		definitions+=Definition*
-		exportOptions=ExportOptions?
+	'tvtdb' '>'
+		(
+			personLocalization=PersonLocalization
+				|
+			(version=Version?
+			definitions+=Definition*
+			exportOptions=ExportOptions?
+			)
+		)
 	'</' 'tvtdb' '>';
 
 ExportOptions:
@@ -31,6 +36,15 @@ ExportOptions:
 ;
 
 Definition:News|ScriptTemplates|ProgrammeRoles|Achievements|Advertisements|CelebrityPeople|InsignificantPeople|Programmes;
+
+PersonLocalization:
+	'<''persons'{PersonLocalization}->'>'
+		persons+=PersonLocale*
+	'</''persons''>'
+	'<''roles''>'
+		roles+=RoleLocale*
+	'</''roles''>'
+;
 
 MayContainVariables:NewsItem|ScriptTemplate;
 
@@ -236,6 +250,17 @@ ProgrammeRole:
 			('title''='title=STRING)?&
 			('country''='country=STRING)?&
 			('gender''='gender=STRING)?
+		)
+	'/>'
+;
+
+RoleLocale:
+	'<''role'
+		(
+			('guid''='role=[ProgrammeRole|STRING] )&
+			('first_name''='firstName=STRING)&
+			('last_name''='lastName=STRING)&
+			('title''='title=STRING)?
 		)
 	'/>'
 ;
@@ -593,6 +618,17 @@ Person:
 	)
 ;
 
+PersonLocale:
+	'<''person'
+		(
+			('guid''='person=[Person|STRING] )&
+			('first_name''='firstName=STRING )?&
+			('last_name''='lastName=STRING )?&
+			('nick_name''='nickName=STRING )?
+		)
+	'/>'
+;
+
 PersonName:(IDorKeyword|ANY_OTHER)+;
 
 PersonDetails:
@@ -807,7 +843,7 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'roles';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet

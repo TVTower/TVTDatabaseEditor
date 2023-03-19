@@ -751,6 +751,19 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 		selfClosingTagProposal("modifier", acceptor, context);
 	}
 
+	//Person localization
+	@Override
+	public void complete_PersonLocale(EObject model, RuleCall ruleCall, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		selfClosingTagProposal("person", acceptor, context);
+	}
+
+	@Override
+	public void complete_RoleLocale(EObject model, RuleCall ruleCall, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		selfClosingTagProposal("role", acceptor, context);
+	}
+
 	@Override
 	protected StyledString getStyledDisplayString(IEObjectDescription desc) {
 		// for persons show name and fictional flag if possible
