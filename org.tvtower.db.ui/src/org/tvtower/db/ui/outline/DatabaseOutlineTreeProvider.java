@@ -12,6 +12,7 @@ import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.EffectType;
 import org.tvtower.db.database.Achievement;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Database;
@@ -70,7 +71,10 @@ public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	protected void _createChildren(IOutlineNode parent, NewsItem n) {
 		if (!_isLeaf(n)) {
-			n.getEffects().getEffects().forEach(e -> createNode(parent, e));
+			n.getEffects().getEffects().forEach(e -> {
+				if(!EffectType.NEWS_AVAILABILITY.equals(e.getTrigger()))
+				createNode(parent, e);
+			});
 		}
 	}
 

@@ -6,6 +6,8 @@ package org.tvtower.db.ui.labeling;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.NewsType;
 import org.tvtower.db.database.Achievement;
 import org.tvtower.db.database.Achievements;
 import org.tvtower.db.database.Advertisement;
@@ -69,11 +71,21 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(NewsItem i) {
+		String prefix = "";
+		if (NewsType.INITIAL_NEWS.equals(i.getType())) {
+			if("0".equals(i.getData().getAvailable())) {
+				prefix = "(--) ";
+			}else if (Constants.newsFlag.hasFlag(i.getData().getFlags(), 2)) {
+				prefix = "(1x) ";
+			} else {
+				prefix = "(\u221E) ";
+			}
+		}
 		String title = fromTitle(i.getTitle());
 		if (title != null) {
-			return title;
+			return prefix + title;
 		}
-		return i.getName();
+		return prefix + i.getName();
 	}
 
 	String image(NewsItem ele) {
