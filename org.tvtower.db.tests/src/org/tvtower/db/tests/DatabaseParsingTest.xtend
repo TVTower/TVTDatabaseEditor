@@ -5,14 +5,14 @@ package org.tvtower.db.tests
 
 import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.extensions.InjectionExtension
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.^extension.ExtendWith
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.tvtower.db.database.Database
+import org.junit.Assert
 
-@ExtendWith(InjectionExtension)
+@RunWith(XtextRunner)
 @InjectWith(DatabaseInjectorProvider)
 class DatabaseParsingTest {
 	@Inject
@@ -61,8 +61,8 @@ class DatabaseParsingTest {
 
 	def void noErrors(CharSequence content){
 		val result = parseHelper.parse(content)
-		Assertions.assertNotNull(result)
+		Assert.assertNotNull(result)
 		val errors = result.eResource.errors
-		Assertions.assertTrue(errors.isEmpty, '''Unexpected errors: «errors.join(", ")»''')
+		Assert.assertTrue('''Unexpected errors: «errors.join(", ")»''', errors.isEmpty)
 	}
 }
