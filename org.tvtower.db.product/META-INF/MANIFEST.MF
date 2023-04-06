@@ -4,4 +4,4 @@ Bundle-Name: TVTower DB Editor
 Bundle-SymbolicName: org.tvtower.db.product;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.tvtower.db.product
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
