@@ -1,4 +1,4 @@
-package org.tvtower.db.tests;
+package org.tvtower.db.tests.helpers;
 
 import java.util.HashMap;
 import java.util.List;

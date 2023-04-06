@@ -46,7 +46,8 @@
     </content>
   </setupTask>
   <setupTask
-      xsi:type="setup.p2:P2Task">
+      xsi:type="setup.p2:P2Task"
+      disabled="true">
     <requirement
         name="org.eclipse.xtext.sdk.feature.group"/>
     <requirement

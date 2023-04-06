@@ -19,7 +19,9 @@
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<configuration>
+					<failIfNoTests>false</failIfNoTests>
 					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
 				</configuration>
 			</plugin>
 		</plugins>

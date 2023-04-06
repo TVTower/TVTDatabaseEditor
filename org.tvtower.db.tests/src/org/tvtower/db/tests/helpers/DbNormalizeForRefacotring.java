@@ -1,4 +1,4 @@
-package org.tvtower.db.tests;
+package org.tvtower.db.tests.helpers;
 
 import java.io.File;
 import java.io.FileInputStream;

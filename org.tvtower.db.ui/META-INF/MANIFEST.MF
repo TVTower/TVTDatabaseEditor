@@ -20,7 +20,7 @@ Require-Bundle: org.tvtower.db,
  org.eclipse.xtend.lib,
  org.eclipse.ui.forms
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.tvtower.db.ui.contentassist,
  org.tvtower.db.ui.quickfix,
  org.tvtower.db.ui.internal,

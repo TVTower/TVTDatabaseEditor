@@ -1,4 +1,4 @@
-package org.tvtower.db.tests
+package org.tvtower.db.tests.helpers
 
 import com.google.inject.Inject
 import java.io.File
@@ -13,16 +13,17 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.EcoreUtil2
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.testing.InjectWith
-import org.eclipse.xtext.testing.extensions.InjectionExtension
+import org.eclipse.xtext.testing.XtextRunner
 import org.eclipse.xtext.testing.util.ParseHelper
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.^extension.ExtendWith
+import org.junit.Ignore
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.tvtower.db.database.Database
 import org.tvtower.db.database.Programme
 import org.tvtower.db.database.Programmes
-import org.junit.Ignore
+import org.tvtower.db.tests.DatabaseInjectorProvider
 
-@ExtendWith(InjectionExtension)
+@RunWith(XtextRunner)
 @InjectWith(DatabaseInjectorProvider)
 //helper for splitting the large database programme file
 //into smaller files with identical content, each file is self contained
