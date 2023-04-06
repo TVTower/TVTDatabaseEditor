@@ -22,9 +22,9 @@ class DatabaseParsingTest {
 	def void emptyDb() {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
-		<tvgdb>
+		<tvtdb>
 			<version value="3" />
-		</tvgdb>
+		</tvtdb>
 		'''.noErrors
 	}
 
@@ -32,13 +32,13 @@ class DatabaseParsingTest {
 	def void roles() {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
-		<tvgdb>
+		<tvtdb>
 			<version value="3" />
 			<programmeroles>
 				<programmerole guid="script-roles-ron-001" first_name="Miranda" last_name="Jones" title="Dr." gender="2" />
-				<programmerole id="script-roles-ger-021" first_name="Klaus" last_name="Rudzinski" gender="1" country="D" />
+				<programmerole guid="script-roles-ger-021" first_name="Klaus" last_name="Rudzinski" gender="1" country="D" />
 			</programmeroles>
-		</tvgdb>
+		</tvtdb>
 		'''.noErrors
 	}
 
@@ -46,7 +46,7 @@ class DatabaseParsingTest {
 	def void singleDoubleQuoteOverride() {
 		'''
 		<?xml version="1.0" encoding="utf-8"?>
-		<tvgdb>
+		<tvtdb>
 			<version value="3" />
 			<allprogrammes>
 				<programme id="id" product="2" >
@@ -55,7 +55,7 @@ class DatabaseParsingTest {
 					</title>
 				</programme>
 			</allprogrammes>
-		</tvgdb>
+		</tvtdb>
 		'''.noErrors
 	}
 
