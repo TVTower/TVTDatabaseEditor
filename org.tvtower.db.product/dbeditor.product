@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Standalone TVTower DB Editor" uid="org.tvtower.db.product.id" id="org.tvtower.db.product.product" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Standalone TVTower DB Editor" uid="org.tvtower.db.product.id" id="org.tvtower.db.product.product" application="org.eclipse.ui.ide.workbench" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <text>
@@ -32,52 +32,51 @@
    </launcher>
 
    <vm>
-      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8</windows>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</windows>
    </vm>
 
    <plugins>
-      <plugin id="ch.qos.logback.classic"/>
-      <plugin id="ch.qos.logback.core"/>
-      <plugin id="ch.qos.logback.slf4j" fragment="true"/>
-      <plugin id="com.google.gson"/>
-      <plugin id="com.google.guava" version="27.1.0.v20190517-1946"/>
+      <plugin id="bcpg"/>
+      <plugin id="bcprov"/>
+      <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.jcraft.jsch"/>
-      <plugin id="com.jcraft.jzlib"/>
+      <plugin id="com.sun.jna"/>
+      <plugin id="com.sun.jna.platform"/>
       <plugin id="io.github.classgraph"/>
+      <plugin id="jakarta.servlet-api"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.xml"/>
-      <plugin id="javax.xml.stream"/>
       <plugin id="org.antlr.runtime"/>
+      <plugin id="org.aopalliance"/>
       <plugin id="org.apache.ant"/>
       <plugin id="org.apache.batik.constants"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.commons.cli"/>
-      <plugin id="org.apache.commons.io"/>
+      <plugin id="org.apache.commons.codec"/>
+      <plugin id="org.apache.commons.commons-io"/>
       <plugin id="org.apache.commons.jxpath"/>
-      <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
+      <plugin id="org.apache.felix.gogo.command"/>
       <plugin id="org.apache.felix.gogo.runtime"/>
+      <plugin id="org.apache.felix.gogo.shell"/>
       <plugin id="org.apache.felix.scr"/>
       <plugin id="org.apache.log4j"/>
-      <plugin id="org.apache.lucene.analyzers-common" version="8.4.1.v20200122-1459"/>
-      <plugin id="org.apache.lucene.analyzers-smartcn" version="8.4.1.v20200122-1459"/>
-      <plugin id="org.apache.lucene.core" version="8.4.1.v20200122-1459"/>
-      <plugin id="org.apache.xerces"/>
-      <plugin id="org.apache.xml.resolver"/>
-      <plugin id="org.apache.xml.serializer"/>
+      <plugin id="org.apache.lucene.analysis-common"/>
+      <plugin id="org.apache.lucene.analysis-smartcn"/>
+      <plugin id="org.apache.lucene.core"/>
       <plugin id="org.apache.xmlgraphics"/>
-      <plugin id="org.apiguardian"/>
+      <plugin id="org.apiguardian.api"/>
+      <plugin id="org.eclipse.ant.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
       <plugin id="org.eclipse.core.contenttype"/>
       <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.databinding.beans"/>
       <plugin id="org.eclipse.core.databinding.observable"/>
       <plugin id="org.eclipse.core.databinding.property"/>
       <plugin id="org.eclipse.core.expressions"/>
@@ -86,6 +85,7 @@
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
+      <plugin id="org.eclipse.core.net.win32" fragment="true"/>
       <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.resources.win32.x86_64" fragment="true"/>
@@ -134,8 +134,10 @@
       <plugin id="org.eclipse.equinox.event"/>
       <plugin id="org.eclipse.equinox.http.jetty"/>
       <plugin id="org.eclipse.equinox.http.servlet"/>
+      <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
+      <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
@@ -146,35 +148,25 @@
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.help.base"/>
       <plugin id="org.eclipse.help.ui"/>
-      <plugin id="org.eclipse.jdt.annotation" version="2.2.600.v20200408-1511"/>
-      <plugin id="org.eclipse.jdt.compiler.apt" fragment="true"/>
-      <plugin id="org.eclipse.jdt.compiler.tool" fragment="true"/>
+      <plugin id="org.eclipse.jdt.annotation"/>
       <plugin id="org.eclipse.jdt.core"/>
+      <plugin id="org.eclipse.jdt.core.compiler.batch"/>
       <plugin id="org.eclipse.jdt.core.manipulation"/>
       <plugin id="org.eclipse.jdt.debug"/>
       <plugin id="org.eclipse.jdt.launching"/>
       <plugin id="org.eclipse.jdt.ui"/>
-      <plugin id="org.eclipse.jem.util"/>
       <plugin id="org.eclipse.jetty.http"/>
       <plugin id="org.eclipse.jetty.io"/>
       <plugin id="org.eclipse.jetty.security"/>
       <plugin id="org.eclipse.jetty.server"/>
       <plugin id="org.eclipse.jetty.servlet"/>
       <plugin id="org.eclipse.jetty.util"/>
+      <plugin id="org.eclipse.jetty.util.ajax"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.jface.text"/>
       <plugin id="org.eclipse.ltk.core.refactoring"/>
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
-      <plugin id="org.eclipse.m2e.archetype.common"/>
-      <plugin id="org.eclipse.m2e.core"/>
-      <plugin id="org.eclipse.m2e.core.ui"/>
-      <plugin id="org.eclipse.m2e.logback.appender" fragment="true"/>
-      <plugin id="org.eclipse.m2e.maven.indexer"/>
-      <plugin id="org.eclipse.m2e.maven.runtime"/>
-      <plugin id="org.eclipse.m2e.maven.runtime.slf4j.simple"/>
-      <plugin id="org.eclipse.m2e.model.edit"/>
-      <plugin id="org.eclipse.m2e.workspace.cli"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
@@ -190,7 +182,6 @@
       <plugin id="org.eclipse.ui.console"/>
       <plugin id="org.eclipse.ui.editors"/>
       <plugin id="org.eclipse.ui.forms"/>
-      <plugin id="org.eclipse.ui.genericeditor"/>
       <plugin id="org.eclipse.ui.ide"/>
       <plugin id="org.eclipse.ui.ide.application"/>
       <plugin id="org.eclipse.ui.intro"/>
@@ -202,17 +193,8 @@
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.urischeme"/>
-      <plugin id="org.eclipse.wst.common.core"/>
-      <plugin id="org.eclipse.wst.common.emf"/>
-      <plugin id="org.eclipse.wst.common.environment"/>
-      <plugin id="org.eclipse.wst.common.frameworks"/>
-      <plugin id="org.eclipse.wst.common.uriresolver"/>
-      <plugin id="org.eclipse.wst.sse.core"/>
-      <plugin id="org.eclipse.wst.xml.core"/>
-      <plugin id="org.eclipse.xtend"/>
       <plugin id="org.eclipse.xtend.lib"/>
       <plugin id="org.eclipse.xtend.lib.macro"/>
-      <plugin id="org.eclipse.xtend.typesystem.emf"/>
       <plugin id="org.eclipse.xtext"/>
       <plugin id="org.eclipse.xtext.builder"/>
       <plugin id="org.eclipse.xtext.common.types"/>
@@ -230,9 +212,24 @@
       <plugin id="org.eclipse.xtext.xbase"/>
       <plugin id="org.eclipse.xtext.xbase.ide"/>
       <plugin id="org.eclipse.xtext.xbase.lib"/>
-      <plugin id="org.objectweb.asm" version="8.0.1.v20200420-1007"/>
-      <plugin id="org.objectweb.asm.tree" version="8.0.1.v20200420-1007"/>
-      <plugin id="org.slf4j.api" version="1.7.30.v20200204-2150"/>
+      <plugin id="org.objectweb.asm"/>
+      <plugin id="org.osgi.service.cm"/>
+      <plugin id="org.osgi.service.component"/>
+      <plugin id="org.osgi.service.component.annotations"/>
+      <plugin id="org.osgi.service.device"/>
+      <plugin id="org.osgi.service.event"/>
+      <plugin id="org.osgi.service.metatype"/>
+      <plugin id="org.osgi.service.prefs"/>
+      <plugin id="org.osgi.service.provisioning"/>
+      <plugin id="org.osgi.service.upnp"/>
+      <plugin id="org.osgi.service.useradmin"/>
+      <plugin id="org.osgi.service.wireadmin"/>
+      <plugin id="org.osgi.util.function"/>
+      <plugin id="org.osgi.util.measurement"/>
+      <plugin id="org.osgi.util.position"/>
+      <plugin id="org.osgi.util.promise"/>
+      <plugin id="org.osgi.util.xml"/>
+      <plugin id="org.slf4j.api"/>
       <plugin id="org.tukaani.xz"/>
       <plugin id="org.tvtower.db"/>
       <plugin id="org.tvtower.db.ide"/>
