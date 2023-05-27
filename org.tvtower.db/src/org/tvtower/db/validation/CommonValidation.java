@@ -41,7 +41,7 @@ public class CommonValidation {
 		if (mandatory && Strings.isNullOrEmpty(value)) {
 			return Optional.of(fieldName + " is missing");
 		}
-		if (!Strings.isNullOrEmpty(value)) {
+		if (value!=null) {
 			try {
 				int asNumber = Integer.parseInt(value);
 				if (asNumber < min) {

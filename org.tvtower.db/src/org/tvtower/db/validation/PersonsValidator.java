@@ -1,6 +1,7 @@
 package org.tvtower.db.validation;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
@@ -40,6 +41,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
 		checkNameChanges(person);
+		checkDates(person);
 	}
 
 	@Check
@@ -122,7 +124,6 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
 		Constants._boolean.isValidValue(d.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPersonDetails_Fictional()));
-		// TODO birthday, deathday
 	}
 
 	private boolean isGenderDefined(Person p) {
@@ -143,7 +144,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkRole(ProgrammeRole r) {
 		CommonValidation.getValueMissingError("first_name", r.getFirstName())
-				.ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
+				.ifPresent(e -> warning(e, $.getProgrammeRole_FirstName()));
 		CommonValidation.getValueMissingError("last_name", r.getLastName())
 				.ifPresent(e -> warning(e, $.getProgrammeRole_LastName()));
 		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
@@ -183,5 +184,24 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 //				error("names too similar", $.getPerson_LastNameOrig());
 //			}
 //		}
+	}
+
+	private void checkDates(Person person) {
+		dateError(person.getBirthday()).ifPresent(e -> error(e, $.getPerson_Birthday()));
+		dateError(person.getDeathday()).ifPresent(e -> error(e, $.getPerson_Deathday()));
+		if(person.getDetails()!=null) {
+			dateError(person.getDetails().getBirthday()).ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Birthday()));
+			dateError(person.getDetails().getDeathday()).ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Deathday()));
+		}
+	}
+
+	private Optional<String> dateError(String dateString) {
+		if(dateString!=null) {
+			if("-1".equals(dateString) ||dateString.startsWith("-1-")) {
+				return Optional.of("relative year -1 is not supported");
+			}
+			//TODO further checks on dates
+		}
+		return Optional.empty();
 	}
 }

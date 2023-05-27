@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.tvtower.db.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: org.tvtower.db.tests
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-SymbolicName: org.tvtower.db.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.tvtower.db,

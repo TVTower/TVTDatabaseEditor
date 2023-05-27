@@ -68,6 +68,7 @@ ScriptTemplate:
 	'>'
 	(
 		title=Title &
+		title_original=TitleOriginal? &
 		description=Description?&
 		variables=Variables? &
 		genres=ScriptGenres?&
@@ -247,8 +248,14 @@ ProgrammeRole:
 			('guid''='name=STRING )&
 			('first_name''='firstName=STRING)&
 			('last_name''='lastName=STRING)&
+			('first_name_original''='firstNameOriginal=STRING)?&
+			('last_name_original''='lastNameOriginal=STRING)?&
+			//TODO not supported by database code
+//			('nick_name''='nickName=STRING)?&
+//			('nick_name_original''='nickNameOriginal=STRING)?&
 			('title''='title=STRING)?&
 			('country''='country=STRING)?&
+			('comment''='comment=STRING)?&
 			('gender''='gender=STRING)?
 		)
 	'/>'
@@ -843,7 +850,7 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'roles';
+IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'roles'|'='|'subgenre'|'category'|'text'|'required';
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet

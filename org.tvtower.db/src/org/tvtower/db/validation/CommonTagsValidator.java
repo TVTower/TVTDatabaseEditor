@@ -81,7 +81,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	private boolean checkScript(Availability a) {
 		boolean result = false;
 		Pattern logicalOperatorPattern = Pattern.compile("\\|\\| | &amp;&amp;");
-		String compareOperatorPattern = "=|<=|>=|<|>";
+		String compareOperatorPattern = "=|<=|>=|<|>";//|&gt;|&lt;|&gt;=|&lt;=";
 		String script = a.getScript();
 		if (!Strings.isNullOrEmpty(a.getScript())) {
 			List<String> compontens = Splitter.on(logicalOperatorPattern).trimResults().omitEmptyStrings()
@@ -189,6 +189,12 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 //				lcontent.add(content);
 //			}
 			validateOptionsCount(l, optionsCount);
+			if("de".equals(language)) {
+				String content=l.getText();
+				if(content.indexOf('"')>=0) {
+					error("contains non-German quotes", l, $.getLanguageString_Langage());
+				}
+			}
 		}
 	}
 
@@ -233,6 +239,9 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					continue;
 				} else if (variable.startsWith("PERSONGENERATOR")) {
 					// TODO check person generator variable
+					continue;
+				} else if (variable.startsWith("ROLE")) {
+					// TODO check ROLE/ROLENAME
 					continue;
 				}
 				if (definedVariables == null) {

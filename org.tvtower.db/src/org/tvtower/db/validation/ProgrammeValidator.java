@@ -108,7 +108,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_Flags()));
 		Constants.licenceFlag.isValidFlag(d.getLicenceFlags(), "licence_flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_LicenceFlags()));
-		CommonValidation.getIntRangeError(d.getBlocks(), "blocks", 0, 12, false)
+		CommonValidation.getIntRangeError(d.getBlocks(), "blocks", 1, 12, false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Blocks()));
 		CommonValidation.getIntRangeError(d.getSlotStart(), "broadcast_time_slot_start", 0, 22, false)
 				.ifPresent(e -> error(e, $.getProgrammeData_SlotStart()));
