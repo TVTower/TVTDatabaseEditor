@@ -143,10 +143,10 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkRole(ProgrammeRole r) {
-		CommonValidation.getValueMissingError("first_name", r.getFirstName())
-				.ifPresent(e -> warning(e, $.getProgrammeRole_FirstName()));
-		CommonValidation.getValueMissingError("last_name", r.getLastName())
-				.ifPresent(e -> warning(e, $.getProgrammeRole_LastName()));
+		CommonValidation.getValueMissingError("name", r.getFirstName(), r.getLastName())
+				.ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
+//		CommonValidation.getValueMissingError("last_name", r.getLastName())
+//				.ifPresent(e -> warning(e, $.getProgrammeRole_LastName()));
 		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
 		Constants.gender.isValidValue(r.getGender(), "gender", false)
 				.ifPresent(e -> error(e, $.getProgrammeRole_Gender()));

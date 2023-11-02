@@ -24,6 +24,8 @@ import org.tvtower.db.database.Staff;
 import org.tvtower.db.database.StaffMember;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 //TODO GroupAttractivitiy valieren (nach Umschreiben)
 public class ProgrammeValidator extends AbstractDatabaseValidator {
@@ -104,6 +106,10 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 		Constants.programmGenre.isValidValue(d.getMaingenre(), "maingenre", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Maingenre()));
 		Constants.programmGenre.isValidList(d.getSubgenre()).ifPresent(e -> error(e, $.getProgrammeData_Subgenre()));
+		if (!Strings.isNullOrEmpty(d.getSubgenre()) && !Strings.isNullOrEmpty(d.getMaingenre())) {
+			Splitter.on(",").trimResults().splitToStream(d.getSubgenre()).filter(g -> g.equals(d.getMaingenre()))
+					.findFirst().ifPresent(g -> error("main genre duplicate", $.getProgrammeData_Subgenre()));
+		}
 		Constants.programmeFlag.isValidFlag(d.getFlags(), "flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Flags()));
 		Constants.licenceFlag.isValidFlag(d.getLicenceFlags(), "licence_flags", false)
@@ -126,6 +132,8 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_LicenceBroadcastFlags()));
 		ensureLimitHandling(d, d.getBroadcastLimit(), $.getProgrammeData_BroadcastLimit());
 		ensureLimitHandling(d, d.getLicenceBroadcastLimit(), $.getProgrammeData_LicenceBroadcastLimit());
+		Constants._boolean.isValidValue(d.getAvailable(), "available", false)
+			.ifPresent(e -> error(e, $.getProgrammeData_Available()));
 	}
 
 	private void ensureLimitHandling(ProgrammeData d, String limit, EStructuralFeature limitFeature) {

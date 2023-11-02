@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.Assignment;
+import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.resource.IEObjectDescription;
@@ -21,14 +23,18 @@ import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext;
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor;
 import org.eclipse.xtext.ui.editor.contentassist.PrefixMatcher;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.EffectType;
 import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.constants.TVTFlag;
 import org.tvtower.db.database.DatabasePackage;
+import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.Person;
 import org.tvtower.db.database.StaffMember;
 import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.validation.DatabaseTime;
+
+import com.google.common.base.Predicate;
 
 /**
  * See
@@ -291,6 +297,14 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
+	public void complete_NewsData(EObject model, RuleCall ruleCall, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		selfClosingTagProposal("data", acceptor, context);
+	}
+	// End News-------------
+
+	// Effect
+	@Override
 	public void completeEffect_Trigger(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants.triggerType, acceptor, context);
@@ -321,18 +335,38 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void complete_NewsData(EObject model, RuleCall ruleCall, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-		selfClosingTagProposal("data", acceptor, context);
-	}
-
-	@Override
 	public void complete_Effect(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		selfClosingTagProposal("effect", acceptor, context);
 	}
-// End News-------------
 
+	@Override
+	public void completeEffect_Guid(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		if(model instanceof Effect) {
+			EClass c=null;
+			String type = ((Effect)model).getType();
+			switch (type) {
+			case EffectType.PERSON:
+				c=DatabasePackage.eINSTANCE.getPerson();
+				break;
+			case EffectType.PROGRAMME_AVAILABILITY:
+				c=DatabasePackage.eINSTANCE.getProgramme();
+				break;
+			case EffectType.SCRIPT_AVAILABILITY:
+				c=DatabasePackage.eINSTANCE.getScriptTemplate();
+				break;
+			}
+			if(c!=null) {
+				final EClass compare= c;
+				Predicate<IEObjectDescription> p=desc-> desc.getEClass() == compare;
+				lookupCrossReference(((CrossReference)assignment.getTerminal()), context, acceptor,p);
+			}
+		}
+	}
+	// End Effect-------------
+
+	
 	// Person
 	@Override
 	public void completePerson_Gender(EObject model, Assignment assignment, ContentAssistContext context,

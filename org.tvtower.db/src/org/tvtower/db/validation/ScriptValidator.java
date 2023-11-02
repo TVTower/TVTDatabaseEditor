@@ -40,7 +40,8 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getScriptTemplate_Product()));
 		Constants.licenceType.isValidValue(t.getLicenceType(), "licence_type", true)
 				.ifPresent(e -> error(e, $.getScriptTemplate_LicenceType()));
-		if ((t.eContainer() instanceof ScriptTemplates) && t.getIndex() != null) {
+		boolean isRoot=t.eContainer() instanceof ScriptTemplates;
+		if (isRoot && t.getIndex() != null) {
 			error("index must not be defined for root elements", $.getScriptTemplate_Index());
 		}
 
@@ -86,6 +87,9 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 			checkLiveDateAndFlags(t);
 		}
 		validateEpisodes(t);
+		if(isRoot) {
+			checkJobIndexes(t);
+		}
 	}
 
 	private boolean hasLiveFlag(ScriptTemplate t) {
@@ -155,14 +159,29 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		}
 	}
 
-	@Check
-	public void checkJobIndexes(Jobs jobs) {
-		for (int i = 0; i < jobs.getJob().size(); i++) {
+	void checkJobIndexes(ScriptTemplate t) {
+		Jobs jobs = t.getJobs();
+		int parentJobSize = jobs.getJob().size();
+		for (int i = 0; i < parentJobSize; i++) {
 			Job job = jobs.getJob().get(i);
 			if (job.getIndex() == null) {
 				error("index must be defined", job, $.getJob_Index());
 			} else if (!("" + i).equals(job.getIndex())) {
 				error("index " + i + " expected", job, $.getJob_Index());
+			}
+		}
+		if (t.getChildren() != null) {
+			for (ScriptTemplate child : t.getChildren().getChild()) {
+				jobs = child.getJobs();
+				for (int i = 0; i < jobs.getJob().size(); i++) {
+					Job job = jobs.getJob().get(i);
+					if (job.getIndex() == null) {
+						error("index must be defined", job, $.getJob_Index());
+						// TODO support overriding a parent job?
+					} else if (!("" + (i + parentJobSize)).equals(job.getIndex())) {
+						error("index " + (i + parentJobSize) + " expected", job, $.getJob_Index());
+					}
+				}
 			}
 		}
 	}
@@ -199,6 +218,10 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getScriptData_ProductionLimit()));
 		CommonValidation.getIntRangeError(d.getBroadcastLimit(), "production_broadcast_limit", 1, 256, false)
 				.ifPresent(e -> error(e, $.getScriptData_BroadcastLimit()));
+		Constants._boolean.isValidValue(d.getAvailable(), "available", false)		
+			.ifPresent(e -> error(e, $.getScriptData_Available()));
+
+
 		ensureLimitHandling(d, d.getBroadcastLimit(), $.getScriptData_BroadcastLimit());
 	}
 

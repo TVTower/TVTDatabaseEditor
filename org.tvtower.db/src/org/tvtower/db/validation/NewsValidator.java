@@ -15,6 +15,9 @@ import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.NewsData;
 import org.tvtower.db.database.NewsItem;
+import org.tvtower.db.database.Person;
+import org.tvtower.db.database.Programme;
+import org.tvtower.db.database.ScriptTemplate;
 
 import com.google.common.base.Strings;
 
@@ -148,6 +151,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		}
 	}
 
+	//TODO extend check effects to programme and scripts
 	@Check
 	public void checkEffect(Effect e) {
 		Constants.triggerType.isValidValue(e.getTrigger(), "trigger", true)
@@ -173,31 +177,46 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(err -> error(err, $.getEffect_Enable()));
 
 		if (e.getType() != null) {
-			boolean checkMinMax = false;
-			boolean genreExpected = false;
-			boolean refExpected = false;
-			boolean choiceExpected = false;
-			boolean enableExpected = false;
-			boolean newsExpected = false;
+			Boolean checkMinMax = Boolean.FALSE;
+			Boolean genreExpected = Boolean.FALSE;
+			Boolean guidExpected = Boolean.FALSE;
+			Boolean choiceExpected = Boolean.FALSE;
+			Boolean enableExpected = Boolean.FALSE;
+			Boolean newsExpected = Boolean.FALSE;
+			Class expectedClass= null;
 
 			switch (e.getType()) {
 			case EffectType.NEWS:
-				newsExpected = true;
+				newsExpected = Boolean.TRUE;
+				expectedClass=NewsItem.class;
 				break;
 			case EffectType.NEWS_CHOICE:
-				choiceExpected = true;
+				choiceExpected = Boolean.TRUE;
+				expectedClass=NewsItem.class;
 				break;
 			case EffectType.PERSON:
-				checkMinMax = true;
-				refExpected = true;
+				checkMinMax = Boolean.TRUE;
+				guidExpected = Boolean.TRUE;
+				expectedClass=Person.class;
 				break;
 			case EffectType.GENRE:
-				checkMinMax = true;
-				genreExpected = true;
+				checkMinMax = Boolean.TRUE;
+				genreExpected = Boolean.TRUE;
 				break;
 			case EffectType.NEWS_AVAILABILITY:
-				newsExpected = true;
-				enableExpected = true;
+				newsExpected = Boolean.TRUE;
+				enableExpected = Boolean.TRUE;
+				expectedClass=NewsItem.class;
+				break;
+			case EffectType.SCRIPT_AVAILABILITY:
+				guidExpected = Boolean.TRUE;
+				enableExpected = null;
+				expectedClass=ScriptTemplate.class;
+				break;
+			case EffectType.PROGRAMME_AVAILABILITY:
+				guidExpected = Boolean.TRUE;
+				enableExpected = null;
+				expectedClass=Programme.class;
 				break;
 			default:
 				break;
@@ -209,8 +228,8 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			effectTypeField("genre", e.getGenre(), genreExpected);
 			effectTypeField("choice", e.getChoose(), choiceExpected);
 			effectTypeField("enable", e.getEnable(), enableExpected);
-			referenceField("reference", e.getRefs(), refExpected);
-			referenceField("news", e.getNews(), newsExpected);
+			referenceField("guid", e.getGuid(), guidExpected, expectedClass);
+			referenceField("news", e.getNews(), newsExpected, expectedClass);
 
 			// check choices
 			if (e.getChoose() != null) {
@@ -245,19 +264,22 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		}
 	}
 
-	private void referenceField(String field, Object value, boolean expected) {
+	private void referenceField(String field, Object value, boolean expected, Class expectedRefType) {
 		if(expected && value ==null) {
 			error(field+ " expected for this effect type", $.getEffect_Type());
 		}else if(!expected&& value!=null) {
 			error(field + " not allowed for this effect type", $.getEffect_Type());
 		}
+		if(expected &&value!=null &&! (expectedRefType.isAssignableFrom(value.getClass()))) {
+			error(expectedRefType.getSimpleName() + " expected", $.getEffect_Guid());
+		}
 	}
 
-	private void effectTypeField(String field, String fieldValue, boolean expected) {
+	private void effectTypeField(String field, String fieldValue, Boolean expected) {
 		boolean present = !Strings.isNullOrEmpty(fieldValue);
-		if (expected && !present) {
+		if (expected==Boolean.TRUE && !present) {
 			error(field + " expected for this effect type", $.getEffect_Type());
-		} else if (!expected && present) {
+		} else if (expected==Boolean.FALSE && present) {
 			error(field + " not allowed for this effect type", $.getEffect_Type());
 		}
 	}

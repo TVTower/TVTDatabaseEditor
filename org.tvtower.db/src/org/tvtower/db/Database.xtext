@@ -87,7 +87,8 @@ ScriptTemplate:
 		productionTime=ProductionTime?&
 		children=ScriptChildren?&
 		attractivity=GroupAttractivity?&
-		progDataModifiers=TemplateProgrammeModifiers?
+		progDataModifiers=TemplateProgrammeModifiers?&
+		effects=Effects?
 	)
 	'</''scripttemplate''>'
 ;
@@ -153,7 +154,8 @@ ScriptData:
 			('production_limit''='productionLimit=STRING)?&
 			('production_broadcast_limit''='broadcastLimit=STRING)?&
 			('production_broadcast_flags''='broadcastFlags=STRING)?&
-			('production_licence_flags''='licenceFlags=STRING)?
+			('production_licence_flags''='licenceFlags=STRING)?&
+			('available''='available=STRING)?
 		)
 	'/>'
 ;
@@ -336,9 +338,8 @@ TaskData:
 			('type''='type=STRING )&
 			('minAudienceAbsolute''='minAudienceAbs=STRING)?&
 			('minAudienceQuote''='minAudiencePercent=STRING)?&
-//TODO genres/flats not yet supported (game.achievements.bmx todo line 145)
-//			('limitToGenres''='limitToGenres=STRING)?&
-//			('limitToFlags''='limitToFlags=STRING)?&
+			('limitToGenres''='limitToGenres=STRING)?&
+			('limitToFlags''='limitToFlags=STRING)?&
 			('minReachAbsolute''='minReachAbs=STRING)?&
 			('minReachPercentage''='minReachPercent=STRING)?&
 			('keyword1''='keyword1=STRING)?&
@@ -521,7 +522,7 @@ Effect:
 			('news''='news=[NewsItem|STRING])?& 
 			('genre''='genre=STRING)?&
 			('choose''='choose=STRING)?&
-			('referenceGUID''='refs=[Person|STRING])?&
+			('guid''='guid=[ecore::EObject|STRING])?&//script or programme or person 
 			('valueMin''='valueMin=STRING)?&
 			('valueMax''='valueMax=STRING)?&
 			('probability''='probability=STRING)?&
@@ -702,7 +703,8 @@ Programme:
 		releaseTime=ProgrammeReleaseTime?&
 		ratings=ProgrammeRatings?&
 		modifiers=Modifiers?&
-		data=ProgrammeData?
+		data=ProgrammeData?&
+		effects=Effects?
 	)
 	'</''programme''>'
 ;
@@ -829,9 +831,9 @@ ProgrammeData:
 			('broadcast_flags''='broadcastFlags=STRING)?&
 			('licence_broadcast_limit''='licenceBroadcastLimit=STRING)?&
 			('licence_broadcast_flags''='licenceBroadcastFlags=STRING)?&
+			('available''='available=STRING)?&
 			('price_mod''='priceMod=STRING)?
 			//TODO noch nicht alles unterstützt
-			//available, //noch kein sinnvoller Anwendungsfall in DB
 		)
 	'/>'
 ;
