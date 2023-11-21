@@ -34,7 +34,7 @@ public class DatabaseHoverProvider extends DefaultEObjectHoverProvider {
 			List<INode> nodes = NodeModelUtils.findNodesForFeature(o, f);
 			for (INode iNode : nodes) {
 				if (iNode.getTextRegion().contains(currentRegion.getOffset())) {
-					TVTHoverInfoCreator infoCreator = Constants.getHoverInfoCreator(f);
+					TVTHoverInfoCreator infoCreator = Constants.getHoverInfoCreator(f, o);
 					if (infoCreator != null) {
 						return infoCreator.createHoverInfo(o.eGet(f));
 					} else {

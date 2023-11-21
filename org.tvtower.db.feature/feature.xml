@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature id="org.tvtower.db.feature"
 	label="Database Feature "
-	version="1.1.0.qualifier">
+	version="1.2.0.qualifier">
 	<plugin
 			id="org.tvtower.db"
 			download-size="0"

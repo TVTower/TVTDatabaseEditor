@@ -18,7 +18,9 @@ import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.ModifierValueValidator;
 import org.tvtower.db.constants.NewsType;
+import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.ContainsLanguageStrings;
@@ -35,17 +37,12 @@ import org.tvtower.db.database.UnnamedProperty;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 //TODO globale ID-Eindeutigkeit
 //TODO validate created_by defined and not empty
 public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
-	private static BigDecimal _100=new BigDecimal(100);
-	private static List<String> progModifiers=ImmutableList.of("price","topicality::age","topicality::refresh","topicality::trailerRefresh", "topicality::wearoff","topicality::trailerWearoff","topicality::firstBroadcastDone","topicality::notLive","topicality::timesBroadcasted","callin::perViewerRevenue");
-	private static List<String> scriptProgModifiers=progModifiers;
-	private static List<String> adModifiers=ImmutableList.of("topicality::infomercialRefresh","topicality::infomercialWearoff");
 
 	@Override
 	public void register(EValidatorRegistrar registrar) {
@@ -325,21 +322,21 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkModifiers(Modifier modifier) {
-		CommonValidation.getDecimalRangeError(modifier.getValue(), "value", BigDecimal.ZERO, _100, true)
-				.ifPresent(e -> error(e, $.getModifier_Value()));
-		EObject container=modifier.eContainer().eContainer();
-		List<String> allowedNames=null;
-		if(container instanceof ScriptTemplate) {
-			allowedNames=scriptProgModifiers;
-		}else if(container instanceof Programme) {
-			allowedNames=progModifiers;
-		}else if(container instanceof Advertisement) {
-			allowedNames=adModifiers;
+		TVTEnum validator = null;
+		EObject container = modifier.eContainer().eContainer();
+		if (container instanceof ScriptTemplate || container instanceof Programme) {
+			validator = Constants.programmeModifier;
+		} else if (container instanceof Advertisement) {
+			validator = Constants.adModifier;
 		}
-		if(allowedNames!=null) {
-			if(!allowedNames.contains(modifier.getModName())) {
-				warning("unbekannter Modifier", $.getModifier_ModName());
-			}
+		if (container instanceof NewsItem) {
+			validator = Constants.newsModifier;
+		}
+		if (validator != null && validator instanceof ModifierValueValidator) {
+			validator.isValidValue(modifier.getModName(), "modifier", true)
+					.ifPresent(e -> error(e, modifier, $.getModifier_ModName()));
+			((ModifierValueValidator) validator).getValueError(modifier)
+					.ifPresent(e -> error(e, modifier, $.getModifier_Value()));
 		}
 	}
 

@@ -3,10 +3,14 @@
  */
 package org.tvtower.db.generator
 
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import org.tvtower.db.database.Effect
+import org.tvtower.db.database.Programme
+import org.tvtower.db.database.ScriptTemplate
 
 /**
  * Generates code from your model files on save.
@@ -15,11 +19,54 @@ import org.eclipse.xtext.generator.IGeneratorContext
  */
 class DatabaseGenerator extends AbstractGenerator {
 
+
+	val availabilityEffects=#["modifyProgrammeAvailability","modifyScriptAvailability"]
+
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(Greeting)
-//				.map[name]
-//				.join(', '))
+//		val effects=resource.allContents.filter(Effect).map[effectDescription].filterNull
+//		if(! effects.nullOrEmpty){
+//			fsa.generateFile("effects_"+resource.URI.lastSegment+".txt",effects.toList.sort.join("\n\n"))
+//		}
 	}
+
+	def String getEffectDescription(Effect e){
+		if(availabilityEffects.contains(e.type)){
+			val target=e.guid
+			return e.source+"\n\t-> "+name(target)
+		}
+		return null
+	}
+
+	def String getSource(Effect e){
+		val direct=e.eContainer.eContainer
+		val directName = name(direct)
+		var prefix=""
+		var suffix=""
+		val parent=direct.eContainer.eContainer
+		if(parent instanceof Programme || parent instanceof ScriptTemplate){
+			prefix=parent.name+" ("
+			suffix=")"
+		}
+		return prefix+directName+suffix
+	}
+
+	def dispatch String name(EObject o){
+		return "Object " +o.class
+	}
+
+	def dispatch String name(Programme p){
+		val base= p.title.lstrings.get(0).text +" (prog)"
+		var suffix="" 
+		if(p.data!==null && ! p.data.year.isNullOrEmpty){
+			suffix =" - "+p.data.year
+		}else if(p.releaseTime!==null &&! p.releaseTime.year.isNullOrEmpty){
+			suffix =" - "+p.releaseTime.year
+		}
+		return base+suffix
+	}
+
+	def dispatch String name(ScriptTemplate t){
+		t.title.lstrings.get(0).text +" (script)"
+	}
+
 }

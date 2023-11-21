@@ -12,7 +12,7 @@ import org.eclipse.xtext.validation.NamesAreUniqueValidator;
  * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
  */
 @ComposedChecks(validators = { NamesAreUniqueValidator.class, NewsValidator.class, CommonTagsValidator.class, PersonsValidator.class,
-		AdValidator.class, ProgrammeValidator.class, ScriptValidator.class, AchievementValidator.class })
+		AdValidator.class, ProgrammeValidator.class, ScriptValidator.class, AchievementValidator.class, EffectsValidator.class })
 public class DatabaseValidator extends AbstractDatabaseValidator {
 	
 //	public static final String INVALID_NAME = "invalidName";

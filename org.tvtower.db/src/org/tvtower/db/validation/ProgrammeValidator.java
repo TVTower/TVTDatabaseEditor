@@ -107,8 +107,8 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getProgrammeData_Maingenre()));
 		Constants.programmGenre.isValidList(d.getSubgenre()).ifPresent(e -> error(e, $.getProgrammeData_Subgenre()));
 		if (!Strings.isNullOrEmpty(d.getSubgenre()) && !Strings.isNullOrEmpty(d.getMaingenre())) {
-			Splitter.on(",").trimResults().splitToStream(d.getSubgenre()).filter(g -> g.equals(d.getMaingenre()))
-					.findFirst().ifPresent(g -> error("main genre duplicate", $.getProgrammeData_Subgenre()));
+			Splitter.on(",").trimResults().splitToList(d.getSubgenre()).stream()
+			.filter(g -> g.equals(d.getMaingenre())).findFirst().ifPresent(g -> error("main genre duplicate", $.getProgrammeData_Subgenre()));
 		}
 		Constants.programmeFlag.isValidFlag(d.getFlags(), "flags", false)
 				.ifPresent(e -> error(e, $.getProgrammeData_Flags()));

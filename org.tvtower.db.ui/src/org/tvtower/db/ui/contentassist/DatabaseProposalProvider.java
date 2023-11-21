@@ -26,10 +26,14 @@ import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.EffectType;
 import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.constants.TVTFlag;
+import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.GroupAttractivity;
+import org.tvtower.db.database.NewsItem;
 import org.tvtower.db.database.Person;
+import org.tvtower.db.database.Programme;
+import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.StaffMember;
 import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.validation.DatabaseTime;
@@ -783,6 +787,19 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void complete_Modifier(EObject model, RuleCall ruleCall, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		selfClosingTagProposal("modifier", acceptor, context);
+	}
+
+	@Override
+	public void completeModifier_ModName(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		EObject target = model.eContainer().eContainer();
+		if (target instanceof Programme || target instanceof ScriptTemplate) {
+			mapProposal(Constants.programmeModifier, acceptor, context);
+		} else if (target instanceof Advertisement) {
+			mapProposal(Constants.adModifier, acceptor, context);
+		} else if (target instanceof NewsItem) {
+			mapProposal(Constants.newsModifier, acceptor, context);
+		}
 	}
 
 	//Person localization

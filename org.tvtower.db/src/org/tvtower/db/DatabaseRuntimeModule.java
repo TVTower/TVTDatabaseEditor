@@ -10,9 +10,11 @@ import org.eclipse.xtext.parser.antlr.LexerBindings;
 import org.eclipse.xtext.parser.antlr.LexerProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
+import org.eclipse.xtext.validation.ConfigurableIssueCodesProvider;
 import org.tvtower.db.parser.antlr.internal.InternalDatabaseLexer;
 import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.resource.DatabaseResourceServiceProvider;
+import org.tvtower.db.validation.DatabaseConfigurableIssueCodesProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Provider;
@@ -52,4 +54,9 @@ public class DatabaseRuntimeModule extends AbstractDatabaseRuntimeModule {
 	public Class<? extends IDefaultResourceDescriptionStrategy> bindIndexingStrategy() {
 		return DatabaseResourceDescriptionStrategy.class;
 	}
+
+	public Class<? extends ConfigurableIssueCodesProvider> bindConfigurableIssueCodesProvider() {
+		return DatabaseConfigurableIssueCodesProvider.class;
+	}
+
 }

@@ -3,6 +3,8 @@ package org.tvtower.db.validation;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -37,11 +39,29 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getPerson_Fictional()));
 		Constants._boolean.isValidValue(person.getBookable(), "bookable", false)
 				.ifPresent(e -> error(e, $.getPerson_Bookable()));
-		if(person.getFictional()!=null && person.getDetails()!=null && person.getDetails().getFictional()!=null){
+		if (person.getFictional() != null && person.getDetails() != null
+				&& person.getDetails().getFictional() != null) {
 			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
-		checkNameChanges(person);
+		if (!isFictional(person) && "1".equals(person.getBookable())) {
+			error("non-fictional persons may not be bookable", $.getPerson_Bookable());
+		}
+		if (person.getTitle() != null) {
+			addIssue("title not supported", person, $.getPerson_Title(),
+					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
+		checkNames(person);
 		checkDates(person);
+	}
+
+	private boolean isFictional(Person p) {
+		if ("1".equals(p.getFictional())) {
+			return true;
+		} else if (p.getDetails() != null && "1".equals(p.getDetails().getFictional())) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Check
@@ -151,56 +171,89 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		Constants.gender.isValidValue(r.getGender(), "gender", false)
 				.ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
 		if (Constants.gender.isUndefined(r.getGender())) {
-			warning("undefined gender", $.getProgrammeRole_Gender());
+			addIssue("undefined gender", r, $.getProgrammeRole_Gender(),
+					DatabaseConfigurableIssueCodesProvider.ROLE_UNDEFINED_GENDER);
 		}
+		if (r.getNickName() != null) {
+			addIssue("nickname not supported", r, $.getProgrammeRole_NickName(),
+					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
+		if (r.getNickNameOriginal() != null) {
+			addIssue("original nickname not supported", r, $.getProgrammeRole_NickName(),
+					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
+
+		checkNameEndsWithS(r.getFirstName(), r.getFirstNameOriginal(), r, $.getProgrammeRole_FirstName());
+		checkNameEndsWithS(r.getLastName(), r.getLastNameOriginal(), r, $.getProgrammeRole_LastName());
+		checkNameEndsWithS(r.getNickName(), r.getNickNameOriginal(), r, $.getProgrammeRole_NickName());
 	}
 
-	private void checkNameChanges(Person person) {
-		if(!PersonUtil.isFictional(person)){
-			if(!Strings.isNullOrEmpty(person.getNickName())){
-				if(Strings.isNullOrEmpty(person.getNickNameOrig())){
+	private void checkNames(Person person) {
+		if (!PersonUtil.isFictional(person)) {
+			if (!Strings.isNullOrEmpty(person.getNickName())) {
+				if (Strings.isNullOrEmpty(person.getNickNameOrig())) {
 					warning("Original Nickname is missing", $.getPerson_NickName());
 				}
 			}
-			if(!isInsignificant(person)) {
-				//there are non-fictional spoof versions in fictional file, where original names are not given
-				if(!Strings.isNullOrEmpty(person.getFirstName())){
-					if(Strings.isNullOrEmpty(person.getFirstNameOrig())){
+			if (!isInsignificant(person)) {
+				// there are non-fictional spoof versions in fictional file, where original
+				// names are not given
+				if (!Strings.isNullOrEmpty(person.getFirstName())) {
+					if (Strings.isNullOrEmpty(person.getFirstNameOrig())) {
 						warning("Original First is missing", $.getPerson_FirstName());
 					}
 				}
-				if(!Strings.isNullOrEmpty(person.getLastName())){
-					if(Strings.isNullOrEmpty(person.getLastNameOrig())){
+				if (!Strings.isNullOrEmpty(person.getLastName())) {
+					if (Strings.isNullOrEmpty(person.getLastNameOrig())) {
 						warning("Original Last is missing", $.getPerson_LastName());
 					}
 				}
 			}
 		}
 
-		//TODO check and improve names
-//		if(person.getFirstNameOrig()!=null && person.getLastNameOrig()!=null) {
-//			if((person.getLastNameOrig().startsWith(person.getLastName()) || person.getLastName().startsWith(person.getLastNameOrig()))
-//					&&person.getFirstName().equals(person.getFirstNameOrig())){
-//				error("names too similar", $.getPerson_LastNameOrig());
-//			}
-//		}
+		checkNameEndsWithS(person.getFirstName(), person.getFirstNameOrig(), person, $.getPerson_FirstName());
+		checkNameEndsWithS(person.getLastName(), person.getLastNameOrig(), person, $.getPerson_LastName());
+		checkNameEndsWithS(person.getNickName(), person.getNickNameOrig(), person, $.getPerson_NickName());
+
+		// TODO improve spoof name similarity
+		if (person.getFirstNameOrig() != null && person.getLastNameOrig() != null) {
+			if ((person.getLastNameOrig().startsWith(person.getLastName())
+					|| person.getLastName().startsWith(person.getLastNameOrig()))
+					&& person.getFirstName().equals(person.getFirstNameOrig())) {
+				addIssue("spoof name (too?) similar " + person.getFirstName() + " " + person.getLastName(), person,
+						$.getPerson_LastNameOrig(), DatabaseConfigurableIssueCodesProvider.PERSON_SPOOF_NAME);
+			}
+		}
+	}
+
+	private void checkNameEndsWithS(String name, String origName, EObject p, EAttribute att) {
+		if (name != null && origName != null) {
+			boolean ns = name.endsWith("s");
+			boolean os = origName.endsWith("s");
+			if (ns != os) {
+				addIssue("name/orig not both ending with s: " + name + " " + origName, p, att,
+						DatabaseConfigurableIssueCodesProvider.PERSON_NAME_ENDING);
+			}
+		}
 	}
 
 	private void checkDates(Person person) {
 		dateError(person.getBirthday()).ifPresent(e -> error(e, $.getPerson_Birthday()));
 		dateError(person.getDeathday()).ifPresent(e -> error(e, $.getPerson_Deathday()));
-		if(person.getDetails()!=null) {
-			dateError(person.getDetails().getBirthday()).ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Birthday()));
-			dateError(person.getDetails().getDeathday()).ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Deathday()));
+		if (person.getDetails() != null) {
+			dateError(person.getDetails().getBirthday())
+					.ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Birthday()));
+			dateError(person.getDetails().getDeathday())
+					.ifPresent(e -> error(e, person.getDetails(), $.getPersonDetails_Deathday()));
 		}
 	}
 
 	private Optional<String> dateError(String dateString) {
-		if(dateString!=null) {
-			if("-1".equals(dateString) ||dateString.startsWith("-1-")) {
+		if (dateString != null) {
+			if ("-1".equals(dateString) || dateString.startsWith("-1-")) {
 				return Optional.of("relative year -1 is not supported");
 			}
-			//TODO further checks on dates
+			// TODO further checks on dates
 		}
 		return Optional.empty();
 	}

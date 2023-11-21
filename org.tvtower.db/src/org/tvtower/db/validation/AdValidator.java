@@ -109,10 +109,10 @@ public class AdValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getAdConditions_ContraPressureGroup()));
 
 		if (c.getProPressureGroup() != null && !"0".equals(c.getProPressureGroup())) {
-			warning("pressure groups not yet supported", $.getAdConditions_ProPressureGroup());
+			addIssue("pressure groups not yet supported", c, $.getAdConditions_ProPressureGroup(), DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
 		}
 		if (c.getContraPressureGroup() != null && !"0".equals(c.getContraPressureGroup())) {
-			warning("pressure groups not yet supported", $.getAdConditions_ContraPressureGroup());
+			addIssue("pressure groups not yet supported",c, $.getAdConditions_ContraPressureGroup(), DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
 		}
 	}
 

@@ -37,9 +37,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		if (isUserDB(item) && Strings.isNullOrEmpty(item.getCreatedBy()) && Strings.isNullOrEmpty(item.getCreator() )) {
 			error("created_by must be defined", $.getMayContainVariables_Name());
 		}
-		if (item.getModifiers() != null) {
-			error("modifiers used", $.getNewsItem_Modifiers());
-		}
 	}
 
 	@Check
@@ -127,11 +124,11 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		}
 		String triggeredThread = triggered.getThreadId();
 		if (!parentNews.getThreadId().equals(triggeredThread)) {
-			warning("triggered news should belong to the same thread", e, feature);
+			addIssue("triggered news should belong to the same thread", e, feature, DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_THREAD);
 		}
 		if (parentNews.getData() != null && parentNews.getData().getGenre() != null && triggered.getData() != null) {
 			if (!parentNews.getData().getGenre().equals(triggered.getData().getGenre())) {
-				warning("genre mismatch with triggering news", triggered.getData(), $.getNewsData_Genre());
+				addIssue("genre mismatch with triggering news", triggered.getData(), $.getNewsData_Genre(), DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_GENRE);
 			}
 		}
 		if (!NewsType.FOLLOW_UP_NEWS.equals(triggered.getType())) {
@@ -143,12 +140,27 @@ public class NewsValidator extends AbstractDatabaseValidator {
 					$.getMayContainVariables_Name());
 		}
 		NewsFlag newsFlags = Constants.newsFlag;
-		if(triggered != parentNews && !newsFlags.hasFlag(parentNews.getData().getFlags(), newsFlags.INVISIBLE)) {
-			if(triggered.getVariables()!=null) {
+		if (triggered != parentNews && !newsFlags.hasFlag(parentNews.getData().getFlags(), newsFlags.INVISIBLE)) {
+			if (triggered.getVariables() != null) {
 				error("variables in triggered news will cause problems", triggered,
 						$.getMayContainVariables_Variables());
 			}
+			boolean parentUnique = isOneTimeEvent(parentNews);
+			if (parentUnique && !isOneTimeEvent(triggered)) {
+				if (parentUnique) {
+					addIssue("triggering news is unique, triggered is not", triggered.getData(), $.getNewsData_Flags(), DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_UNIQUENESS);
+				} else {
+					error("unique news triggered by repeatable news", triggered.getData(), $.getNewsData_Flags());
+				}
+			}
 		}
+	}
+
+	private boolean isOneTimeEvent(NewsItem news) {
+		if(news!=null && news.getData()!=null && Constants.newsFlag.hasFlag(news.getData().getFlags(), Constants.newsFlag.UNIQUE_EVENT)) {
+			return true;
+		}
+		return false;
 	}
 
 	//TODO extend check effects to programme and scripts

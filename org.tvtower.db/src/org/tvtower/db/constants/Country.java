@@ -2,6 +2,7 @@ package org.tvtower.db.constants;
 
 public class Country extends TVTEnum {
 
+	//https://de.wikipedia.org/wiki/Liste_der_Kfz-Nationalit%C3%A4tszeichen
 	Country() {
 		add("A","Austria");
 		add("AFG","Afghanistan");
@@ -18,6 +19,7 @@ public class Country extends TVTEnum {
 		add("CDN","Canada");
 		add("CH","Switzerland");
 		add("CHN","China");
+		add("CL","Sri Lanka");
 		add("CO","Colombia");
 		add("CS","Tchechoslovakia");
 		add("CZ","Czech Republic");
@@ -41,6 +43,7 @@ public class Country extends TVTEnum {
 		add("KN","Greenland");
 		add("KSA","Saudi Arabia");
 		add("LT","Lithuania");
+		add("MA","Marocco");
 		add("MEX","Mexico");
 		add("NL","Netherlands");
 		add("NZ","New Zealand");
