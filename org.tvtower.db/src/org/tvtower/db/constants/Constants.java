@@ -110,7 +110,7 @@ public class Constants {
 				.put($.getEffect_Genre(), programmGenre).put($.getEffect_Time(), timeProvider)
 				.put($.getEffect_Enable(), _boolean)
 
-				.put($.getPerson_Bookable(), _boolean).put($.getPerson_Fictional(), _boolean)
+				.put($.getPerson_Castable(), _boolean).put($.getPerson_Fictional(), _boolean)
 				.put($.getPerson_LevelUp(), _boolean).put($.getPerson_Gender(), gender)
 				.put($.getPerson_Country(), country).put($.getPerson_Job(), job)
 				.put($.getPersonDetails_Country(), country).put($.getPersonDetails_Gender(), gender)

@@ -385,7 +385,7 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void completePerson_Bookable(EObject model, Assignment assignment, ContentAssistContext context,
+	public void completePerson_Castable(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants._boolean, acceptor, context);
 	}

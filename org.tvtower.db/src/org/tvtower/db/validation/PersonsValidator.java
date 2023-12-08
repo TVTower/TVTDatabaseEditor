@@ -37,14 +37,14 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		Constants.job.isValidFlag(person.getJob(), "job", false).ifPresent(e -> error(e, $.getPerson_Job()));
 		Constants._boolean.isValidValue(person.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPerson_Fictional()));
-		Constants._boolean.isValidValue(person.getBookable(), "bookable", false)
-				.ifPresent(e -> error(e, $.getPerson_Bookable()));
+		Constants._boolean.isValidValue(person.getCastable(), "castable", false)
+				.ifPresent(e -> error(e, $.getPerson_Castable()));
 		if (person.getFictional() != null && person.getDetails() != null
 				&& person.getDetails().getFictional() != null) {
 			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
-		if (!isFictional(person) && "1".equals(person.getBookable())) {
-			error("non-fictional persons may not be bookable", $.getPerson_Bookable());
+		if (!isFictional(person) && "1".equals(person.getCastable())) {
+			error("non-fictional persons may not be castable", $.getPerson_Castable());
 		}
 		if (person.getTitle() != null) {
 			addIssue("title not supported", person, $.getPerson_Title(),
@@ -81,7 +81,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (!isInsignificant(person)) {
 			assertNotSet(person.getLevelUp(), "levelup", $.getPerson_LevelUp());
 
-			if ("1".equals(person.getBookable())) {
+			if ("1".equals(person.getCastable())) {
 				if (!isGenderDefined(person)) {
 					error("gender must be defined", $.getPerson_Name());
 				}

@@ -598,7 +598,7 @@ Person:
 			('title''='title=STRING )?&
 			('fictional''='fictional=STRING )?&
 			('levelup''='levelUp=STRING )?&
-			('bookable''='bookable=STRING )?&
+			('castable''='castable=STRING )?&
 			('gender''='gender=STRING )?&
 			('face_code''='faceCode=STRING )?&
 			('country''='country=STRING)?&
