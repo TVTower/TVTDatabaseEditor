@@ -30,6 +30,12 @@ public class DbNormalizeForRefacotring {
 	TreeMap<String, Node> news = new TreeMap<>();
 	TreeMap<String, Node> scripts = new TreeMap<>();
 
+	//allows defining a language tag that should be ignored for normalization
+	//e.g. for comparing data base changes excluding changes in that language
+	private static final String langToIgnore = null;// "pl"
+	//do not change this constant!
+	private static final String langIgnorePrefix = langToIgnore == null ? null : langToIgnore + " -";
+
 	@Test
 	public void iterateFolder() throws IOException {
 		File parent = new File(".").getAbsoluteFile().getParentFile().getParentFile().getParentFile();
@@ -46,7 +52,7 @@ public class DbNormalizeForRefacotring {
 			}
 		}
 
-		String normName="normalizedOrig.txt";
+		String normName="normalized.txt";
 		write(persons, "persons/"+normName);
 		write(programmes, "progs/"+normName);
 		write(ads, "ads/"+normName);
@@ -143,7 +149,7 @@ public class DbNormalizeForRefacotring {
 			// iterate the employees
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
-				String id = ((Element) node).getAttribute(baseTag=="scripttemplate"?"guid":"id");
+				String id = ((Element) node).getAttribute("guid");
 				if (map.containsKey(id)) {
 					throw new IllegalStateException("duplicate id '" + id +"' in "+fileName );
 				} else {
@@ -187,7 +193,11 @@ public class DbNormalizeForRefacotring {
 				if (child != null) {
 					String childText = toString(child);
 					if (childText != null && childText.length() > 0) {
-						b.append("; child: " + childText);
+						if (langToIgnore != null && childText.startsWith(langIgnorePrefix)) {
+							i = i + 1;
+						} else {
+							b.append("; child: " + childText);
+						}
 					}
 				}
 			}
