@@ -74,7 +74,6 @@ ScriptTemplate:
 		genres=ScriptGenres?&
 		jobs=Jobs?&
 		data=ScriptData?&
-		groups=ProgrammeGroups? &
 		availability=Availability?&
 		episodes=Episodes?&
 		studioSize=StudioSize?&
@@ -155,6 +154,8 @@ ScriptData:
 			('production_broadcast_limit''='broadcastLimit=STRING)?&
 			('production_broadcast_flags''='broadcastFlags=STRING)?&
 			('production_licence_flags''='licenceFlags=STRING)?&
+			('target_groups''='targetGroup=STRING )?&
+			('target_groups_optional''='optionalTargetGroup=STRING)?&
 			('available''='available=STRING)?
 		)
 	'/>'
@@ -731,7 +732,6 @@ ProgrammeGroups:
 	'<''groups' {ProgrammeGroups}
 		(
 			('target_groups''='targetGroup=STRING )?&
-			('target_groups_optional''='optionalTargetGroup=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
 			('contra_pressure_groups''='contraPressureGroup=STRING)?
 		)

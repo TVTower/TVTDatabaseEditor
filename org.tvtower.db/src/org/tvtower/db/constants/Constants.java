@@ -83,6 +83,8 @@ public class Constants {
 				.put($.getScriptData_LicenceFlags(), licenceFlag).put($.getScriptData_ScriptFlags(), scriptFlag)
 				.put($.getScriptData_Live_date(), timeProvider).put($.getScriptData_BroadcastFlags(), broadcastFlag)
 				.put($.getScriptGenres_MainGenre(), programmGenre).put($.getScriptGenres_Subgenres(), programmGenre)
+				.put($.getScriptData_OptionalTargetGroup(), targetgroup)
+				.put($.getScriptData_TargetGroup(), targetgroup)
 
 				.put($.getProgrammeRole_Country(), country).put($.getProgrammeRole_Gender(), gender)
 
@@ -126,7 +128,6 @@ public class Constants {
 				.put($.getProgrammeData_LicenceBroadcastFlags(), broadcastFlag)
 
 				.put($.getProgrammeGroups_TargetGroup(), targetgroup)
-				.put($.getProgrammeGroups_OptionalTargetGroup(), targetgroup)
 				.put($.getProgrammeGroups_ProPressureGroup(), pressuregroup)
 				.put($.getProgrammeGroups_ContraPressureGroup(), pressuregroup)
 

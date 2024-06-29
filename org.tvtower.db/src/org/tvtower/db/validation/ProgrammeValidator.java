@@ -171,18 +171,6 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 	}
 
 	@Check
-	public void checkProgrammeGroups(ProgrammeGroups g) {
-		Constants.targetgroup.isValidFlag(g.getTargetGroup(), "target_groups", false)
-				.ifPresent(e -> error(e, $.getProgrammeGroups_TargetGroup()));
-		Constants.targetgroup.isValidFlag(g.getOptionalTargetGroup(), "target_groups_optional", false)
-				.ifPresent(e -> error(e, $.getProgrammeGroups_OptionalTargetGroup()));
-		Constants.pressuregroup.isValidFlag(g.getProPressureGroup(), "pro_pressure_groups", false)
-				.ifPresent(e -> error(e, $.getProgrammeGroups_ProPressureGroup()));
-		Constants.pressuregroup.isValidFlag(g.getContraPressureGroup(), "contra_pressure_groups", false)
-				.ifPresent(e -> error(e, $.getProgrammeGroups_ContraPressureGroup()));
-	}
-
-	@Check
 	public void checkProgrammeStaff(Staff staff) {
 		int offset = getParentStaffCount(staff);
 		if (offset > 0) {

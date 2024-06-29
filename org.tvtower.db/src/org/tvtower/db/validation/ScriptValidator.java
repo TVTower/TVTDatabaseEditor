@@ -202,6 +202,11 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getScriptData_OptionalProgrammeFlags()));
 		Constants.scriptFlag.isValidFlag(d.getScriptFlags(), "scriptflags", false)
 				.ifPresent(e -> error(e, $.getScriptData_ScriptFlags()));
+		Constants.targetgroup.isValidFlag(d.getTargetGroup(), "target_group", false)
+				.ifPresent(e -> error(e, $.getScriptData_TargetGroup()));
+		Constants.targetgroup.isValidFlag(d.getOptionalTargetGroup(), "target_group_optional", false)
+				.ifPresent(e -> error(e, $.getScriptData_OptionalTargetGroup()));
+
 
 		Constants.licenceFlag.isValidFlag(d.getLicenceFlags(), "production_licence_flags", false)
 				.ifPresent(e -> error(e, $.getScriptData_LicenceFlags()));

@@ -494,12 +494,6 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void completeProgrammeGroups_OptionalTargetGroup(EObject model, Assignment assignment,
-			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		flagProposal(Constants.targetgroup, acceptor, context);
-	}
-
-	@Override
 	public void completeProgrammeGroups_ProPressureGroup(EObject model, Assignment assignment,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.pressuregroup, acceptor, context);
@@ -656,6 +650,18 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	public void completeScriptData_ScriptFlags(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.scriptFlag, acceptor, context);
+	}
+
+	@Override
+	public void completeScriptData_TargetGroup(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.targetgroup, acceptor, context);
+	}
+	
+	@Override
+	public void completeScriptData_OptionalTargetGroup(EObject model, Assignment assignment,
+			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		flagProposal(Constants.targetgroup, acceptor, context);
 	}
 
 	@Override
