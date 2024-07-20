@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.tvtower.db.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: org.tvtower.db.ui
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 1.3.0.qualifier
 Bundle-SymbolicName: org.tvtower.db.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.tvtower.db,
