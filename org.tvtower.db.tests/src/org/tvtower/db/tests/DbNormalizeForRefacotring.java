@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -51,8 +52,36 @@ public class DbNormalizeForRefacotring {
 		write(ads, "ads/"+normName);
 		write(news, "news/"+normName);
 		write(scripts, "scripts/"+normName);
+		printDiffs();
 	}
-	
+
+	private void printDiffs() {
+		try {
+			MessageDigest hash= MessageDigest.getInstance("SHA-256");
+			File parent=new File("target/dbcompare/");
+			if(parent.exists() && parent.isDirectory()) {
+				for (File subDir : parent.listFiles()) {
+					if(subDir.exists() && subDir.isDirectory()) {
+						File[] files = subDir.listFiles();
+						if(files!=null && files.length==2){
+							File f1 = files[0];
+							File f2 = files[1];
+							String b1 = new String(hash.digest(Files.toByteArray(f1)));
+							String b2 =  new String(hash.digest(Files.toByteArray(f2)));
+							if(!b1.equals(b2)) {
+								System.err.println("diff in "+subDir.getName());
+							}
+						}
+					}
+				}
+			}else {
+				System.out.println("no compare directory found");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	@Test
 	public void normalizePersons() throws IOException {
 		parsePersonFile("persons/db_orig.xml");

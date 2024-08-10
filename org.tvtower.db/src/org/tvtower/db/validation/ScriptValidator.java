@@ -192,6 +192,9 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getJob_Required()));
 		Constants.job.isValidCastJob(job.getFunction(), "function", true).ifPresent(e -> error(e, $.getJob_Function()));
 		Constants.gender.isValidValue(job.getGender(), "gender", false).ifPresent(e -> error(e, $.getJob_Gender()));
+		Constants._boolean.isValidValue(job.getRandomRole(), "random_role", false)
+				.ifPresent(e -> error(e, $.getJob_RandomRole()));
+		//TODO generator country validation, propsal and hover
 	}
 
 	@Check

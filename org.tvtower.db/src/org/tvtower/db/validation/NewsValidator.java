@@ -4,6 +4,7 @@ import static org.tvtower.db.validation.CommonValidation.isUserDB;
 
 import java.math.BigDecimal;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -15,6 +16,7 @@ import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.NewsData;
 import org.tvtower.db.database.NewsItem;
+import org.tvtower.db.database.NewsProbability;
 import org.tvtower.db.database.Person;
 import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ScriptTemplate;
@@ -106,25 +108,25 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		if (item.getEffects() != null) {
 			String thread = item.getThreadId();
 			if (thread != null) {
-				item.getEffects().getEffects().stream().filter(e->Constants.effectType.isNewsTrigger(e.getType()))
-				.forEach(e -> {
-					checkTriggeredNews(item, e, e.getNews(), $.getEffect_News());
-					checkTriggeredNews(item, e, e.getNews1(), $.getEffect_News1());
-					checkTriggeredNews(item, e, e.getNews2(), $.getEffect_News2());
-					checkTriggeredNews(item, e, e.getNews3(), $.getEffect_News3());
-					checkTriggeredNews(item, e, e.getNews4(), $.getEffect_News4());
-				});
+				item.getEffects().getEffects().stream().filter(e -> Constants.effectType.isNewsTrigger(e.getType()))
+						.forEach(e -> {
+							if (e.getNews() != null && e.getNews().getNews() != null) {
+								e.getNews().getNews().forEach(n -> {
+									checkTriggeredNews(item, e, n.getNews(), $.getEffect_News());
+								});
+							}
+						});
 			}
 		}
 	}
 
 	private void checkTriggeredNews(NewsItem parentNews, Effect e, NewsItem triggered, EStructuralFeature feature) {
-		if(triggered.eIsProxy()) {
+		if (triggered.eIsProxy() || parentNews.eResource() != triggered.eResource()) {
 			return;
 		}
 		String triggeredThread = triggered.getThreadId();
 		if (!parentNews.getThreadId().equals(triggeredThread)) {
-			addIssue("triggered news should belong to the same thread", e, feature, DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_THREAD);
+				addIssue("triggered news should belong to the same thread", e, feature, DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_THREAD);
 		}
 		if (parentNews.getData() != null && parentNews.getData().getGenre() != null && triggered.getData() != null) {
 			if (!parentNews.getData().getGenre().equals(triggered.getData().getGenre())) {
@@ -163,6 +165,17 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		return false;
 	}
 
+	@Check
+	public void checkNewsProbability(NewsProbability e) {
+		CommonValidation.getIntRangeError(e.getProbability(), "probability", 0, 100, false)
+				.ifPresent(err -> error(err, $.getNewsProbability_Probability()));
+		if (e.getCount1() != e.getCount2()) {
+			error("property indexes for news and probability do not coincide", $.getNewsProbability_Count2());
+		}
+		referenceField("news" + (e.getCount1() > 0 ? e.getCount1() : ""), e.getNews(), true, NewsItem.class,
+				$.getNewsProbability_News());
+	}
+
 	//TODO extend check effects to programme and scripts
 	@Check
 	public void checkEffect(Effect e) {
@@ -177,14 +190,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(err -> error(err, $.getEffect_ValueMax()));
 		CommonValidation.getIntRangeError(e.getProbability(), "probability", 0, 100, false)
 				.ifPresent(err -> error(err, $.getEffect_Probability()));
-		CommonValidation.getIntRangeError(e.getProbability1(), "probability1", 0, 100, false)
-				.ifPresent(err -> error(err, $.getEffect_Probability1()));
-		CommonValidation.getIntRangeError(e.getProbability2(), "probability2", 0, 100, false)
-				.ifPresent(err -> error(err, $.getEffect_Probability2()));
-		CommonValidation.getIntRangeError(e.getProbability3(), "probability3", 0, 100, false)
-				.ifPresent(err -> error(err, $.getEffect_Probability3()));
-		CommonValidation.getIntRangeError(e.getProbability4(), "probability4", 0, 100, false)
-				.ifPresent(err -> error(err, $.getEffect_Probability4()));
 		Constants._boolean.isValidValue(e.getEnable(), "enable", false)
 				.ifPresent(err -> error(err, $.getEffect_Enable()));
 
@@ -241,27 +246,34 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			effectTypeField("choice", e.getChoose(), choiceExpected);
 			effectTypeField("enable", e.getEnable(), enableExpected);
 			referenceField("guid", e.getGuid(), guidExpected, expectedClass);
-			referenceField("news", e.getNews(), newsExpected, expectedClass);
+
+			EList<NewsProbability> newsList = null;
+			if (e.getNews() != null) {
+				newsList = e.getNews().getNews();
+			}
+			if (newsExpected && (newsList == null || newsList.isEmpty())) {
+				error("triggered news are expected", $.getEffect_Type());
+			}
 
 			// check choices
 			if (e.getChoose() != null) {
 				if (!"or".equals(e.getChoose())) {
 					error("unsupported choose operator", $.getEffect_Choose());
 				} else {
-					if (e.getNews() != null) {
+					// TODO check indexes as well
+					if (newsList == null || newsList.size() < 2) {
 						error("for choices use news<X> values", $.getEffect_News());
 					}
 				}
 			} else {
 				assertChoiceValueNotSet(e.getProbability(), $.getEffect_Probability());
-				assertChoiceValueNotSet(e.getNews1(), $.getEffect_News1());
-				assertChoiceValueNotSet(e.getNews2(), $.getEffect_News2());
-				assertChoiceValueNotSet(e.getNews3(), $.getEffect_News3());
-				assertChoiceValueNotSet(e.getNews4(), $.getEffect_News4());
-				assertChoiceValueNotSet(e.getProbability1(), $.getEffect_Probability1());
-				assertChoiceValueNotSet(e.getProbability2(), $.getEffect_Probability2());
-				assertChoiceValueNotSet(e.getProbability3(), $.getEffect_Probability3());
-				assertChoiceValueNotSet(e.getProbability4(), $.getEffect_Probability4());
+				if (newsList != null) {
+					newsList.forEach(n -> {
+						if (n.getCount1() != 0 || n.getCount2() != 0) {
+							error("without choose this value must not be set", n, $.getNewsProbability_News());
+						}
+					});
+				}
 			}
 			// TODO time not always needed
 			CommonValidation.getTimeError(e.getTime(), "time").ifPresent(err -> error(err, $.getEffect_Time()));
@@ -277,13 +289,17 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	}
 
 	private void referenceField(String field, Object value, boolean expected, Class expectedRefType) {
+		referenceField(field, value, expected, expectedRefType, $.getEffect_Type());
+	}
+
+	private void referenceField(String field, Object value, boolean expected, Class expectedRefType, EStructuralFeature f) {
 		if(expected && value ==null) {
-			error(field+ " expected for this effect type", $.getEffect_Type());
+			error(field+ " expected for this effect type", f);
 		}else if(!expected&& value!=null) {
-			error(field + " not allowed for this effect type", $.getEffect_Type());
+			error(field + " not allowed for this effect type", f);
 		}
 		if(expected &&value!=null &&! (expectedRefType.isAssignableFrom(value.getClass()))) {
-			error(expectedRefType.getSimpleName() + " expected", $.getEffect_Guid());
+			error(expectedRefType.getSimpleName() + " expected", f);
 		}
 	}
 

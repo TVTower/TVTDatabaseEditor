@@ -10,13 +10,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.print.attribute.standard.Severity;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.preferences.IPreferenceValues;
+import org.eclipse.xtext.preferences.IPreferenceValuesProvider;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
+import org.eclipse.xtext.validation.ConfigurableIssueCodesProvider;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
+import org.eclipse.xtext.validation.SeverityConverter;
 import org.tvtower.db.constants.Constants;
 import org.tvtower.db.constants.ModifierValueValidator;
 import org.tvtower.db.constants.NewsType;
@@ -24,6 +30,7 @@ import org.tvtower.db.constants.TVTEnum;
 import org.tvtower.db.database.Advertisement;
 import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.ContainsLanguageStrings;
+import org.tvtower.db.database.Database;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.LanguageString;
@@ -34,18 +41,35 @@ import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ScriptTemplate;
 import org.tvtower.db.database.UnnamedProperty;
+import org.tvtower.db.validation.expressionhelper.ScriptExpression;
+import org.tvtower.db.validation.expressionhelper.SimpleExpression;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.inject.Inject;
 
-//TODO globale ID-Eindeutigkeit
 //TODO validate created_by defined and not empty
 public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	private static DatabasePackage $ = DatabasePackage.eINSTANCE;
+	private static final Pattern SIMPLE_VARIABLE_PATTERN= Pattern.compile("\\$\\{(\\w+)\\}"); 
 
+	@Inject
+	private IPreferenceValuesProvider valuesProvider;
+	@Inject
+	private ConfigurableIssueCodesProvider issuCodeProvider;
+
+	private boolean checkLocalizationDuplicates=false;
+	
 	@Override
 	public void register(EValidatorRegistrar registrar) {
+	}
+
+	@Check
+	public void setupLanguageStringValidation(Database db) {
+		IPreferenceValues preferenceValues = valuesProvider.getPreferenceValues(db.eResource());
+		String value = preferenceValues.getPreference(issuCodeProvider.getConfigurableIssueCodes()
+				.get(DatabaseConfigurableIssueCodesProvider.VALIDATE_LOCALIZATION_DUPLICATES));
+		checkLocalizationDuplicates=!SeverityConverter.SEVERITY_IGNORE.equals(value);
 	}
 
 	@Check
@@ -63,7 +87,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			}
 		}
 		if (scriptDefinesYear && hasYear) {
-			error("script defines year as well", $.getAvailability_Script());
+			error("script restricts year as well", $.getAvailability_Script());
 		}
 	}
 
@@ -71,80 +95,15 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		return checkNumber(year, true, 1950, 3000, "year", f);
 	}
 
-	// Mögliche Werte in game.gamescriptexpression
-	// TIME_X, mit X in YEAR, DAY, HOUR, MINUTE, WEEKDAY, SEASON, DAYSPLAYED,
-	// YEARSPLAYED, DAYOFMONTH, DAYOFYEAR, MONTH, (ISNIGHT, ISDAWN, ISDAY, ISDUSK)
-	// returns if script defines year
+	//ScriptExpression checks simple expressions and parameters of worldtime comparisons
 	private boolean checkScript(Availability a) {
 		boolean result = false;
-		Pattern logicalOperatorPattern = Pattern.compile("\\|\\| | &amp;&amp;");
-		String compareOperatorPattern = "=|<=|>=|<|>";//|&gt;|&lt;|&gt;=|&lt;=";
 		String script = a.getScript();
-		if (!Strings.isNullOrEmpty(a.getScript())) {
-			List<String> compontens = Splitter.on(logicalOperatorPattern).trimResults().omitEmptyStrings()
-					.splitToList(script);
-			for (String s : compontens) {
-				String[] kv = s.split(compareOperatorPattern);
-				if (kv.length != 2) {
-					error("cannot recognize pattern " + s, $.getAvailability_Script());
-				} else {
-					int min = 0;
-					int max = 0;
-					String key = kv[0].trim();
-					String value = kv[1].trim();
-					switch (key) {
-					case "TIME_YEAR":
-						min = Constants.MIN_YEAR;
-						max = Constants.MAX_YEAR;
-						result = true;
-						break;
-//					case "TIME_DAY":
-
-					case "TIME_SEASON":
-						max = 4;
-						break;
-					case "TIME_MONTH":
-						max = 12;
-						break;
-					case "TIME_WEEKDAY":
-						max = 6;
-						break;
-					case "TIME_DAYOFYEAR":
-						warning("dayofyear should not be used", $.getAvailability_Script());
-						break;
-					case "TIME_DAYSPLAYED":
-						max = 10000;
-						break;
-					case "TIME_YEARSPLAYED":
-						max = 150;
-						break;
-					case "TIME_DAYSOFMONTH":
-						max = 31;
-						break;
-					case "TIME_HOUR":
-						max = 23;
-						break;
-					case "TIME_MINUTE":
-						max = 59;
-						break;
-					case "TIME_ISNIGHT":
-						max = 1;
-						break;
-					case "TIME_ISDAWN":
-						max = 1;
-						break;
-					case "TIME_ISDAY":
-						max = 1;
-						break;
-					case "TIME_ISDUSK":
-						max = 1;
-						break;
-					default:
-						error("no valid script key " + key, $.getAvailability_Script());
-						return result;
-					}
-					checkNumber(value, false, min, max, key, $.getAvailability_Script());
-				}
+		if (!Strings.isNullOrEmpty(script)) {
+			ScriptExpression s=new ScriptExpression(script, a);
+			result= s.hasYearExpression();
+			for (String error : s.getErrors()) {
+				error(error,$.getAvailability_Script());
 			}
 		}
 		return result;
@@ -167,10 +126,38 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 	@Check(CheckType.NORMAL)
 	public void checkLanguageStringsContainer(ContainsLanguageStrings c) {
+		String globalText=c.getGlobal();
+		if(globalText!=null) {
+			if(germanContainsIllegalQuote(globalText)) {
+				error("contains non-German quotes", c, $.getContainsLanguageStrings_Global());
+			}
+			validateExpressions(globalText, c, $.getContainsLanguageStrings_Global());
+
+			if (checkLocalizationDuplicates && globalText.contains("${")
+					&& (globalText.contains("cast") || globalText.contains("role"))) {
+				addIssue("role/cast could be localized", c, $.getContainsLanguageStrings_Global(), DatabaseConfigurableIssueCodesProvider.VALIDATE_LOCALIZATION_DUPLICATES);
+			}
+		}
+
 		Set<String> languages = new HashSet<>();
 		AtomicInteger optionsCount = new AtomicInteger(-1);
 		//prepare duplicate entry checks
-//		Set<String> lcontent=new HashSet<>();
+//		boolean plMissing=true;
+
+		if (checkLocalizationDuplicates) {
+			int languageCount = c.getLstrings().size();
+			if (languageCount == 0) {
+			} else if (c.getLstrings().size() == 1) {
+				LanguageString l = c.getLstrings().get(0);
+				if (!"all".equals(l.getLangage()) // && languageCount>1
+				) {
+					addIssue("use unspecified/all languages pattern: " + l.getText(), l, $.getLanguageString_Langage(), DatabaseConfigurableIssueCodesProvider.VALIDATE_LOCALIZATION_DUPLICATES);
+				}
+			} else if (c.getLstrings().stream().map(l -> l.getText()).distinct().count() == 1) {
+				addIssue("all identical: " + c.getLstrings().get(0).getText(), c, $.getContainsLanguageStrings_Lstrings(), DatabaseConfigurableIssueCodesProvider.VALIDATE_LOCALIZATION_DUPLICATES);
+			}
+		}
+
 		for (LanguageString l : c.getLstrings()) {
 			String language = l.getLangage();
 			if (languages.contains(language)) {
@@ -178,28 +165,54 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			} else {
 				languages.add(language);
 			}
-//			String content = l.getText();
-//			if (lcontent.contains(content)) {
-//				error("duplicate content " + (Strings.isNullOrEmpty(content) ? "<EMPTY>" : content), l,
-//						$.getLanguageString_Langage());
-//			} else {
-//				lcontent.add(content);
-//			}
 			validateOptionsCount(l, optionsCount);
 			if("de".equals(language)) {
 				String content=l.getText();
-				if(content.indexOf('"')>=0) {
+				if(germanContainsIllegalQuote(content)) {
 					error("contains non-German quotes", l, $.getLanguageString_Langage());
 				}
 			}
+//			if("pl".equals(language)) {
+//				plMissing=false;
+//			}
 		}
+		
+//		if(plMissing && c instanceof Title) {
+//			error("polish missing",c.getLstrings().get(0), $.getLanguageString_Langage());
+//		}
+	}
+
+	private boolean germanContainsIllegalQuote(String s) {
+		if (Strings.isNullOrEmpty(s)) {
+			return false;
+		} else if (s.indexOf('”') >= 0) {
+			return true;
+		} else {
+			int expCount = 0;
+			char[] arr = s.toCharArray();
+			char current;
+			for (int i = 0; i < arr.length; i++) {
+				current = arr[i];
+				if (expCount == 0 && current == '"') {
+					return true;
+				}
+				if (current == '$') {
+					if (arr[i + 1] == '{') {
+						expCount++;
+					}
+				} else if (expCount > 0 && current == '}') {
+					expCount--;
+				}
+			}
+		}
+		return false;
 	}
 
 	private void validateOptionsCount(LanguageString s, AtomicInteger optionsCount) {
 		int count = -1;
 		if (!Strings.isNullOrEmpty(s.getText())) {
-			//remove reference like [1|Full] from the text
-			count = s.getText().replaceAll("\\[\\w+\\|\\w+\\]", " ").split("\\|").length;
+			//TODO what about options within an expression
+			count = s.getText().split("\\|").length;
 		}
 		if (optionsCount.get() < 0) {
 			if (count >= 0) {
@@ -211,8 +224,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	}
 
 	//TODO implement variable validation for followup news
-	private boolean isFollowUpNews(LanguageString s) {
-		NewsItem newsItem = EcoreUtil2.getContainerOfType(s, NewsItem.class);
+	private boolean isFollowUpNews(EObject o) {
+		NewsItem newsItem = EcoreUtil2.getContainerOfType(o, NewsItem.class);
 		if(newsItem!=null && NewsType.FOLLOW_UP_NEWS.equals(newsItem.getType())) {
 			return true;
 		}
@@ -226,51 +239,57 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		}
 		String text = s.getText();
 		if (text != null) {
-			List<String> definedVariables=null;
-			// anything between percent not containing percent or space
-			Pattern pattern = Pattern.compile("%([^%\\s]+)%");
-			Matcher matcher = pattern.matcher(text);
-			while (matcher.find()) {
-				String variable = matcher.group(1);
-				if (!Constants.globalVariable.isValidValue(variable, "", false).isPresent()) {
-					continue;
-				} else if (variable.startsWith("PERSONGENERATOR")) {
-					// TODO check person generator variable
-					continue;
-				} else if (variable.startsWith("ROLE")) {
-					// TODO check ROLE/ROLENAME
-					continue;
-				}
-				if (definedVariables == null) {
-					definedVariables = getVariablesFromContainers(s);
-				}
-				if(definedVariables.isEmpty()) {
-					if(!isFollowUpNews(s)) {
-						error("no variable definitions found", $.getLanguageString_Text());
-					}
-					continue;
-				}
-				boolean found = false;
-				for (String def : definedVariables) {
-					if (variable.equalsIgnoreCase(def)) {
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					MayContainVariables varibaleContainer = EcoreUtil2.getContainerOfType(s, MayContainVariables.class);
-					if (varibaleContainer instanceof ScriptTemplate) {
-						if (!Constants.roleVariable.isValidValue(variable, "", false).isPresent()) {
-							found = true;
-						}
-					}
-				}
-				if (!found) {
-					error("variable " + variable + " not defined", $.getLanguageString_Text());
-				}
-			}
+			validateExpressions(text, s, $.getLanguageString_Text());
 		}
 	}
+
+	private void validateExpressions(String text, EObject context, EStructuralFeature f) {
+		List<String> definedVariables=null;
+		//we don't do full expression evaluation only simple variables ${abc}
+		//and simple functions ${.name:parameter1:parameter2} without inner expressions
+
+		//first simple variables
+		Matcher simpleVariableMatcher = SIMPLE_VARIABLE_PATTERN.matcher(text);
+		while (simpleVariableMatcher.find()) {
+			String variable = simpleVariableMatcher.group(1);
+			if (definedVariables == null) {
+				definedVariables = getVariablesFromContainers(context);
+			}
+			if(definedVariables.isEmpty()) {
+				if(!isFollowUpNews(context)) {
+					error("no variable definitions found", f);
+				}
+				continue;
+			}
+			boolean found = false;
+			for (String def : definedVariables) {
+				if (variable.equalsIgnoreCase(def)) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				error("simple variable " + variable + " not defined", f);
+			}
+		}
+
+		//TODO nested variable ${prefix_${variant}}
+
+		//then function calls
+		//personGenerator, random city, roles/persons depending on context
+		List<SimpleExpression> simpleExpressions=SimpleExpression.get(text);
+//		MayContainVariables vContainer = EcoreUtil2.getContainerOfType(s, MayContainVariables.class);
+//		if (varibaleContainer instanceof ScriptTemplate) {
+		for (SimpleExpression exp : simpleExpressions) {
+			String error = exp.getValidationError(context);
+			if (error != null) {
+				error(error, f);
+			}
+//			//TODO param could be a variable - search in definedVariables
+//			System.out.println(fct+" "+params);
+		}
+	}
+
 
 	private List<String> getVariablesFromContainers(EObject o) {
 		MayContainVariables vContainer = EcoreUtil2.getContainerOfType(o, MayContainVariables.class);

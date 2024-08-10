@@ -41,9 +41,9 @@ PersonLocalization:
 	'<''persons'{PersonLocalization}->'>'
 		persons+=PersonLocale*
 	'</''persons''>'
-	'<''roles''>'
+	'<''programmeroles''>'
 		roles+=RoleLocale*
-	'</''roles''>'
+	'</''programmeroles''>'
 ;
 
 MayContainVariables:NewsItem|ScriptTemplate;
@@ -91,19 +91,28 @@ ScriptTemplate:
 	)
 	'</''scripttemplate''>'
 ;
-ContainsLanguageStrings:Title|Description|VariableDef|Text;
+ContainsLanguageStrings:Title|TitleOriginal|Description|VariableDef|Text;
 Title:
 	'<''title'{Title}
 	('/>'
 		|
 	'>'
-		lstrings+=LanguageString*
+		(
+			=> global=TextContent
+		|
+			lstrings+=LanguageString*
+		)
 	'</''title''>'
 	)
 ;
 Description:
 	'<''description''>'{Description}
-		lstrings+=LanguageString*
+		(
+			=> global=TextContent
+		|
+			lstrings+=LanguageString*
+		)
+
 	'</''description''>'
 ;
 ScriptChildren:
@@ -119,7 +128,11 @@ Variables:
 
 VariableDef:
 	'<'var=IDorKeyword'>'
-		lstrings+=LanguageString*
+		(
+			=> global=TextContent
+		|
+			lstrings+=LanguageString*
+		)
 	'</'IDorKeyword'>'
 ;
 
@@ -136,7 +149,9 @@ Job:
 			('function''='function=STRING)&
 			('required''='required=STRING)&
 			('gender''='gender=STRING)?&
-			('role_guid''='rolId=[ProgrammeRole|STRING] )?
+			('country''='country=STRING)?&
+			('role_guid''='rolId=[ProgrammeRole|STRING] )?&
+			('random_role''='randomRole=STRING )?
 		)
 	'/>'
 ;
@@ -251,11 +266,12 @@ ProgrammeRole:
 			('guid''='name=STRING )&
 			('first_name''='firstName=STRING)&
 			('last_name''='lastName=STRING)&
+			('nick_name''='nickName=STRING)?&
+			('title''='title=STRING)?&
 			('first_name_original''='firstNameOriginal=STRING)?&
 			('last_name_original''='lastNameOriginal=STRING)?&
-			('nick_name''='nickName=STRING)?&
 			('nick_name_original''='nickNameOriginal=STRING)?&
-			('title''='title=STRING)?&
+			('title_original''='titleOriginal=STRING)?&
 			('country''='country=STRING)?&
 			('comment''='comment=STRING)?&
 			('gender''='gender=STRING)?
@@ -264,11 +280,12 @@ ProgrammeRole:
 ;
 
 RoleLocale:
-	'<''role'
+	'<''programmerole'
 		(
 			('guid''='role=[ProgrammeRole|STRING] )&
 			('first_name''='firstName=STRING)&
 			('last_name''='lastName=STRING)&
+			('nick_name''='nickName=STRING)?&
 			('title''='title=STRING)?
 		)
 	'/>'
@@ -283,7 +300,7 @@ Achievements:
 Achievement:
 	'<''achievement'
 		(
-			(('id')'='name=STRING )&
+			(('guid')'='name=STRING )&
 			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -304,7 +321,12 @@ Text:
 	('/>'
 		|
 	'>'
-		lstrings+=LanguageString*
+		(
+			=> global=TextContent
+		|
+			lstrings+=LanguageString*
+		)
+
 	'</''text''>'
 	)
 ;
@@ -318,7 +340,7 @@ Tasks:
 Task:
 	'<''task'
 		(
-			(('id')'='id=STRING )&
+			(('guid')'='id=STRING )&
 			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -369,7 +391,7 @@ Rewards:
 Reward:
 	'<''reward'
 		(
-			(('id')'='id=STRING )&
+			(('guid')'='id=STRING )&
 			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -417,7 +439,7 @@ Advertisements:
 Advertisement:
 	'<''ad'
 		(
-			('id''='name=STRING )&
+			('guid''='name=STRING )&
 			('comment''='comment=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -445,8 +467,6 @@ AdConditions:
 			('allowed_programme_flag''='allowedProgrammeFlag=STRING)?&
 			('prohibited_programme_flag''='prohibitedProgrammeFlag=STRING)?&
 			('target_group''='targetGroup=STRING)?&
-			('allowed_programme_type''='allowedProgrammeType=STRING)?&
-			('prohibited_programme_type''='prohibitedProgrammeType=STRING)?&
 			('pro_pressure_groups''='proPressureGroup=STRING)?&
 			('contra_pressure_groups''='contraPressureGroup=STRING)?
 		)
@@ -483,8 +503,8 @@ News:
 NewsItem:
 	'<''news'
 		(
-			('id''='name=STRING )&
-			('thread_id''='threadId=STRING )?&
+			('guid''='name=STRING )&
+			('thread_guid''='threadId=STRING )?&
 			('type''='type=STRING )?&
 			('creator''='creator=STRING)?&
 			('comment''='comment=STRING)?&
@@ -521,27 +541,26 @@ Effect:
 		(
 			('trigger''='trigger=STRING )?& 
 			('type''='type=STRING)?&
-			('news''='news=[NewsItem|STRING])?& 
 			('genre''='genre=STRING)?&
 			('choose''='choose=STRING)?&
 			('guid''='guid=[ecore::EObject|STRING])?&//script or programme or person 
 			('valueMin''='valueMin=STRING)?&
 			('valueMax''='valueMax=STRING)?&
 			('probability''='probability=STRING)?&
-			('news1''='news1=[NewsItem|STRING])?&//TODO lieber als Children
-			('probability1''='probability1=STRING)?&
-			('news2''='news2=[NewsItem|STRING])?&
-			('probability2''='probability2=STRING)?&
-			('news3''='news3=[NewsItem|STRING])?&
-			('probability3''='probability3=STRING)?&
-			('news4''='news4=[NewsItem|STRING])?&
-			('probability4''='probability4=STRING)?&
+			(news = NewsProbabilities)?&
 			('enable''='enable=STRING)?&
 			('time''='time=STRING)?
 		)
 	'/>'
 ;
 
+NewsProbabilities hidden():
+	news+=NewsProbability+
+;
+
+NewsProbability:
+	'news' (->count1=INT)? WS*'=' WS* news=[NewsItem|STRING] WS* (->'probability'(count2=INT)? WS*'=' WS*probability=STRING WS*)?
+;
 
 Availability:
 	'<''availability'{Availability}
@@ -587,7 +606,7 @@ InsignificantPeople:
 Person:
 	'<''person'
 		(
-			('id''='name=STRING )&
+			('guid''='name=STRING )&
 			('tmdb_id''='tmdbId=STRING )?&
 			('imdb_id''='imdbId=STRING )?&
 			('first_name''='firstName=STRING )?&
@@ -597,6 +616,7 @@ Person:
 			('nick_name''='nickName=STRING )?&
 			('nick_name_original''='nickNameOrig=STRING )?&
 			('title''='title=STRING )?&
+			('title_original''='titleOrig=STRING )?&
 			('fictional''='fictional=STRING )?&
 			('levelup''='levelUp=STRING )?&
 			('castable''='castable=STRING )?&
@@ -619,9 +639,11 @@ Person:
 			('<''first_name''>'firstName=PersonName'</''first_name''>')?&
 			('<''last_name''>'lastName=PersonName'</''last_name''>')?&
 			('<''nick_name''>'nickName=PersonName?'</''nick_name''>')?&
+			('<''title''>'title=PersonName?'</''title''>')?&
 			('<''first_name_original''>'firstNameOrig=PersonName'</''first_name_original''>')?&
 			('<''last_name_original''>'lastNameOrig=PersonName'</''last_name_original''>')?&
 			('<''nick_name_original''>'nickNameOrig=PersonName'</''nick_name_original''>')?&
+			('<''title_original''>'titleOrig=PersonName?'</''title_original''>')?&
 			details=PersonDetails?&
 			data=PersonData?
 		)
@@ -635,6 +657,7 @@ PersonLocale:
 			('guid''='person=[Person|STRING] )&
 			('first_name''='firstName=STRING )?&
 			('last_name''='lastName=STRING )?&
+			('title''='title=STRING )?&
 			('nick_name''='nickName=STRING )?
 		)
 	'/>'
@@ -683,13 +706,13 @@ Programmes:
 Programme:
 	'<''programme'
 		(
-			('id''='name=STRING )&
+			('guid''='name=STRING )&
 			('product''='product=STRING )?&
 			('licence_type''='licenceType=STRING )?&
 			('tmdb_id''='tmdbId=STRING )?&
 			('imdb_id''='imdbId=STRING )?&
 			('fictional''='fictional=STRING )?&
-			('programmedata_id''='ref=[Programme|STRING])?&
+			('programmedata_guid''='ref=[Programme|STRING])?&
 			('comment''='comment=STRING)?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
@@ -765,6 +788,7 @@ StaffMember:
 	'<''member'
 	(
 		('index''='index=STRING )&
+		('role_guid''='rolId=[ProgrammeRole|STRING] )?&
 		('function''='function=STRING)?
 	)
 	(
@@ -845,7 +869,11 @@ TitleOriginal:
 	('/>'
 		|
 	'>'
-		languageString+=LanguageString*
+		(
+			=> global=TextContent
+		|
+			lstrings+=LanguageString*
+		)
 	'</''title_original''>'
 	)
 ;
@@ -854,8 +882,8 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:ID|'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'roles'|'='|'subgenre'|'category'|'text'|'required'|'creator'|'id'|'achievement';
-TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variable resolution for now*/ ;
+IDorKeyword:(ID |'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'='|'subgenre'|'category'|'text'|'required'|'creator'|'achievement')(->(INT ID?)?);
+TextContent:(IDorKeyword |STRING|INT|ANY_OTHER|'>')* /* ignore variables and variable resolution for now*/ ;
 
 //no variable recognition, yet
 //VARIABLE hidden():'%'(ID|ANY_OTHER|INT)+'%';
@@ -864,6 +892,9 @@ TextContent:(IDorKeyword |STRING|INT|ANY_OTHER)* /* ignore variables and variabl
 @Override
 terminal STRING:
 	'"' ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|'"') )* '"'
+//allow alternative quote - used for available script expressions
+	|
+	"'" ( '\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\'|"'") )* "'"
 ;
 @Override
 terminal ML_COMMENT:
@@ -873,3 +904,7 @@ terminal ML_COMMENT:
 terminal SL_COMMENT:
 	"THEREARENOSINGLELINECOMMENTS"
 ;
+
+//remove numbers from ID in order to support news, news1, news2
+@Override
+terminal ID: '^'?('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_')*;

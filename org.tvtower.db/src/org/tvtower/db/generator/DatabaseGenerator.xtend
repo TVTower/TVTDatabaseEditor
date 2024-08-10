@@ -11,6 +11,7 @@ import org.eclipse.xtext.generator.IGeneratorContext
 import org.tvtower.db.database.Effect
 import org.tvtower.db.database.Programme
 import org.tvtower.db.database.ScriptTemplate
+import org.tvtower.db.database.Programmes
 
 /**
  * Generates code from your model files on save.
@@ -23,10 +24,32 @@ class DatabaseGenerator extends AbstractGenerator {
 	val availabilityEffects=#["modifyProgrammeAvailability","modifyScriptAvailability"]
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
+//		val movies =resource.allContents.filter(Programme)
+//		if(!movies.nullOrEmpty){
+//			fsa.generateFile("progs_"+resource.URI.lastSegment+".txt", movies.map[toEntry].join("\n"))
+//			fsa.generateFile("quality_"+resource.URI.lastSegment+".csv", movies.map[toQuality].filter[!isNullOrEmpty].join("\n"))
+//		}
+
 //		val effects=resource.allContents.filter(Effect).map[effectDescription].filterNull
 //		if(! effects.nullOrEmpty){
 //			fsa.generateFile("effects_"+resource.URI.lastSegment+".txt",effects.toList.sort.join("\n\n"))
 //		}
+	}
+
+	def String toEntry(Programme p){
+		p.title.lstrings.findFirst[t|t.langage == "en"]?.text
+		+
+		"\n  "+p.description.lstrings.findFirst[t|t.langage == "en"]?.text
+	}
+
+	def String toQuality(Programme p){
+		val data=p.ratings
+		if(data!==null){
+			if(data.critics!==null && data.speed!==null && data.outcome!==null){
+				return data.critics+","+data.speed+","+data.outcome
+			}
+		}
+		return ""
 	}
 
 	def String getEffectDescription(Effect e){

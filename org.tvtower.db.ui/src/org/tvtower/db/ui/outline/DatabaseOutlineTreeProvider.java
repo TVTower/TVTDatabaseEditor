@@ -20,6 +20,7 @@ import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Effect;
 import org.tvtower.db.database.News;
 import org.tvtower.db.database.NewsItem;
+import org.tvtower.db.database.NewsProbabilities;
 import org.tvtower.db.database.Person;
 import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ScriptTemplate;
@@ -79,11 +80,12 @@ public class DatabaseOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 	protected void createNode(IOutlineNode parent, Effect e) {
-		maybeCreateTriggeredNewsNode(parent, e, e.getNews(), DatabasePackage.eINSTANCE.getEffect_News());
-		maybeCreateTriggeredNewsNode(parent, e, e.getNews1(), DatabasePackage.eINSTANCE.getEffect_News1());
-		maybeCreateTriggeredNewsNode(parent, e, e.getNews2(), DatabasePackage.eINSTANCE.getEffect_News2());
-		maybeCreateTriggeredNewsNode(parent, e, e.getNews3(), DatabasePackage.eINSTANCE.getEffect_News3());
-		maybeCreateTriggeredNewsNode(parent, e, e.getNews4(), DatabasePackage.eINSTANCE.getEffect_News4());
+		NewsProbabilities news = e.getNews();
+		if(news!=null) {
+			news.getNews().forEach(n->{
+				maybeCreateTriggeredNewsNode(parent, e, n.getNews(), DatabasePackage.eINSTANCE.getNewsProbability_News());
+			});
+		}
 	}
 
 	protected void maybeCreateTriggeredNewsNode(IOutlineNode outlineParent, Effect parentEffect, NewsItem triggeredNews,

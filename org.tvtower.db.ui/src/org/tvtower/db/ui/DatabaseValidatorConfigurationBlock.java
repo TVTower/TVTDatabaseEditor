@@ -17,7 +17,8 @@ public class DatabaseValidatorConfigurationBlock extends AbstractValidatorConfig
 	@Override
 	protected void fillSettingsPage(Composite composite, int nColumns, int defaultIndent) {
 		addComboBox(DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE, "unsupported attribute", composite, defaultIndent);
-		addCheckBox(composite, "check availability effects (slow and buggy - activate on demand)", DatabaseConfigurableIssueCodesProvider.VALIDATTE_EFFECT_ACTIVATION, new String[] { IPreferenceStore.TRUE, IPreferenceStore.FALSE }, defaultIndent);
+		addComboBox(DatabaseConfigurableIssueCodesProvider.VALIDATE_LOCALIZATION_DUPLICATES, "localization duplicates", composite, defaultIndent);
+		addCheckBox(composite, "check availability effects (slow and buggy - activate on demand)", DatabaseConfigurableIssueCodesProvider.VALIDATE_EFFECT_ACTIVATION, new String[] { IPreferenceStore.TRUE, IPreferenceStore.FALSE }, defaultIndent);
 
 		Composite section = createSection("News", composite, nColumns);
 		addComboBox(DatabaseConfigurableIssueCodesProvider.TRIGGERED_NEWS_THREAD, "triggered news: different thread id", section, defaultIndent);

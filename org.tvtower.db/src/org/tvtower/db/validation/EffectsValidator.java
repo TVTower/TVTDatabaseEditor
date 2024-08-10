@@ -48,7 +48,7 @@ public class EffectsValidator extends AbstractDatabaseValidator {
 	public void checkProgrammeEffects(Database db) {
 		IPreferenceValues preferenceValues = valuesProvider.getPreferenceValues(db.eResource());
 		String value = preferenceValues.getPreference(issuCodeProvider.getConfigurableIssueCodes()
-				.get(DatabaseConfigurableIssueCodesProvider.VALIDATTE_EFFECT_ACTIVATION));
+				.get(DatabaseConfigurableIssueCodesProvider.VALIDATE_EFFECT_ACTIVATION));
 		if (!"true".equals(value)) {
 			return;
 		}
@@ -77,27 +77,27 @@ public class EffectsValidator extends AbstractDatabaseValidator {
 		});
 	}
 
-	// if there is an effect reference to an entry, we assume it is an enableing
-	// one!
+	// if there is an effect reference to an entry, we assume it is an enableing one!
 	private void removeEnabledByOtherFiles(List<? extends EObject> objects) {
 		if (!objects.isEmpty()) {
 			List<EObject> toRemove = new ArrayList<>();
 			// all from the same file...
 			IResourceDescriptions data = index.getResourceDescriptions(objects.get(0).eResource().getResourceSet());
-			EReference refType = $.getEffect_Guid();
 			Map<URI, EObject> map = new HashMap<>();
 			for (EObject orig : objects) {
 				URI origURI = orig.eResource().getURI().appendFragment(orig.eResource().getURIFragment(orig));
 				map.put(origURI, orig);
 			}
+			//TODO checking refType currently causes ClassCastException
+//			EReference refType = $.getEffect_Guid();
 			for (IResourceDescription r : data.getAllResourceDescriptions()) {
 				for (IReferenceDescription ref : r.getReferenceDescriptions()) {
-					if (refType.equals(ref.getEReference())) {
+//					if (refType.equals(ref.getEReference())) {
 						EObject enabled = map.get(ref.getTargetEObjectUri());
 						if (enabled != null) {
 							toRemove.add(enabled);
 						}
-					}
+//					}
 				}
 			}
 			objects.removeAll(toRemove);

@@ -25,9 +25,6 @@ public class Constants {
 	public static BroadcastFlag broadcastFlag = new BroadcastFlag();
 	public static ProgrammeDistribution distribution = new ProgrammeDistribution();
 
-	public static GlobalVariable globalVariable = new GlobalVariable();
-	public static RoleVariable roleVariable = new RoleVariable();
-
 	public static JobFlag job = new JobFlag();
 	public static Gender gender = new Gender();
 	public static Country country = new Country();
@@ -76,6 +73,7 @@ public class Constants {
 		DatabaseTime timeProvider = new DatabaseTime(null);
 		return ImmutableMap.<EStructuralFeature, TVTHoverInfoCreator>builder().put($.getJob_Function(), job)
 				.put($.getJob_Required(), _boolean).put($.getJob_Gender(), gender)
+				.put($.getJob_RandomRole(), _boolean)
 
 				.put($.getScriptTemplate_Product(), programmeType).put($.getScriptTemplate_LicenceType(), licenceType)
 				.put($.getScriptData_ProgrammeFlags(), programmeFlag)
@@ -90,8 +88,6 @@ public class Constants {
 
 				.put($.getAdConditions_AllowedGenre(), programmGenre)
 				.put($.getAdConditions_ProhibitedGenre(), programmGenre)
-				.put($.getAdConditions_AllowedProgrammeType(), programmeType)
-				.put($.getAdConditions_ProhibitedProgrammeType(), programmeType)
 				.put($.getAdConditions_AllowedProgrammeFlag(), programmeFlag)
 				.put($.getAdConditions_ProhibitedProgrammeFlag(), programmeFlag)
 				.put($.getAdConditions_TargetGroup(), targetgroup)

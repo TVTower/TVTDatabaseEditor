@@ -1,5 +1,6 @@
 package org.tvtower.db.constants;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.tvtower.db.database.TaskData;
@@ -15,32 +16,36 @@ public class TaskType extends TVTEnum {
 	}
 
 	public Optional<String> getMinAudienceAbsError(TaskData d) {
-		return getMinMaxError(isAudienceType(d), d.getMinAudienceAbs(), "minAudienceAbsolute", 0, Integer.MAX_VALUE);
+		return getMinMaxError(isAudienceType(d), d.getMinAudienceAbs(), "minAudienceAbsolute", 0, Integer.MAX_VALUE,true);
 	}
 
 	public Optional<String> getMinAudiencePercentError(TaskData d) {
-		return getMinMaxError(isAudienceType(d), d.getMinAudiencePercent(), "minAudienceQuote", 0, 100);
+		return getMinMaxError(isAudienceType(d), d.getMinAudiencePercent(), "minAudienceQuote", 0, 100,false);
 	}
 
 	public Optional<String> getCheckMinuteError(TaskData d) {
-		return getMinMaxError(isAudienceType(d), d.getCheckMinute(), "checkMinute", 0, 59);
+		return getMinMaxError(isAudienceType(d), d.getCheckMinute(), "checkMinute", 0, 59,true);
 	}
 
 	public Optional<String> getCheckHourError(TaskData d) {
-		return getMinMaxError(isAudienceType(d), d.getCheckHour(), "checkHour", 0, 23);
+		return getMinMaxError(isAudienceType(d), d.getCheckHour(), "checkHour", 0, 23,true);
 	}
 
 	public Optional<String> getMinReachAbsError(TaskData d) {
-		return getMinMaxError(isReachType(d), d.getMinReachAbs(), "minReachAbsolute", 0, Integer.MAX_VALUE);
+		return getMinMaxError(isReachType(d), d.getMinReachAbs(), "minReachAbsolute", 0, Integer.MAX_VALUE,true);
 	}
 
 	public Optional<String> getMinReachPercentError(TaskData d) {
-		return getMinMaxError(isReachType(d), d.getMinReachPercent(), "minReachPercentage", 0, 100);
+		return getMinMaxError(isReachType(d), d.getMinReachPercent(), "minReachPercentage", 0, 1, false);
 	}
 
-	private Optional<String> getMinMaxError(boolean typeMatch, String value, String fieldName, int min, int max) {
+	private Optional<String> getMinMaxError(boolean typeMatch, String value, String fieldName, int min, int max, boolean integer) {
 		if (typeMatch) {
-			return CommonValidation.getIntRangeError(value, fieldName, min, max, false);
+			if(integer) {
+				return CommonValidation.getIntRangeError(value, fieldName, min, max, false);
+			}else {
+				return CommonValidation.getDecimalRangeError(value, fieldName, BigDecimal.valueOf(min), BigDecimal.valueOf(max), false);
+			}
 		} else if (value != null) {
 			return Optional.of(fieldName + " not allowed for this type");
 		}

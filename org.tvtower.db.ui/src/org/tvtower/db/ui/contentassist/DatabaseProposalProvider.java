@@ -179,18 +179,6 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 	}
 
 	@Override
-	public void completeAdConditions_AllowedProgrammeType(EObject model, Assignment assignment,
-			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants.programmeType, acceptor, context);
-	}
-
-	@Override
-	public void completeAdConditions_ProhibitedProgrammeType(EObject model, Assignment assignment,
-			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants.programmeType, acceptor, context);
-	}
-
-	@Override
 	public void completeAdConditions_ProPressureGroup(EObject model, Assignment assignment,
 			ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		flagProposal(Constants.pressuregroup, acceptor, context);
@@ -606,6 +594,12 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 
 	@Override
 	public void completeJob_Required(EObject model, Assignment assignment, ContentAssistContext context,
+			ICompletionProposalAcceptor acceptor) {
+		mapProposal(Constants._boolean, acceptor, context);
+	}
+
+	@Override
+	public void completeJob_RandomRole(EObject model, Assignment assignment, ContentAssistContext context,
 			ICompletionProposalAcceptor acceptor) {
 		mapProposal(Constants._boolean, acceptor, context);
 	}

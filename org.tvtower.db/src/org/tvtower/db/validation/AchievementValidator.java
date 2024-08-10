@@ -1,5 +1,8 @@
 package org.tvtower.db.validation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -13,6 +16,9 @@ import org.tvtower.db.database.Reward;
 import org.tvtower.db.database.RewardData;
 import org.tvtower.db.database.Task;
 import org.tvtower.db.database.TaskData;
+import org.tvtower.db.database.Title;
+
+import com.google.common.base.Strings;
 
 public class AchievementValidator extends AbstractDatabaseValidator {
 
@@ -24,12 +30,21 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 
 	@Check
 	public void checkAchievement(Achievement a) {
-		if (a.getTitle() == null || a.getTitle().getLstrings().isEmpty()) {
-			error("title must be defined", $.getAchievement_Name());
+		final List<Title> titles=new ArrayList<>();
+		titles.add(a.getTitle());
+		if(a.getTasks()!=null) {
+			a.getTasks().getTasks().forEach(t->titles.add(t.getTitle()));
+		}
+		if (titles.stream().allMatch(t->isEmpty(t))) {
+			error("a title must be defined", $.getAchievement_Name());
 		}
 		if (a.getData() == null) {
 			error("data must be defined", $.getAchievement_Name());
 		}
+	}
+
+	private boolean isEmpty(Title t) {
+		return t==null || (t.getLstrings().isEmpty() && Strings.isNullOrEmpty(t.getGlobal()));
 	}
 
 	@Check
@@ -43,16 +58,6 @@ public class AchievementValidator extends AbstractDatabaseValidator {
 		Constants.achievementCategory.isValidFlag(d.getCategory(), "category", true)
 				.ifPresent(e -> error(e, $.getAchievementData_Category()));
 		// TODO sprite_finished, sprite_unfinished from XML?
-	}
-
-	@Check
-	public void checkTask(Task t) {
-		if (t.getTitle() == null || t.getTitle().getLstrings().isEmpty()) {
-			error("title must be defined", $.getTask_Id());
-		}
-		if (t.getText() == null || t.getText().getLstrings().isEmpty()) {
-			error("text must be defined", $.getTask_Id());
-		}
 	}
 
 	@Check

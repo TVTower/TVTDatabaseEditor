@@ -95,10 +95,6 @@ public class AdValidator extends AbstractDatabaseValidator {
 				.ifPresent(e -> error(e, $.getAdConditions_AllowedGenre()));
 		Constants.programmGenre.isValidValue(c.getProhibitedGenre(), "prohibited_genre", false)
 				.ifPresent(e -> error(e, $.getAdConditions_ProhibitedGenre()));
-		Constants.programmeType.isValidValue(c.getAllowedProgrammeType(), "allowed_programme_type", false)
-				.ifPresent(e -> error(e, $.getAdConditions_AllowedProgrammeType()));
-		Constants.programmeType.isValidValue(c.getProhibitedProgrammeType(), "prohibited_programme_type", false)
-				.ifPresent(e -> error(e, $.getAdConditions_ProhibitedProgrammeType()));
 		Constants.programmeFlag.isValidFlag(c.getAllowedProgrammeFlag(), "allowed_programme_flag", false)
 				.ifPresent(e -> error(e, $.getAdConditions_AllowedProgrammeFlag()));
 		Constants.programmeFlag.isValidFlag(c.getProhibitedProgrammeFlag(), "prohibited_programme_flag", false)
@@ -113,6 +109,12 @@ public class AdValidator extends AbstractDatabaseValidator {
 		}
 		if (c.getContraPressureGroup() != null && !"0".equals(c.getContraPressureGroup())) {
 			addIssue("pressure groups not yet supported",c, $.getAdConditions_ContraPressureGroup(), DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
+		if (c.getProhibitedGenre() != null && !"0".equals(c.getProhibitedGenre())) {
+			addIssue("prohibited genre not yet supported",c, $.getAdConditions_ProhibitedGenre(), DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
+		if (c.getProhibitedProgrammeFlag() != null && !"0".equals(c.getProhibitedProgrammeFlag())) {
+			addIssue("prohibited programme flag not yet supported",c, $.getAdConditions_ProhibitedProgrammeFlag(), DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
 		}
 	}
 

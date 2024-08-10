@@ -4,11 +4,14 @@
 package org.tvtower.db.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ide.LexerIdeBindings;
+import org.eclipse.xtext.ide.editor.contentassist.antlr.internal.Lexer;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHover;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.outline.actions.OutlineWithEditorLinker;
 import org.eclipse.xtext.ui.editor.toggleComments.DefaultSingleLineCommentHelper;
 import org.eclipse.xtext.ui.validation.AbstractValidatorConfigurationBlock;
+import org.tvtower.db.ui.contentassist.CustomDatabaseLexer;
 import org.tvtower.db.ui.hover.DatabaseEObjectHover;
 import org.tvtower.db.ui.hover.DatabaseHoverProvider;
 import org.tvtower.db.ui.outline.DatabaseOutlineWithEditorLinker;
@@ -48,5 +51,11 @@ public class DatabaseUiModule extends AbstractDatabaseUiModule {
 		// cause comment rule not to be found, so that no comment toggling is done
 		binder.bind(String.class).annotatedWith(Names.named(DefaultSingleLineCommentHelper.SL_COMMENT))
 				.toInstance("thereIsNoSLComment");
+	}
+
+	@Override
+	public void configureContentAssistLexer(Binder binder) {
+		binder.bind(Lexer.class).annotatedWith(Names.named(LexerIdeBindings.CONTENT_ASSIST))
+				.to(CustomDatabaseLexer.class);
 	}
 }
