@@ -5,6 +5,7 @@ import static org.tvtower.db.validation.CommonValidation.isUserDB;
 import java.math.BigDecimal;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
@@ -184,10 +185,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 		Constants.effectType.isValidValue(e.getType(), "type", true).ifPresent(err -> error(err, $.getEffect_Type()));
 		Constants.programmGenre.isValidValue(e.getGenre(), "genre", false)
 				.ifPresent(err -> error(err, $.getEffect_Genre()));
-		CommonValidation.getDecimalRangeError(e.getValueMin(), "valueMin", VALUE_MIN, VALUE_MAX, false)
-				.ifPresent(err -> error(err, $.getEffect_ValueMin()));
-		CommonValidation.getDecimalRangeError(e.getValueMax(), "valueMax", VALUE_MIN, VALUE_MAX, false)
-				.ifPresent(err -> error(err, $.getEffect_ValueMax()));
 		CommonValidation.getIntRangeError(e.getProbability(), "probability", 0, 100, false)
 				.ifPresent(err -> error(err, $.getEffect_Probability()));
 		Constants._boolean.isValidValue(e.getEnable(), "enable", false)
@@ -200,6 +197,7 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			Boolean choiceExpected = Boolean.FALSE;
 			Boolean enableExpected = Boolean.FALSE;
 			Boolean newsExpected = Boolean.FALSE;
+			boolean checkDecimalMinMax=true;
 			Class expectedClass= null;
 
 			switch (e.getType()) {
@@ -219,6 +217,15 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			case EffectType.GENRE:
 				checkMinMax = Boolean.TRUE;
 				genreExpected = Boolean.TRUE;
+				break;
+			case EffectType.BETTY_LOVE:
+				checkMinMax = Boolean.TRUE;
+				checkDecimalMinMax=false;
+				//different value range for betty love
+				CommonValidation.getIntRangeError(e.getValueMin(), "valueMin", -1000, 1000, true)
+					.ifPresent(err -> error(err, $.getEffect_ValueMin()));
+				CommonValidation.getIntRangeError(e.getValueMax(), "valueMax", -1000, 1000, true)
+						.ifPresent(err -> error(err, $.getEffect_ValueMax()));
 				break;
 			case EffectType.NEWS_AVAILABILITY:
 				newsExpected = Boolean.TRUE;
@@ -240,6 +247,13 @@ public class NewsValidator extends AbstractDatabaseValidator {
 			}
 			effectTypeField("valueMin", e.getValueMin(), checkMinMax);
 			effectTypeField("valueMax", e.getValueMin(), checkMinMax);
+			if(checkDecimalMinMax) {
+				CommonValidation.getDecimalRangeError(e.getValueMin(), "valueMin", VALUE_MIN, VALUE_MAX, false)
+						.ifPresent(err -> error(err, $.getEffect_ValueMin()));
+				CommonValidation.getDecimalRangeError(e.getValueMax(), "valueMax", VALUE_MIN, VALUE_MAX, false)
+						.ifPresent(err -> error(err, $.getEffect_ValueMax()));
+			}
+
 			CommonValidation.getMinMaxError(e.getValueMin(), e.getValueMax())
 					.ifPresent(err -> error(err, $.getEffect_ValueMin()));
 			effectTypeField("genre", e.getGenre(), genreExpected);
@@ -293,13 +307,21 @@ public class NewsValidator extends AbstractDatabaseValidator {
 	}
 
 	private void referenceField(String field, Object value, boolean expected, Class expectedRefType, EStructuralFeature f) {
-		if(expected && value ==null) {
-			error(field+ " expected for this effect type", f);
-		}else if(!expected&& value!=null) {
+		if (expected && value == null) {
+			error(field + " expected for this effect type", f);
+		} else if (!expected && value != null) {
 			error(field + " not allowed for this effect type", f);
 		}
-		if(expected &&value!=null &&! (expectedRefType.isAssignableFrom(value.getClass()))) {
-			error(expectedRefType.getSimpleName() + " expected", f);
+		if (expected && value != null) {
+			if (value instanceof EObject) {
+				if (((EObject) value).eIsProxy()) {
+					// do not validate unresolved entries
+					return;
+				}
+			}
+			if (!(expectedRefType.isAssignableFrom(value.getClass()))) {
+				error(expectedRefType.getSimpleName() + " expected", f);
+			}
 		}
 	}
 

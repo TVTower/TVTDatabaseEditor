@@ -44,6 +44,15 @@ PersonLocalization:
 	'<''programmeroles''>'
 		roles+=RoleLocale*
 	'</''programmeroles''>'
+	('<''globalvariables''>'
+		variables+=GlobalVariable*
+	'</''globalvariables''>')?
+;
+
+GlobalVariable:
+	'<'var=IDorKeyword'>'
+			=> content=TextContent
+	'</'IDorKeyword'>'
 ;
 
 MayContainVariables:NewsItem|ScriptTemplate;

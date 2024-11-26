@@ -17,9 +17,10 @@ public class SimpleExpression {
 	private static final Pattern SIMPLE_EXPRESSION_PARAM_PATTERN = Pattern.compile("(:[^$:]+)");
 	private static final Pattern FUNCTION_PATTERN = Pattern.compile("\\$\\{(\\.\\w+):");
 	private static final Pattern WT_REPLACE_PATTERN = Pattern.compile("&wt_(\\\"\\w+\\\")");
+	private static final Pattern MISSING_DOT_PATTERN = Pattern.compile("\\$\\{(\\w+):");
 
 	private static final List<String> KNOWN_COMPLEX_FUNCTIONS = ImmutableList.of(//
-			".and", ".eq", ".gt", ".lt", ".gte", ".or", ".if");
+			".and", ".eq", ".gt", ".gte", ".lt", ".lte", ".or", ".if", ".person", ".csv");
 
 	public static List<SimpleExpression> get(String content) {
 		Set<Integer> startIndexes = new HashSet<>();
@@ -51,6 +52,16 @@ public class SimpleExpression {
 				result.add(exp);
 			}
 		}
+
+		// check for function syntax errors
+		Matcher functionNameErrorMatcher = MISSING_DOT_PATTERN.matcher(content);
+		while (functionNameErrorMatcher.find()) {
+			String fct = functionNameErrorMatcher.group(1).toLowerCase();
+			SimpleExpression exp = new SimpleExpression();
+			exp.function = fct;
+			result.add(exp);
+		}
+
 		return result;
 	}
 
@@ -76,7 +87,9 @@ public class SimpleExpression {
 	public String getValidationError(EObject context) {
 		String error = null;
 		String errorInfix = " in simple expression ";
-		if (params != null) {
+		if (getFunction() != null && getFunction().charAt(0) != '.') {
+			error = "missing function dot - ${" + getFunction() + ":...";
+		} else if (params != null) {
 			switch (getFunction()) {
 			case ".worldtime":
 				error = WorldTimeExpression.validate(params);
@@ -88,7 +101,10 @@ public class SimpleExpression {
 				error = PersonGeneratorExpression.validate(params);
 				break;
 			case ".locale":
-				error = LocaleExpression.validate(params);
+				error = TrivialExpressions.validateLocale(params);
+				break;
+			case ".ucfirst":
+				error = TrivialExpressions.validateUcfirst(params);
 				break;
 			case ".self":
 				error = SelfExpression.validate(params, context);

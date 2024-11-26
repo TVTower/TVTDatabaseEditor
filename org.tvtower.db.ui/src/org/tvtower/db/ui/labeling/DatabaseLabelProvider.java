@@ -157,6 +157,9 @@ public class DatabaseLabelProvider extends DefaultEObjectLabelProvider {
 
 	private String fromTitle(Title t) {
 		if (t != null) {
+			if(t.getGlobal()!=null) {
+				return t.getGlobal();
+			}
 			EList<LanguageString> lStrings = t.getLstrings();
 			if (!lStrings.isEmpty()) {
 				return lStrings.get(0).getText();

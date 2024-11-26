@@ -2,22 +2,28 @@ package org.tvtower.db.validation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.print.attribute.standard.Severity;
-
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.preferences.IPreferenceValues;
 import org.eclipse.xtext.preferences.IPreferenceValuesProvider;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.CheckType;
 import org.eclipse.xtext.validation.ConfigurableIssueCodesProvider;
@@ -32,6 +38,8 @@ import org.tvtower.db.database.Availability;
 import org.tvtower.db.database.ContainsLanguageStrings;
 import org.tvtower.db.database.Database;
 import org.tvtower.db.database.DatabasePackage;
+import org.tvtower.db.database.Effect;
+import org.tvtower.db.database.GlobalVariable;
 import org.tvtower.db.database.GroupAttractivity;
 import org.tvtower.db.database.LanguageString;
 import org.tvtower.db.database.MayContainVariables;
@@ -45,6 +53,7 @@ import org.tvtower.db.validation.expressionhelper.ScriptExpression;
 import org.tvtower.db.validation.expressionhelper.SimpleExpression;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 //TODO validate created_by defined and not empty
@@ -57,6 +66,8 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 	private IPreferenceValuesProvider valuesProvider;
 	@Inject
 	private ConfigurableIssueCodesProvider issuCodeProvider;
+	@Inject
+	private OnChangeEvictingCache cache;
 
 	private boolean checkLocalizationDuplicates=false;
 	
@@ -158,8 +169,12 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			}
 		}
 
+		int index=0;
 		for (LanguageString l : c.getLstrings()) {
 			String language = l.getLangage();
+			if("all".equals(language) && index!=0) {
+				error("'all' should be first defined language", l, $.getLanguageString_Langage());
+			}
 			if (languages.contains(language)) {
 				error("duplicate language", l, $.getLanguageString_Langage());
 			} else {
@@ -175,6 +190,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 //			if("pl".equals(language)) {
 //				plMissing=false;
 //			}
+			index++;
 		}
 		
 //		if(plMissing && c instanceof Title) {
@@ -223,7 +239,6 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		}
 	}
 
-	//TODO implement variable validation for followup news
 	private boolean isFollowUpNews(EObject o) {
 		NewsItem newsItem = EcoreUtil2.getContainerOfType(o, NewsItem.class);
 		if(newsItem!=null && NewsType.FOLLOW_UP_NEWS.equals(newsItem.getType())) {
@@ -250,16 +265,15 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 		//first simple variables
 		Matcher simpleVariableMatcher = SIMPLE_VARIABLE_PATTERN.matcher(text);
+		List<String> globalVariables = null;
 		while (simpleVariableMatcher.find()) {
+			if(globalVariables == null) {
+				globalVariables=getGlobalVaribales(context);
+			}
 			String variable = simpleVariableMatcher.group(1);
 			if (definedVariables == null) {
 				definedVariables = getVariablesFromContainers(context);
-			}
-			if(definedVariables.isEmpty()) {
-				if(!isFollowUpNews(context)) {
-					error("no variable definitions found", f);
-				}
-				continue;
+				definedVariables.addAll(globalVariables);
 			}
 			boolean found = false;
 			for (String def : definedVariables) {
@@ -268,7 +282,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					break;
 				}
 			}
-			if (!found) {
+			if (!found){
 				error("simple variable " + variable + " not defined", f);
 			}
 		}
@@ -292,16 +306,66 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 
 
 	private List<String> getVariablesFromContainers(EObject o) {
+		if(isFollowUpNews(o)) {
+			NewsChains chains=cache.get("newschains", o.eResource(), ()->{
+				return new NewsChains(o.eResource());
+			});
+			return new ArrayList<String>(chains.getDefinedVariablesFor(EcoreUtil2.getContainerOfType(o, NewsItem.class)));
+		}
 		MayContainVariables vContainer = EcoreUtil2.getContainerOfType(o, MayContainVariables.class);
+
 		if (vContainer == null) {
 			return new ArrayList<>();
 		} else {
 			List<String> result = getVariablesFromContainers(vContainer.eContainer());
-			if(vContainer.getVariables()!=null) {
-				result.addAll(vContainer.getVariables().getVariable().stream().map(v->v.getVar()).collect(Collectors.toList()));
+			if (vContainer.getVariables() != null) {
+				result.addAll(vContainer.getVariables().getVariable().stream().map(v -> v.getVar())
+						.collect(Collectors.toList()));
 			}
 			return result;
 		}
+	}
+
+	//hack to get the global variable list
+	//either it is in the resource set or we load the resource again
+	private List<String> getGlobalVaribales(EObject o) {
+		return cache.get("gv", o.eResource(), ()->{
+			ResourceSet s=o.eResource().getResourceSet();
+			Resource gvr = null;
+			for (Resource r : s.getResources()) {
+				if (r.getURI().toString().endsWith("/lang/en.xml")) {
+					gvr = r;
+					break;
+				}
+			}
+			if (gvr == null) {
+				URI uri = s.getResources().get(0).getURI();
+				URI gvrUri = null;
+				List<String> segmentList = uri.segmentsList();
+				if (segmentList.contains("lang")) {
+					gvrUri = uri.trimSegments(1);
+				} else if (segmentList.contains("user")) {
+					gvrUri = uri.trimSegments(2);
+				} else {
+					gvrUri = uri.trimSegments(1);
+				}
+				gvrUri = gvrUri.appendSegment("lang").appendSegment("en.xml");
+				try {
+					gvr = s.getResource(gvrUri, true);
+				} catch (Exception e) {
+					gvr = null;
+					// ignore - resource could not be loaded
+				}
+			}
+			if (gvr != null) {
+				EList<EObject> contents = gvr.getContents();
+				if (!contents.isEmpty() && contents.get(0) instanceof Database) {
+					List<GlobalVariable> gv = EcoreUtil2.getAllContentsOfType(contents.get(0), GlobalVariable.class);
+					return gv.stream().map(v -> v.getVar()).collect(Collectors.toList());
+				}
+			}
+			return new ArrayList<>();
+		});
 	}
 
 	@Check
@@ -357,4 +421,139 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		}
 	}
 
+	// helper class for "linear" news chaines leading to a particular news item
+	private class NewsChains {
+
+		// guid->variables directly defined by that news item
+		Map<String, Set<String>> idToVariables = new HashMap<>();
+		// guid->guidis of triggering news items for navigating back to the chain's
+		// origin
+		Map<String, Set<String>> idToTriggering = new HashMap<>();
+
+		// we do not (explicityl) consider cross-file news chains
+		public NewsChains(Resource r) {
+			// temporary map of triggered news ids
+			Map<String, Set<String>> idToTriggered = new HashMap<>();
+			for (EObject o : r.getContents()) {
+				List<NewsItem> news = EcoreUtil2.getAllContentsOfType(o, NewsItem.class);
+				for (NewsItem item : news) {
+					String id = item.getName();
+					// store directly defined variables
+					Set<String> variables = new HashSet<>();
+					if (item.getVariables() != null) {
+						item.getVariables().getVariable().forEach(v -> {
+							variables.add(v.getVar());
+						});
+					}
+					if (!variables.isEmpty()) {
+						idToVariables.put(id, variables);
+					}
+
+					// store triggered news
+					Set<String> triggered = new HashSet<>();
+					if (item.getEffects() != null) {
+						for (Effect e : item.getEffects().getEffects()) {
+							if (Constants.effectType.isNewsTrigger(e.getType()) && e.getNews() != null) {
+								e.getNews().getNews().forEach(p -> {
+									NewsItem triggeredItem = p.getNews();
+									if (triggeredItem != null && !triggeredItem.eIsProxy()) {
+										triggered.add(triggeredItem.getName());
+									}
+								});
+							}
+						}
+					}
+					if (!triggered.isEmpty()) {
+						idToTriggered.put(id, triggered);
+					}
+				}
+			}
+			// transform triggered news to a map storing predecessor ids
+			for (Entry<String, Set<String>> triggered : idToTriggered.entrySet()) {
+				String triggering = triggered.getKey();
+				for (String tr : triggered.getValue()) {
+					idToTriggering.computeIfAbsent(tr, k -> new HashSet<>()).add(triggering);
+				}
+			}
+		}
+
+		// variables defined for an item is the set of variables present in all chains
+		// leading to that item
+		public Set<String> getDefinedVariablesFor(NewsItem n) {
+			List<NewsChain> chains = getChains(n.getName());
+			Set<String> all = new HashSet<>();
+			if (!chains.isEmpty()) {
+				all = chains.get(0).getVariables(idToVariables);
+				if (chains.size() > 1) {
+					for (NewsChain c : chains) {
+						all = Sets.intersection(all, c.getVariables(idToVariables));
+					}
+				}
+			}
+			return all;
+		}
+
+		private List<NewsChain> getChains(String finalElement) {
+			List<NewsChain> result = new ArrayList<>();
+			NewsChain initial = new NewsChain(finalElement);
+			result.add(initial);
+			//update list of chains until all have found their start element
+			while (!result.stream().allMatch(c -> c.startFound)) {
+				List<NewsChain> newResult = new ArrayList<>();
+				for (NewsChain c : result) {
+					if (c.startFound) {
+						newResult.add(c);
+					} else {
+						newResult.addAll(c.predecessors(idToTriggering));
+					}
+
+				}
+				result = newResult;
+			}
+			return result;
+		}
+	}
+
+	private class NewsChain {
+		Set<String> elements = new HashSet<>();
+		String startElement;
+		boolean startFound = false;
+
+		NewsChain(String startElement) {
+			this.startElement = startElement;
+			elements.add(startElement);
+		}
+
+		List<NewsChain> predecessors(Map<String, Set<String>> triggering) {
+			List<NewsChain> result = new ArrayList<>();
+			//no trigger -> done
+			if (!triggering.containsKey(startElement)) {
+				startFound = true;
+				result.add(this);
+			} else {
+				for (String newStart : triggering.get(startElement)) {
+					//circular chain (self-triggering) -> done
+					if (elements.contains(newStart)) {
+						startFound = true;
+						result.add(this);
+					} else {
+						NewsChain c = new NewsChain(newStart);
+						c.elements.addAll(elements);
+						result.add(c);
+					}
+				}
+			}
+			return result;
+		}
+
+		Set<String> getVariables(Map<String, Set<String>> variableMap) {
+			Set<String> result = new HashSet<>();
+			for (String element : elements) {
+				if (variableMap.containsKey(element)) {
+					result.addAll(variableMap.get(element));
+				}
+			}
+			return result;
+		}
+	}
 }

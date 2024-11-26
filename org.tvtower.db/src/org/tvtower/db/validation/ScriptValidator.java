@@ -147,7 +147,17 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 				} else {
 					int count = t.getChildren().getChild().size();
 					checkMinMaxSlope(t.getEpisodes(), 1, count);
-					if (t.getChildren().getChild().stream().anyMatch(c -> c.getEpisodes() != null)) {
+
+					//making a pilot episode optional is OK
+					int skipPilot = 0;
+					if (count > 0 && t.getChildren().getChild().get(0).getEpisodes() != null) {
+						MinMaxSlope pilotEpisodes = t.getChildren().getChild().get(0).getEpisodes().getData();
+						if ("0".equals(pilotEpisodes.getMin())
+								&& (pilotEpisodes.getMax() == null || "1".equals(pilotEpisodes.getMax()))) {
+							skipPilot = 1;
+						}
+					}
+					if (t.getChildren().getChild().stream().skip(skipPilot).anyMatch(c -> c.getEpisodes() != null)) {
 						error("episodes in parent and children are not supported", $.getScriptTemplate_Episodes());
 					}
 				}

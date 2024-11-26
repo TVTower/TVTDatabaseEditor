@@ -15,9 +15,9 @@ import com.google.common.collect.ImmutableList;
 class SelfExpression extends AbstractExpression {
 	private static boolean STRICT = true;
 	private static final List<String> scriptParams = ImmutableList.of(//
-			"role");
+			"role", "parent");
 	private static final List<String> programmeParams = ImmutableList.of(//
-			"cast", "role");
+			"cast", "role", "parent");
 	private static final List<String> supportedNameParam = ImmutableList.of(//
 			"name", "firstname", "lastname", "fullname", "nickname", "title");
 
@@ -39,6 +39,7 @@ class SelfExpression extends AbstractExpression {
 		return "illegal context for .self";
 	}
 
+	//TODO validate parent!!
 	private static String getProgrammError(List<String> params, Programme context) {
 		String param1 = params.get(0);
 		if(!isStringParam(param1)) {
@@ -72,10 +73,17 @@ class SelfExpression extends AbstractExpression {
 		return null;
 	}
 
+	//TODO validate parent!!
 	private static String getScriptError(List<String> params, ScriptTemplate context) {
 		String param1 = params.get(0);
 		if(!isStringParam(param1)) {
 			return "first parameter must be string parameter";
+		}
+		if("parent".equals(param1)) {
+			ScriptTemplate parent = EcoreUtil2.getContainerOfType(context, ScriptTemplate.class);
+			if(parent !=null) {
+				return getScriptError(params.subList(1, params.size()), parent);
+			}
 		}
 		if (STRICT && !isStringFromCollection(param1, scriptParams)) {
 			return "unsupported self paramter " + param1;

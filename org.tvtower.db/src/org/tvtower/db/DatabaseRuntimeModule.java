@@ -3,6 +3,7 @@
  */
 package org.tvtower.db;
 
+import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.SimpleNameProvider;
 import org.eclipse.xtext.parser.antlr.Lexer;
@@ -14,6 +15,7 @@ import org.eclipse.xtext.validation.ConfigurableIssueCodesProvider;
 import org.tvtower.db.parser.antlr.internal.InternalDatabaseLexer;
 import org.tvtower.db.resource.DatabaseResourceDescriptionStrategy;
 import org.tvtower.db.resource.DatabaseResourceServiceProvider;
+import org.tvtower.db.scoping.DatabaseLinkingDiagnosticMessageProvider;
 import org.tvtower.db.validation.DatabaseConfigurableIssueCodesProvider;
 
 import com.google.inject.Binder;
@@ -57,6 +59,10 @@ public class DatabaseRuntimeModule extends AbstractDatabaseRuntimeModule {
 
 	public Class<? extends ConfigurableIssueCodesProvider> bindConfigurableIssueCodesProvider() {
 		return DatabaseConfigurableIssueCodesProvider.class;
+	}
+
+	public Class<? extends ILinkingDiagnosticMessageProvider> bindLinkingErrorMessageProvider() {
+		return DatabaseLinkingDiagnosticMessageProvider.class;
 	}
 
 }
