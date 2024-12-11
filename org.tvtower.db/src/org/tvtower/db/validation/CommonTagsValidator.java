@@ -150,11 +150,9 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			}
 		}
 
+		//prepare duplicate entry checks
 		Set<String> languages = new HashSet<>();
 		AtomicInteger optionsCount = new AtomicInteger(-1);
-		//prepare duplicate entry checks
-//		boolean plMissing=true;
-
 		if (checkLocalizationDuplicates) {
 			int languageCount = c.getLstrings().size();
 			if (languageCount == 0) {
@@ -187,14 +185,16 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 					error("contains non-German quotes", l, $.getLanguageString_Langage());
 				}
 			}
-//			if("pl".equals(language)) {
-//				plMissing=false;
-//			}
 			index++;
 		}
-		
-//		if(plMissing && c instanceof Title) {
-//			error("polish missing",c.getLstrings().get(0), $.getLanguageString_Langage());
+
+//		boolean plMissing = true;
+//		if ((globalText == null && c.getLstrings().isEmpty()) || globalText != null || languages.contains("all")
+//				|| languages.contains("pl")) {
+//			plMissing = false;
+//		}
+//		if (plMissing && (c instanceof Title)) {
+//			error("polish missing", c.getLstrings().get(0), $.getLanguageString_Langage());
 //		}
 	}
 
