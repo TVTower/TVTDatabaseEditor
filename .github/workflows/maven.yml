@@ -30,7 +30,7 @@ jobs:
     - name: Build with Maven
       run: mvn -ntp package
     - name: Upload Maven build artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: artifact
         path: org.tvtower.db.repository/target/repository/
