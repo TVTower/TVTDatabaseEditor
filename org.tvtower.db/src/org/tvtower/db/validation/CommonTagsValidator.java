@@ -52,6 +52,7 @@ import org.tvtower.db.database.UnnamedProperty;
 import org.tvtower.db.validation.expressionhelper.ScriptExpression;
 import org.tvtower.db.validation.expressionhelper.SimpleExpression;
 
+import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -153,6 +154,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		//prepare duplicate entry checks
 		Set<String> languages = new HashSet<>();
 		AtomicInteger optionsCount = new AtomicInteger(-1);
+		AtomicInteger csvCount = new AtomicInteger(-1);
 		if (checkLocalizationDuplicates) {
 			int languageCount = c.getLstrings().size();
 			if (languageCount == 0) {
@@ -178,7 +180,7 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 			} else {
 				languages.add(language);
 			}
-			validateOptionsCount(l, optionsCount);
+			validateOptionsCount(l, optionsCount, csvCount);
 			if("de".equals(language)) {
 				String content=l.getText();
 				if(germanContainsIllegalQuote(content)) {
@@ -224,18 +226,41 @@ public class CommonTagsValidator extends AbstractDatabaseValidator {
 		return false;
 	}
 
-	private void validateOptionsCount(LanguageString s, AtomicInteger optionsCount) {
-		int count = -1;
+	private void validateOptionsCount(LanguageString s, AtomicInteger optionsCount, AtomicInteger csvCount) {
+		int optCount = -1;
+		int dataCount = -1;
+		List<String> options = new ArrayList<>();
 		if (!Strings.isNullOrEmpty(s.getText())) {
-			//TODO what about options within an expression
-			count = s.getText().split("\\|").length;
+			// TODO what about options within an expression
+			options = Splitter.on('|').splitToList(s.getText());
+			optCount = options.size();
+		}
+		for (String option : options) {
+			// remove html entities
+			option = option.replaceAll("&\\w+;", "");
+			int singleDataCount = option.split(";", -1).length;
+			if (dataCount < 0) {
+				dataCount = singleDataCount;
+				if (csvCount.get() < 0) {
+					csvCount.set(dataCount);
+				}
+			} else if (singleDataCount != dataCount) {
+				int index = options.indexOf(option) + 1;
+				error("alternative " + index + " has " + singleDataCount + " csv entries, " + dataCount
+						+ " in others for this language", s, $.getLanguageString_Text());
+			}
 		}
 		if (optionsCount.get() < 0) {
-			if (count >= 0) {
-				optionsCount.set(count);
+			if (optCount >= 0) {
+				optionsCount.set(optCount);
 			}
-		} else if (count >= 0 && count != optionsCount.get()) {
-			error("options count mismatch with other language", s, $.getLanguageString_Text());
+		} else if (optCount >= 0 && optCount != optionsCount.get()) {
+			error("options count mismatch wrt other language", s, $.getLanguageString_Text());
+		}
+		// mark mismatch only if one semicolon was found at all
+		// semicolon might be part of regular text
+		if (dataCount > 1 && csvCount.get() > 1 && dataCount != csvCount.get()) {
+			error("csv data entry count mismatch wrt other language", s, $.getLanguageString_Text());
 		}
 	}
 

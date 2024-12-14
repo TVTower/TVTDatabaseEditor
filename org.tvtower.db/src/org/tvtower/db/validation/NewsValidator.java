@@ -177,7 +177,6 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				$.getNewsProbability_News());
 	}
 
-	//TODO extend check effects to programme and scripts
 	@Check
 	public void checkEffect(Effect e) {
 		Constants.triggerType.isValidValue(e.getTrigger(), "trigger", true)
@@ -189,6 +188,10 @@ public class NewsValidator extends AbstractDatabaseValidator {
 				.ifPresent(err -> error(err, $.getEffect_Probability()));
 		Constants._boolean.isValidValue(e.getEnable(), "enable", false)
 				.ifPresent(err -> error(err, $.getEffect_Enable()));
+
+		if(!Constants.triggerType.isSupported(e)) {
+			error("trigger type not supported for this element", $.getEffect_Trigger());
+		}
 
 		if (e.getType() != null) {
 			Boolean checkMinMax = Boolean.FALSE;
