@@ -19,12 +19,29 @@ public class SimpleExpression {
 	private static final Pattern WT_REPLACE_PATTERN = Pattern.compile("&wt_(\\\"\\w+\\\")");
 	private static final Pattern MISSING_DOT_PATTERN = Pattern.compile("\\$\\{(\\w+):");
 
+	private static final Pattern COLON_IN_STRING_PATTERN=Pattern.compile(":\"[^\":${]*(:)[^\":${]*\"");
+
 	private static final List<String> KNOWN_COMPLEX_FUNCTIONS = ImmutableList.of(//
 			".and", ".eq", ".gt", ".gte", ".lt", ".lte", ".or", ".if", ".person", ".csv");
 
-	public static List<SimpleExpression> get(String content) {
+	public static List<SimpleExpression> get(String contentRaw) {
 		Set<Integer> startIndexes = new HashSet<>();
 		List<SimpleExpression> result = new ArrayList<>();
+		String content = contentRaw;
+		//replace colon from simple strings in order to find the correct number of function arguments
+		if (contentRaw.indexOf('$') >= 0) {
+			Matcher matcher = COLON_IN_STRING_PATTERN.matcher(content);
+
+			StringBuffer sb = new StringBuffer();
+			while (matcher.find()) {
+				matcher.appendReplacement(sb, ":" + matcher.group().replace(':', ' '));
+			}
+			matcher.appendTail(sb);
+			content = sb.toString();
+		} else {
+			return result;
+		}
+
 		Matcher simpleExpressionMatcher = SIMPLE_EXPRESSION_PATTERN.matcher(content);
 		while (simpleExpressionMatcher.find()) {
 			String fct = simpleExpressionMatcher.group(2).toLowerCase();
