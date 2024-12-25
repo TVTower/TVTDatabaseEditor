@@ -160,7 +160,8 @@ Job:
 			('gender''='gender=STRING)?&
 			('country''='country=STRING)?&
 			('role_guid''='rolId=[ProgrammeRole|STRING] )?&
-			('random_role''='randomRole=STRING )?
+			('random_role''='randomRole=STRING )?&
+			('person''='preselectedCast=[Person|STRING])?
 		)
 	'/>'
 ;
