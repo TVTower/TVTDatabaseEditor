@@ -473,7 +473,7 @@ AdConditions:
 			('min_image''='minImage=STRING)?&
 			('max_image''='maxImage=STRING)?&
 			('allowed_genre''='allowedGenre=STRING)?&
-			('prohibited_genre''='prohibitedGenre=STRING)?&
+//			('prohibited_genre''='prohibitedGenre=STRING)?&
 			('allowed_programme_flag''='allowedProgrammeFlag=STRING)?&
 			('prohibited_programme_flag''='prohibitedProgrammeFlag=STRING)?&
 			('target_group''='targetGroup=STRING)?&

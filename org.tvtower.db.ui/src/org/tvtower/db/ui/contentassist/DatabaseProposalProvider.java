@@ -160,11 +160,11 @@ public class DatabaseProposalProvider extends AbstractDatabaseProposalProvider {
 		mapProposal(Constants.programmGenre, acceptor, context);
 	}
 
-	@Override
-	public void completeAdConditions_ProhibitedGenre(EObject model, Assignment assignment, ContentAssistContext context,
-			ICompletionProposalAcceptor acceptor) {
-		mapProposal(Constants.programmGenre, acceptor, context);
-	}
+//	@Override
+//	public void completeAdConditions_ProhibitedGenre(EObject model, Assignment assignment, ContentAssistContext context,
+//			ICompletionProposalAcceptor acceptor) {
+//		mapProposal(Constants.programmGenre, acceptor, context);
+//	}
 
 	@Override
 	public void completeAdConditions_AllowedProgrammeFlag(EObject model, Assignment assignment,

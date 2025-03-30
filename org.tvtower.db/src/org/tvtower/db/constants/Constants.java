@@ -87,7 +87,7 @@ public class Constants {
 				.put($.getProgrammeRole_Country(), country).put($.getProgrammeRole_Gender(), gender)
 
 				.put($.getAdConditions_AllowedGenre(), programmGenre)
-				.put($.getAdConditions_ProhibitedGenre(), programmGenre)
+//				.put($.getAdConditions_ProhibitedGenre(), programmGenre)
 				.put($.getAdConditions_AllowedProgrammeFlag(), programmeFlag)
 				.put($.getAdConditions_ProhibitedProgrammeFlag(), programmeFlag)
 				.put($.getAdConditions_TargetGroup(), targetgroup)

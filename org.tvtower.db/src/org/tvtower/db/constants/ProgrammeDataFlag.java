@@ -23,6 +23,7 @@ public class ProgrammeDataFlag extends TVTFlag {
 		add("customproduction");
 		add("invisible");
 		add("live on tape");
+		add("no remake");
 	}
 
 //	@Override
