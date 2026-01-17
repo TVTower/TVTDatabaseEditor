@@ -71,6 +71,7 @@ ScriptTemplate:
 			('licence_type''='licenceType=STRING)&
 			('index''='index=STRING)?&
 			('comment''='comment=STRING)?&
+			('wikidata_id''='wikiID=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -161,6 +162,7 @@ Job:
 			('country''='country=STRING)?&
 			('role_guid''='rolId=[ProgrammeRole|STRING] )?&
 			('random_role''='randomRole=STRING )?&
+			('display_template''='displayTemplate=STRING )?&
 			('person''='preselectedCast=[Person|STRING])?
 		)
 	'/>'
@@ -259,9 +261,9 @@ MinMaxSlope:
 ;
 
 LanguageString:
-	'<'langage=ID'>'
+	'<'langage=LanguageId'>'
 		text=TextContent
-	'</'langage2=ID'>'
+	'</'langage2=LanguageId'>'
 ;
 
 ProgrammeRoles:
@@ -284,6 +286,7 @@ ProgrammeRole:
 			('title_original''='titleOriginal=STRING)?&
 			('country''='country=STRING)?&
 			('comment''='comment=STRING)?&
+			('wikidata_id''='wikiID=STRING )?&
 			('gender''='gender=STRING)?
 		)
 	'/>'
@@ -451,6 +454,7 @@ Advertisement:
 		(
 			('guid''='name=STRING )&
 			('comment''='comment=STRING )?&
+			('wikidata_id''='wikiID=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -518,6 +522,7 @@ NewsItem:
 			('type''='type=STRING )?&
 			('creator''='creator=STRING)?&
 			('comment''='comment=STRING)?&
+			('wikidata_id''='wikiID=STRING )?&
 			('created_by''='createdBy=STRING)?
 		)
 	'>'
@@ -638,6 +643,7 @@ Person:
 			('birthday''='birthday=STRING)?&
 			('deathday''='deathday=STRING)?&
 			('comment''='comment=STRING)?&
+			('wikidata_id''='wikiID=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -724,6 +730,7 @@ Programme:
 			('fictional''='fictional=STRING )?&
 			('programmedata_guid''='ref=[Programme|STRING])?&
 			('comment''='comment=STRING)?&
+			('wikidata_id''='wikiID=STRING )?&
 			('creator''='creator=STRING)?&
 			('created_by''='createdBy=STRING)?
 		)
@@ -892,8 +899,9 @@ TitleOriginal:
 Version: '<' 'version' {Version}props+=UnnamedProperty* '/>';
 UnnamedProperty:key=IDorKeyword'='value=STRING;
 
-IDorKeyword:(ID |'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'review'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'='|'subgenre'|'category'|'text'|'required'|'creator'|'achievement')(->(INT ID?)?);
+IDorKeyword:(ID |'version'|'jobs'|'job'|'title'|'description'|'value'|'price'|'quality'|'money'|'children'|'infomercial'|'available'|'type'|'group'|'comment'|'genre'|'genres'|'effect'|'time'|'probability'|'news'|'country'|'fictional'|'appearance'|'birthday'|'person'|'power'|'humor'|'charisma'|'fame'|'popularity'|'groups'|'staff'|'member'|'programme'|'index'|'function'|'year'|'distribution'|'critics'|'review'|'speed'|'outcome'|'ad'|'celebritypeople'|'script'|'choose'|'tags'|'product'|'images'|'name'|'modifier'|'modifiers'|'generator'|'ratings'|'min'|'day'|'hour'|'trigger'|'blocks'|'enable'|'episodes'|'flags'|'max'|'penalty'|'data'|'potential'|'effects'|'guid'|'profit'|'gender'|'task'|'tasks'|'conditions'|'details'|'reward'|'rewards'|'persons'|'role'|'='|'subgenre'|'category'|'text'|'required'|'creator'|'achievement'|'-'|'duration'|'slope')(->(INT ID?)?);
 TextContent:(IDorKeyword |STRING|INT|ANY_OTHER|'>')* /* ignore variables and variable resolution for now*/ ;
+LanguageId hidden():(ID->'-')?ID;
 
 //no variable recognition, yet
 //VARIABLE hidden():'%'(ID|ANY_OTHER|INT)+'%';

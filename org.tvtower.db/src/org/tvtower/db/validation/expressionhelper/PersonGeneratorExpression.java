@@ -22,10 +22,12 @@ class PersonGeneratorExpression extends AbstractExpression {
 		if (!isStringFromCollection(sub, supportedNameParam)) {
 			return "unsupported name parameter";
 		}
-		String country = params.get(1);
-		if (!isStringParam(country)) {
-			// TODO but it could be a variable returning the country...
-			return "country parameter must be a string";
+		if (paramCount > 1) {
+			String country = params.get(1);
+			if (!isStringParam(country)) {
+				// TODO but it could be a variable returning the country...
+				return "country parameter must be a string";
+			}
 		}
 		if (paramCount > 2) {
 			String gender = params.get(2);

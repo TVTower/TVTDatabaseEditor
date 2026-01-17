@@ -46,10 +46,6 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (!isFictional(person) && "1".equals(person.getCastable())) {
 			error("non-fictional persons may not be castable", $.getPerson_Castable());
 		}
-		if (person.getTitle() != null) {
-			addIssue("title not supported", person, $.getPerson_Title(),
-					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
-		}
 		checkNames(person);
 		checkDates(person);
 	}
@@ -173,14 +169,6 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (Constants.gender.isUndefined(r.getGender())) {
 			addIssue("undefined gender", r, $.getProgrammeRole_Gender(),
 					DatabaseConfigurableIssueCodesProvider.ROLE_UNDEFINED_GENDER);
-		}
-		if (r.getNickName() != null) {
-			addIssue("nickname not supported", r, $.getProgrammeRole_NickName(),
-					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
-		}
-		if (r.getNickNameOriginal() != null) {
-			addIssue("original nickname not supported", r, $.getProgrammeRole_NickName(),
-					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
 		}
 
 		checkNameEndsWithS(r.getFirstName(), r.getFirstNameOriginal(), r, $.getProgrammeRole_FirstName());

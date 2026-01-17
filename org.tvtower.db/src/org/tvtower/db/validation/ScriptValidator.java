@@ -204,7 +204,12 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		Constants.gender.isValidValue(job.getGender(), "gender", false).ifPresent(e -> error(e, $.getJob_Gender()));
 		Constants._boolean.isValidValue(job.getRandomRole(), "random_role", false)
 				.ifPresent(e -> error(e, $.getJob_RandomRole()));
+		if(job.getDisplayTemplate()!=null) {
+			addIssue("display template not supported", job, $.getJob_DisplayTemplate(),
+					DatabaseConfigurableIssueCodesProvider.UNSUPPORTED_ATTRIBUTE);
+		}
 		//TODO generator country validation, propsal and hover
+		//TODO country variable?
 	}
 
 	@Check
