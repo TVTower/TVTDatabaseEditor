@@ -117,11 +117,10 @@ class ProgrammesSplitter {
 			<?xml version="1.0" encoding="utf-8"?>
 			<tvtdb>
 				<version value="3" />
-				<allprogrammes>«FOR p : progs»
-				«p.toTxt»
-				«ENDFOR»
+				<allprogrammes>
+			«FOR p : progs»«p.toTxt»«ENDFOR»
 				</allprogrammes>
-				</tvtdb>
+			</tvtdb>
 		'''.toString().getBytes(StandardCharsets.UTF_8))
 	}
 
