@@ -160,7 +160,7 @@ Job:
 			('required''='required=STRING)&
 			('gender''='gender=STRING)?&
 			('country''='country=STRING)?&
-			('role_guid''='rolId=[ProgrammeRole|STRING] )?&
+			('role_guid''='rolId=[RoleOrPerson|STRING] )?&
 			('random_role''='randomRole=STRING )?&
 			('display_template''='displayTemplate=STRING )?&
 			('person''='preselectedCast=[Person|STRING])?
@@ -303,6 +303,8 @@ RoleLocale:
 		)
 	'/>'
 ;
+
+RoleOrPerson:ProgrammeRole|Person;
 
 Achievements:
 	'<''allachievements''>'{Achievements}
@@ -816,7 +818,7 @@ StaffMember:
 		|
 		(
 			'>'
-			ref=[Person|PersonRef]
+			ref=[RoleOrPerson|PersonRef]
 			'</''member''>'
 		)
 	)

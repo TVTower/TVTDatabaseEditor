@@ -84,7 +84,7 @@ public class Constants {
 				.put($.getScriptData_OptionalTargetGroup(), targetgroup)
 				.put($.getScriptData_TargetGroup(), targetgroup)
 
-				.put($.getProgrammeRole_Country(), country).put($.getProgrammeRole_Gender(), gender)
+				.put($.getRoleOrPerson_Country(), country).put($.getRoleOrPerson_Gender(), gender)
 
 				.put($.getAdConditions_AllowedGenre(), programmGenre)
 //				.put($.getAdConditions_ProhibitedGenre(), programmGenre)
@@ -109,8 +109,9 @@ public class Constants {
 				.put($.getEffect_Enable(), _boolean)
 
 				.put($.getPerson_Castable(), _boolean).put($.getPerson_Fictional(), _boolean)
-				.put($.getPerson_LevelUp(), _boolean).put($.getPerson_Gender(), gender)
-				.put($.getPerson_Country(), country).put($.getPerson_Job(), job)
+				.put($.getPerson_LevelUp(), _boolean)
+//				.put($.getPerson_Gender(), gender).put($.getPerson_Country(), country)
+				.put($.getPerson_Job(), job)
 				.put($.getPersonDetails_Country(), country).put($.getPersonDetails_Gender(), gender)
 				.put($.getPersonDetails_Fictional(), _boolean).put($.getPersonDetails_Job(), job)
 				.put($.getPersonData_TopGenre(), programmGenre)

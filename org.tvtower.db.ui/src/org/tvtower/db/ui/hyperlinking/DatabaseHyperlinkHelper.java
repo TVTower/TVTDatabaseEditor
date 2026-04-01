@@ -63,7 +63,7 @@ public class DatabaseHyperlinkHelper extends HyperlinkHelper {
 				Person p = (Person) sem;
 				wikiId = p.getWikiID();
 				wikiIdKeyword = ga.getPersonAccess().getWikidata_idKeyword_2_22_0();
-				wikiIdAttribute = $.getPerson_WikiID();
+				wikiIdAttribute = $.getRoleOrPerson_WikiID();
 				createHyperlink(p.getTmdbId(), TMDB + "person/", node, sem,
 						ga.getPersonAccess().getTmdb_idKeyword_2_1_0(), $.getPerson_TmdbId(), acceptor);
 				createHyperlink(p.getImdbId(), IMDB + "name/", node, sem,
@@ -72,7 +72,7 @@ public class DatabaseHyperlinkHelper extends HyperlinkHelper {
 				ProgrammeRole p = (ProgrammeRole) sem;
 				wikiId = p.getWikiID();
 				wikiIdKeyword = ga.getProgrammeRoleAccess().getWikidata_idKeyword_2_11_0();
-				wikiIdAttribute = $.getProgrammeRole_WikiID();
+				wikiIdAttribute = $.getRoleOrPerson_WikiID();
 			} else if (sem instanceof ScriptTemplate) {
 				ScriptTemplate t = (ScriptTemplate) sem;
 				wikiId = t.getWikiID();

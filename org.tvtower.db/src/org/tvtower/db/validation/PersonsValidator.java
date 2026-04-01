@@ -32,7 +32,7 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 	public void checkGeneral(Person person) {
 		if (person.getGenerator() == null) {
 			CommonValidation.getValueMissingError("name", person.getFirstName(), person.getLastName())
-					.ifPresent(e -> error(e, $.getPerson_Name()));
+					.ifPresent(e -> error(e, $.getRoleOrPerson_Name()));
 		}
 		Constants.job.isValidFlag(person.getJob(), "job", false).ifPresent(e -> error(e, $.getPerson_Job()));
 		Constants._boolean.isValidValue(person.getFictional(), "fictional", false)
@@ -66,9 +66,9 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			assertNotSet(person.getDetails(), "details", $.getPerson_Details());
 			assertNotSet(person.getData(), "data", $.getPerson_Data());
 			CommonValidation.getCountryError(person.getCountry(), false)
-					.ifPresent(e -> error(e, $.getPerson_Country()));
+					.ifPresent(e -> error(e, $.getRoleOrPerson_Country()));
 			Constants.gender.isValidValue(person.getGender(), "gender", false)
-					.ifPresent(e -> error(e, $.getPerson_Gender()));
+					.ifPresent(e -> error(e, $.getRoleOrPerson_Gender()));
 		}
 	}
 
@@ -79,23 +79,23 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 
 			if ("1".equals(person.getCastable())) {
 				if (!isGenderDefined(person)) {
-					error("gender must be defined", $.getPerson_Name());
+					error("gender must be defined", $.getRoleOrPerson_Name());
 				}
 			}
 			if (PersonUtil.isFictional(person)) {
 				if (!isGenderDefined(person)) {
-					error("cannot be used in cast", $.getPerson_Name());
+					error("cannot be used in cast", $.getRoleOrPerson_Name());
 				}
 			}
-			defineInDetails(person.getCountry(), "country", $.getPerson_Country());
+			defineInDetails(person.getCountry(), "country", $.getRoleOrPerson_Country());
 			defineInDetails(person.getJob(), "job", $.getPerson_Job());
-			defineInDetails(person.getGender(), "gender", $.getPerson_Gender());
+			defineInDetails(person.getGender(), "gender", $.getRoleOrPerson_Gender());
 
 			if (person.getData() == null) {
 				// randomized
 			}
 			if (person.getDetails() == null) {
-				error("details must be defined", $.getPerson_Name());
+				error("details must be defined", $.getRoleOrPerson_Name());
 			}
 		}
 	}
@@ -160,27 +160,27 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 	@Check
 	public void checkRole(ProgrammeRole r) {
 		CommonValidation.getValueMissingError("name", r.getFirstName(), r.getLastName())
-				.ifPresent(e -> error(e, $.getProgrammeRole_FirstName()));
+				.ifPresent(e -> error(e, $.getRoleOrPerson_FirstName()));
 //		CommonValidation.getValueMissingError("last_name", r.getLastName())
 //				.ifPresent(e -> warning(e, $.getProgrammeRole_LastName()));
-		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getProgrammeRole_Country()));
+		CommonValidation.getCountryError(r.getCountry(), false).ifPresent(e -> error(e, $.getRoleOrPerson_Country()));
 		Constants.gender.isValidValue(r.getGender(), "gender", false)
-				.ifPresent(e -> error(e, $.getProgrammeRole_Gender()));
+				.ifPresent(e -> error(e, $.getRoleOrPerson_Gender()));
 		if (Constants.gender.isUndefined(r.getGender())) {
-			addIssue("undefined gender", r, $.getProgrammeRole_Gender(),
+			addIssue("undefined gender", r, $.getRoleOrPerson_Gender(),
 					DatabaseConfigurableIssueCodesProvider.ROLE_UNDEFINED_GENDER);
 		}
 
-		checkNameEndsWithS(r.getFirstName(), r.getFirstNameOriginal(), r, $.getProgrammeRole_FirstName());
-		checkNameEndsWithS(r.getLastName(), r.getLastNameOriginal(), r, $.getProgrammeRole_LastName());
-		checkNameEndsWithS(r.getNickName(), r.getNickNameOriginal(), r, $.getProgrammeRole_NickName());
+		checkNameEndsWithS(r.getFirstName(), r.getFirstNameOriginal(), r, $.getRoleOrPerson_FirstName());
+		checkNameEndsWithS(r.getLastName(), r.getLastNameOriginal(), r, $.getRoleOrPerson_LastName());
+		checkNameEndsWithS(r.getNickName(), r.getNickNameOriginal(), r, $.getRoleOrPerson_NickName());
 	}
 
 	private void checkNames(Person person) {
 		if (!PersonUtil.isFictional(person)) {
 			if (!Strings.isNullOrEmpty(person.getNickName())) {
 				if (Strings.isNullOrEmpty(person.getNickNameOrig())) {
-					warning("Original Nickname is missing", $.getPerson_NickName());
+					warning("Original Nickname is missing", $.getRoleOrPerson_NickName());
 				}
 			}
 			if (!isInsignificant(person)) {
@@ -188,20 +188,20 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				// names are not given
 				if (!Strings.isNullOrEmpty(person.getFirstName())) {
 					if (Strings.isNullOrEmpty(person.getFirstNameOrig())) {
-						warning("Original First is missing", $.getPerson_FirstName());
+						warning("Original First is missing", $.getRoleOrPerson_FirstName());
 					}
 				}
 				if (!Strings.isNullOrEmpty(person.getLastName())) {
 					if (Strings.isNullOrEmpty(person.getLastNameOrig())) {
-						warning("Original Last is missing", $.getPerson_LastName());
+						warning("Original Last is missing", $.getRoleOrPerson_LastName());
 					}
 				}
 			}
 		}
 
-		checkNameEndsWithS(person.getFirstName(), person.getFirstNameOrig(), person, $.getPerson_FirstName());
-		checkNameEndsWithS(person.getLastName(), person.getLastNameOrig(), person, $.getPerson_LastName());
-		checkNameEndsWithS(person.getNickName(), person.getNickNameOrig(), person, $.getPerson_NickName());
+		checkNameEndsWithS(person.getFirstName(), person.getFirstNameOrig(), person, $.getRoleOrPerson_FirstName());
+		checkNameEndsWithS(person.getLastName(), person.getLastNameOrig(), person, $.getRoleOrPerson_LastName());
+		checkNameEndsWithS(person.getNickName(), person.getNickNameOrig(), person, $.getRoleOrPerson_NickName());
 
 		// TODO improve spoof name similarity
 		if (person.getFirstNameOrig() != null && person.getLastNameOrig() != null) {
