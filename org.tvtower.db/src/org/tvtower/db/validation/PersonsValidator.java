@@ -33,6 +33,8 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 		if (person.getGenerator() == null) {
 			CommonValidation.getValueMissingError("name", person.getFirstName(), person.getLastName())
 					.ifPresent(e -> error(e, $.getRoleOrPerson_Name()));
+		} else if("0".equals(person.getFictional()) || (person.getDetails()!=null && "0".equals(person.getDetails().getFictional()))){
+			error("generated person must be fictional", $.getPerson_Generator());
 		}
 		Constants.job.isValidFlag(person.getJob(), "job", false).ifPresent(e -> error(e, $.getPerson_Job()));
 		Constants._boolean.isValidValue(person.getFictional(), "fictional", false)
@@ -43,21 +45,11 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 				&& person.getDetails().getFictional() != null) {
 			error("fictional defined multiple times", $.getPerson_Fictional());
 		}
-		if (!isFictional(person) && "1".equals(person.getCastable())) {
+		if (!PersonUtil.isFictional(person) && "1".equals(person.getCastable())) {
 			error("non-fictional persons may not be castable", $.getPerson_Castable());
 		}
 		checkNames(person);
 		checkDates(person);
-	}
-
-	private boolean isFictional(Person p) {
-		if ("1".equals(p.getFictional())) {
-			return true;
-		} else if (p.getDetails() != null && "1".equals(p.getDetails().getFictional())) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	@Check
@@ -67,9 +59,25 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 			assertNotSet(person.getData(), "data", $.getPerson_Data());
 			CommonValidation.getCountryError(person.getCountry(), false)
 					.ifPresent(e -> error(e, $.getRoleOrPerson_Country()));
-			Constants.gender.isValidValue(person.getGender(), "gender", false)
-					.ifPresent(e -> error(e, $.getRoleOrPerson_Gender()));
+			if (isCastable(person)) {
+				Constants.gender.isValidValue(person.getGender(), "gender", false)
+						.ifPresent(e -> error(e, $.getRoleOrPerson_Gender()));
+			} else {
+				//real persons cannot be cast, so other gender is OK
+				Constants.gender.isValidNonCastableValue(person.getGender(), "gender", false)
+						.ifPresent(e -> error(e, $.getRoleOrPerson_Gender()));
+			}
 		}
+	}
+
+	private boolean isCastable(Person p) {
+		if ("1".equals(p.getCastable())) {
+			return true;
+		}
+		if ("0".equals(p.getCastable())) {
+			return false;
+		}
+		return PersonUtil.isFictional(p);
 	}
 
 	@Check
@@ -136,8 +144,13 @@ public class PersonsValidator extends AbstractDatabaseValidator {
 	public void checkPersonDetails(PersonDetails d) {
 		CommonValidation.getCountryError(d.getCountry(), false).ifPresent(e -> error(e, $.getPersonDetails_Country()));
 		Constants.job.isValidFlag(d.getJob(), "job", false).ifPresent(e -> error(e, $.getPersonDetails_Job()));
-		Constants.gender.isValidValue(d.getGender(), "gender", true)
-				.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
+		if (isCastable((Person) d.eContainer())) {
+			Constants.gender.isValidValue(d.getGender(), "gender", true)
+					.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
+		} else {
+			Constants.gender.isValidNonCastableValue(d.getGender(), "gender", true)
+					.ifPresent(e -> error(e, $.getPersonDetails_Gender()));
+		}
 		Constants._boolean.isValidValue(d.getFictional(), "fictional", false)
 				.ifPresent(e -> error(e, $.getPersonDetails_Fictional()));
 	}
