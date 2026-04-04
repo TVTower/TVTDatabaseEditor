@@ -12,11 +12,12 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.EValidatorRegistrar;
 import org.tvtower.db.constants.Constants;
+import org.tvtower.db.constants.LicenceType;
+import org.tvtower.db.constants.ProgrammeType;
 import org.tvtower.db.database.DatabasePackage;
 import org.tvtower.db.database.Programme;
 import org.tvtower.db.database.ProgrammeChildren;
 import org.tvtower.db.database.ProgrammeData;
-import org.tvtower.db.database.ProgrammeGroups;
 import org.tvtower.db.database.ProgrammeRatings;
 import org.tvtower.db.database.ProgrammeReleaseTime;
 import org.tvtower.db.database.Programmes;
@@ -73,6 +74,7 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 		if (p.getChildren() != null) {
 			String expectedChildLicenceType = Constants.licenceType.getChildType(p.getLicenceType());
 			ProgrammeChildren children = p.getChildren();
+			boolean isSeriesProduct=ProgrammeType.SERIES.equals(p.getProduct());
 			for (int i = 0; i < children.getChild().size(); i++) {
 				Programme child = children.getChild().get(i);
 //mismatch of fictional flag in children possible
@@ -84,8 +86,8 @@ public class ProgrammeValidator extends AbstractDatabaseValidator {
 //						&& !parentFictional.equals(child.getFictional())) {
 //					error("fictional mismatch", child, $.getProgramme_Fictional());
 //				}
-				if (!Objects.equal(p.getProduct(), child.getProduct())) {
-					error("product mismatch", child, $.getProgramme_Product());
+				if (!isSeriesProduct && !Objects.equal(p.getProduct(), child.getProduct())) {
+					addIssue("product mismatch", child, $.getProgramme_Product(), DatabaseConfigurableIssueCodesProvider.PRODUCTTYPE_MISMATCH);
 				}
 				if(child.getData()!=null && child.getData().getLicenceFlags() != null) {
 					warning("be careful when defining child licence flags", child.getData(), $.getProgrammeData_LicenceFlags());

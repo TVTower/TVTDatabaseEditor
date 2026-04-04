@@ -48,12 +48,13 @@ public class ScriptValidator extends AbstractDatabaseValidator {
 		if (t.getChildren() != null) {
 			String expectedChildLicenceType = Constants.licenceType.getChildType(t.getLicenceType());
 			String parentProduct = t.getProduct();
+			boolean isSeriesProduct=ProgrammeType.SERIES.equals(parentProduct);
 
 			ScriptChildren children = t.getChildren();
 			for (int i = 0; i < children.getChild().size(); i++) {
 				ScriptTemplate child = children.getChild().get(i);
-				if (child.getProduct() != null && !child.getProduct().equals(parentProduct)) {
-					error("product mismatch", child, $.getScriptTemplate_Product());
+				if (!isSeriesProduct && child.getProduct() != null && !child.getProduct().equals(parentProduct)) {
+					addIssue("product mismatch", child, $.getScriptTemplate_Product(), DatabaseConfigurableIssueCodesProvider.PRODUCTTYPE_MISMATCH);
 				}
 				if (!expectedChildLicenceType.equals(child.getLicenceType())) {
 					error("expect licence_type " + expectedChildLicenceType, child, $.getScriptTemplate_LicenceType());

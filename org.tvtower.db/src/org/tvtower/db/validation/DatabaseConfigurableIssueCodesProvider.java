@@ -21,6 +21,7 @@ public class DatabaseConfigurableIssueCodesProvider extends ConfigurableIssueCod
 	public static final String ROLE_UNDEFINED_GENDER = ISSUE_CODE_PREFIX + "roleUndefinedGender";
 	public static final String UNSUPPORTED_ATTRIBUTE = ISSUE_CODE_PREFIX + "unsupportedAttribute";
 	public static final String VALIDATE_LOCALIZATION_DUPLICATES = ISSUE_CODE_PREFIX + "locLanguages";
+	public static final String PRODUCTTYPE_MISMATCH = ISSUE_CODE_PREFIX + "prodType";
 	// not issue code but boolean
 	public static final String VALIDATE_EFFECT_ACTIVATION = ISSUE_CODE_PREFIX + "effectActivation";
 
@@ -36,6 +37,7 @@ public class DatabaseConfigurableIssueCodesProvider extends ConfigurableIssueCod
 		acceptor.accept(create(ROLE_UNDEFINED_GENDER, SeverityConverter.SEVERITY_WARNING));
 		acceptor.accept(create(UNSUPPORTED_ATTRIBUTE, SeverityConverter.SEVERITY_ERROR));
 		acceptor.accept(create(VALIDATE_LOCALIZATION_DUPLICATES, SeverityConverter.SEVERITY_IGNORE));
+		acceptor.accept(create(PRODUCTTYPE_MISMATCH, SeverityConverter.SEVERITY_WARNING));
 
 		acceptor.accept(create(VALIDATE_EFFECT_ACTIVATION, "false"));
 	}
