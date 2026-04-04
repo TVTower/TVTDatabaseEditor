@@ -6,6 +6,6 @@ public class ProgrammeDistribution extends TVTEnum {
 		add("0", "unknown");
 		add("1", "cinema");
 		add("2", "tv");
-		add("3", "vidoe");
+		add("3", "video");
 	}
 }
