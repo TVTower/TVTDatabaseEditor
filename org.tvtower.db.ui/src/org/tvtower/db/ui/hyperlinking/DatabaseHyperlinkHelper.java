@@ -49,7 +49,7 @@ public class DatabaseHyperlinkHelper extends HyperlinkHelper {
 				Advertisement ad = (Advertisement) sem;
 				wikiId = ad.getWikiID();
 				wikiIdKeyword = ga.getAdvertisementAccess().getWikidata_idKeyword_2_2_0();
-				wikiIdAttribute = $.getAdvertisement_WikiID();
+				wikiIdAttribute = $.getMayContainVariables_WikiID();
 			} else if (sem instanceof Programme) {
 				Programme p = (Programme) sem;
 				wikiId = p.getWikiID();

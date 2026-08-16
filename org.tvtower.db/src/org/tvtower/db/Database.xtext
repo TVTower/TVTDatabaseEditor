@@ -55,7 +55,7 @@ GlobalVariable:
 	'</'IDorKeyword'>'
 ;
 
-MayContainVariables:NewsItem|ScriptTemplate;
+MayContainVariables:NewsItem|ScriptTemplate|Advertisement;
 
 ScriptTemplates:
 	'<''scripttemplates''>'{ScriptTemplates}
@@ -467,6 +467,7 @@ Advertisement:
 		conditions=AdConditions?&
 		data=AdvertisementData?&
 		availability=Availability?&
+		variables=Variables?&
 		modifiers=Modifiers?
 	)
 	'</''ad''>'
